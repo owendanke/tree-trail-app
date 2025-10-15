@@ -1,3 +1,3 @@
-# holcomb_tree_trail
+# Holcomb Tree Trail App
 
-A new Flutter project.
+A Flutter project for the Holcomb Tree Trail Arboretum. 
