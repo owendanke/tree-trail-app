@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:holcomb_tree_trail/pages/home/home.dart';
 import 'package:holcomb_tree_trail/ui/nav_bar.dart';
+import 'package:holcomb_tree_trail/ui/theme.dart';
 
 void main() {
   runApp(const MainApp());
@@ -11,11 +11,11 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       title: 'Holcomb Tree Trail',
-      
+      theme: ThemeData.from(colorScheme: MaterialTheme.lightScheme()),
       //home: HomePage(title: 'Home Page'),
-      home: MainNavigation(), // use MainNavigation instead of HomePage
+      home: const MainNavigation(), // use MainNavigation instead of HomePage
     );
   }
 }

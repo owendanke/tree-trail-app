@@ -20,7 +20,7 @@ class _ExplorePageState extends State<ExplorePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const Text('Explore screen!'),
+            const Text('Tree screen!'),
           ],
         ),
       ),

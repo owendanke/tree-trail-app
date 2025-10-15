@@ -33,6 +33,8 @@ class _MainNavigationState extends State<MainNavigation> {
         children: _pages,
       ),
       bottomNavigationBar: NavigationBar(
+        //backgroundColor: Theme.of(context).colorScheme.primary,
+        indicatorColor: Theme.of(context).colorScheme.error,
         selectedIndex: _currentIndex,
         onDestinationSelected: (index) {
           setState(() {
@@ -51,9 +53,9 @@ class _MainNavigationState extends State<MainNavigation> {
             label: 'Explore',
           ),
           NavigationDestination(
-            icon: Icon(Icons.person_outline),
-            selectedIcon: Icon(Icons.person),
-            label: 'Profile',
+            icon: Icon(Icons.map_outlined),
+            selectedIcon: Icon(Icons.map),
+            label: 'Map',
           ),
         ],
       ),

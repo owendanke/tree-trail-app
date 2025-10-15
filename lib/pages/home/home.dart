@@ -13,7 +13,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        backgroundColor: Theme.of(context).colorScheme.primary,
         title: Text(widget.title),
       ),
       body: Center(
@@ -24,8 +24,9 @@ class _HomePageState extends State<HomePage> {
             Padding(padding: EdgeInsets.symmetric(vertical: 20.0)),
             ElevatedButton(
               onPressed: () {
+                
               },
-              child: const Text('Button'),
+              child: const Text('Go to trees ->'),
             )
           ],
         ),
