@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 class ExplorePage extends StatefulWidget {
-  const ExplorePage({super.key, required this.title});
+  const ExplorePage({super.key});
   
-  final String title;
+  final String title = 'Explore';
   
   @override
   State<ExplorePage> createState() => _ExplorePageState();

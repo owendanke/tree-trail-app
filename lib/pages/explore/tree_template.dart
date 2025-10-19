@@ -7,12 +7,12 @@ class TemplatePage extends StatelessWidget {
   final List<Widget>? actions;
 
   const TemplatePage({
-    Key? key,
+    super.key,
     required this.title,
     required this.body,
     this.floatingActionButton,
     this.actions,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

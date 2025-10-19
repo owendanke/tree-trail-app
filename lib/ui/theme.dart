@@ -1,98 +1,8 @@
 import "package:flutter/material.dart";
+import "package:google_fonts/google_fonts.dart";
 
 class MaterialTheme {
-  TextTheme textTheme = TextTheme(
-    displayLarge: TextStyle(
-      fontSize: 32,
-      fontWeight: FontWeight.bold,
-      fontFamily: "lato",
-      color: Colors.white,
-    ),
-    displayMedium: TextStyle(
-      fontSize: 28,
-      fontWeight: FontWeight.bold,
-      fontFamily: "lato",
-      color: Colors.white,
-    ),
-    displaySmall: TextStyle(
-      fontSize: 24,
-      fontWeight: FontWeight.bold,
-      fontFamily: "lato",
-      color: Colors.white,
-    ),
-    headlineLarge: TextStyle(
-      fontSize: 22,
-      fontWeight: FontWeight.w600,
-      fontFamily: "lato",
-      color: Colors.white,
-    ),
-    headlineMedium: TextStyle(
-      fontSize: 20,
-      fontWeight: FontWeight.w600,
-      fontFamily: "lato",
-      color: Colors.white,
-    ),
-    headlineSmall: TextStyle(
-      fontSize: 18,
-      fontWeight: FontWeight.w600,
-      fontFamily: "lato",
-      color: Colors.white,
-    ),
-    titleLarge: TextStyle(
-      fontSize: 20,
-      fontWeight: FontWeight.w500,
-      fontFamily: "lato",
-      color: Colors.white,
-    ),
-    titleMedium: TextStyle(
-      fontSize: 16,
-      fontWeight: FontWeight.w500,
-      fontFamily: "lato",
-      color: Colors.white,
-    ),
-    titleSmall: TextStyle(
-      fontSize: 14,
-      fontWeight: FontWeight.w500,
-      fontFamily: "lato",
-      color: Colors.white,
-    ),
-    bodyLarge: TextStyle(
-      fontSize: 16,
-      fontWeight: FontWeight.normal,
-      fontFamily: "lato",
-      color: Colors.white,
-    ),
-    bodyMedium: TextStyle(
-      fontSize: 14,
-      fontWeight: FontWeight.normal,
-      fontFamily: "lato",
-      color: Colors.white,
-    ),
-    bodySmall: TextStyle(
-      fontSize: 12,
-      fontWeight: FontWeight.normal,
-      fontFamily: "lato",
-      color: Colors.white70,
-    ),
-    labelLarge: TextStyle(
-      fontSize: 14,
-      fontWeight: FontWeight.w500,
-      fontFamily: "lato",
-      color: Colors.white,
-    ),
-    labelMedium: TextStyle(
-      fontSize: 12,
-      fontWeight: FontWeight.w500,
-      fontFamily: "lato",
-      color: Colors.white,
-    ),
-    labelSmall: TextStyle(
-      fontSize: 11,
-      fontWeight: FontWeight.w500,
-      fontFamily: "lato",
-      color: Colors.white70,
-    ),
-  );
+  TextTheme textTheme = GoogleFonts.latoTextTheme();
 
   MaterialTheme();
 
@@ -104,9 +14,9 @@ class MaterialTheme {
       onPrimary: Color(0xffffffff),
       primaryContainer: Color(0xffb1f1c1),
       onPrimaryContainer: Color(0xff12512e),
-      secondary: Color(0xff006874),
+      secondary: Color(0xfff36b22), //Color(0xff006874),
       onSecondary: Color(0xffffffff),
-      secondaryContainer: Color(0xff9eeffd),
+      secondaryContainer: Color(0xff942824), //Color(0xff9eeffd),
       onSecondaryContainer: Color(0xff004f58),
       tertiary: Color(0xff4d662b),
       onTertiary: Color(0xffffffff),
@@ -435,7 +345,7 @@ class MaterialTheme {
        bodyColor: colorScheme.onSurface,
        displayColor: colorScheme.onSurface,
      ),
-     scaffoldBackgroundColor: colorScheme.background,
+     scaffoldBackgroundColor: colorScheme.surface,
      canvasColor: colorScheme.surface,
   );
 

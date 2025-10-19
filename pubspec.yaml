@@ -7,14 +7,19 @@ environment:
   sdk: ^3.9.2
 
 dependencies:
+  firebase_core: ^4.2.0
+  google_fonts: ^6.3.2
   flutter:
     sdk: flutter
-  google_fonts: ^6.3.2
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^5.0.0
+  flutter_lints: ^6.0.0
 
 flutter:
   uses-material-design: true
+  assets:
+    - lib/assets/tree_trail_logo.png
+    - lib/assets/HTT_farm_view.png
+    - lib/assets/ABOUT_THE_TRAIL.txt
