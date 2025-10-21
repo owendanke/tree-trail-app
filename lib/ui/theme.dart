@@ -2,8 +2,9 @@ import "package:flutter/material.dart";
 import "package:google_fonts/google_fonts.dart";
 
 class MaterialTheme {
+  
   TextTheme textTheme = GoogleFonts.latoTextTheme();
-
+  
   MaterialTheme();
 
   static ColorScheme lightScheme() {
@@ -338,17 +339,16 @@ class MaterialTheme {
 
 
   ThemeData theme(ColorScheme colorScheme) => ThemeData(
-     useMaterial3: true,
-     brightness: colorScheme.brightness,
-     colorScheme: colorScheme,
-     textTheme: textTheme.apply(
-       bodyColor: colorScheme.onSurface,
-       displayColor: colorScheme.onSurface,
-     ),
-     scaffoldBackgroundColor: colorScheme.surface,
-     canvasColor: colorScheme.surface,
+    useMaterial3: true,
+    brightness: colorScheme.brightness,
+    colorScheme: colorScheme,
+    textTheme: textTheme.apply(
+      bodyColor: colorScheme.onSurface,
+      displayColor: colorScheme.onPrimary,
+    ),
+    scaffoldBackgroundColor: colorScheme.surface,
+    canvasColor: colorScheme.surface,
   );
-
 
   List<ExtendedColor> get extendedColors => [
   ];

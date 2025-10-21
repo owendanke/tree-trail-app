@@ -59,10 +59,10 @@ class _AboutPageState extends State<AboutPage> {
 
             Padding(padding: EdgeInsets.symmetric(vertical: 16.0)),
             
-            FittedBox(
-              fit: BoxFit.contain,
-              child: Text(_textContent, style: Theme.of(context).textTheme.bodyMedium,),
-            ),
+            Container(
+              width: (widget.screenWidth - 40),
+              child: Text(_textContent),
+              ),
           ]
         ),
       ),

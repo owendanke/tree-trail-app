@@ -18,7 +18,8 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Holcomb Tree Trail',
-      theme: ThemeData.from(colorScheme: MaterialTheme.lightScheme()),
+      //theme: ThemeData.from(colorScheme: MaterialTheme.lightScheme(), textTheme: GoogleFonts.latoTextTheme()),
+      theme: MaterialTheme().light(),
       //home: HomePage(title: 'Home Page'),
       home: const MainNavigation(), // use MainNavigation instead of HomePage
     );

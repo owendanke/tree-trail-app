@@ -58,7 +58,7 @@ class _MainNavigationState extends State<MainNavigation> {
           ),
         ),
         bottomNavigationBar: NavigationBar(
-          //backgroundColor: Theme.of(context).colorScheme.primary,
+          backgroundColor: Theme.of(context).colorScheme.primary,
           indicatorColor: Theme.of(context).colorScheme.secondary,
           selectedIndex: _currentIndex,
           onDestinationSelected: (index) {
