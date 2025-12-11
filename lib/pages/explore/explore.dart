@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
+
+import 'package:holcomb_tree_trail/routes/explore_routes.dart';
 
 class ExplorePage extends StatefulWidget {
   const ExplorePage({super.key});
@@ -20,7 +23,13 @@ class _ExplorePageState extends State<ExplorePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const Text('Explore screen!'),
+            CupertinoButton.filled(
+              borderRadius: BorderRadius.circular(5.0),
+              onPressed: () {
+                Navigator.pushNamed(context, ExploreRoutes.treeList);
+              },
+              child: const Text('Featured Trees'),
+            ),
           ],
         ),
       ),

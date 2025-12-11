@@ -67,7 +67,7 @@ class _HomePageState extends State<HomePage> {
               onPressed: () {
                 Navigator.pushNamed(context, HomeRoutes.treeList);
               },
-              child: const Text('Go to trees ->'),
+              child: const Text('Featured Trees'),
             ),
           ],
         ),

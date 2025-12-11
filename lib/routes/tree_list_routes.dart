@@ -1,29 +1,31 @@
 import 'package:flutter/material.dart';
 import 'app_routes.dart';
-
-// Import page files
-import 'package:holcomb_tree_trail/pages/explore/explore.dart';
-import 'package:holcomb_tree_trail/pages/explore/tree_list.dart';
 import 'package:holcomb_tree_trail/pages/explore/tree_template.dart';
 
-class ExploreRoutes implements AppRoutes{
-  // Route name constants
-  static const String explore = '/';
-  static const String treeList = '/tree_list';
-  final Map<String, Widget Function(BuildContext)> routes = {
-      '/': (context) => ExplorePage(),
-      '/tree_list': (context) => TreeListPage(),
-    };
+/*
+  Creates routes for navigating generated tree list items and pages
+*/
 
-  Map<dynamic, dynamic> externalRoutes;
+// Import Pages
+import 'package:holcomb_tree_trail/pages/explore/tree_list.dart';
+
+class TreeListRoutes implements AppRoutes{
+  // Route name constants
+  static const String treeList = '/';
+
+  var externalRoutes;
   
-  ExploreRoutes({required this.externalRoutes});
+  TreeListRoutes({required this.externalRoutes});
+
 
   @override
   String get initialRoute => '/';
 
   @override
   Map<String, WidgetBuilder> getRoutes(BuildContext context) {
+    final Map<String, Widget Function(BuildContext)> routes = {'/': (context) => TreeListPage()};
+
+    print('External routes: ${externalRoutes.keys}');
 
     for (var page in externalRoutes.entries) {
       // add '/treePage/' before each key as to not confuse what the route is for
@@ -35,6 +37,7 @@ class ExploreRoutes implements AppRoutes{
         );
     }
 
+    print('Final routes: ${routes.keys}');
     return routes;
   }
 }

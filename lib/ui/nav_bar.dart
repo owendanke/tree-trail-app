@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:holcomb_tree_trail/main.dart';
 import 'package:holcomb_tree_trail/routes/app_routes.dart';
 
-// Routes
+// Routes (correspond to tabs on the navigation bar)
 import 'package:holcomb_tree_trail/routes/home_routes.dart';
 import 'package:holcomb_tree_trail/routes/explore_routes.dart';
 import 'package:holcomb_tree_trail/routes/map_routes.dart';
 import 'package:holcomb_tree_trail/routes/settings_routes.dart';
-
-
 
 
 class MainNavigation extends StatefulWidget {
@@ -20,18 +19,19 @@ class MainNavigation extends StatefulWidget {
 class _MainNavigationState extends State<MainNavigation> {
   int _currentIndex = 0;
 
-  // Initialize route modules
+  /* Initialize route modules
+    These determine what navigation routes are available on a tab
+    Each tab has its own routes based on the index of this list
+  */
   final List<AppRoutes> _routeModules = [
     HomeRoutes(),
-    ExploreRoutes(),
+    ExploreRoutes(externalRoutes: treePageData),
     MapRoutes(),
     SettingsRoutes(),
   ];
   
-
   // Global keys to preserve navigator state for each tab
   late final List<GlobalKey<NavigatorState>> _navigatorKeys = List.generate(_routeModules.length, (index) => GlobalKey<NavigatorState>());
-
 
   @override
   Widget build(BuildContext context) {
