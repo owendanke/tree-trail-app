@@ -17,41 +17,65 @@ void main() {
   /* TODO:
     * implement firebase initialization
     * load and verify assets
-    * build list of Trees
-    * build pages and routes for every Tree
+    * build list of Trees - DONE
+    * build pages and routes for every Tree - DONE
   */
 
   String testYaml = 
     '''
-    1-18: "shingle oak"\n10-18: "swamp white oak"
+    1-18: "shingle oak"\n10-18: "swamp white oak"\n59-21: "dawn redwood"
     ''';
 
+  /*
+   Begin building map of ID to Tree name
+   First step reads YAML stream into treeIdMap. Converts list of Maps to a single Map
+   Next step builds treePageData that holds everything a page needs 
+   */
   var treeIdMap = {};
 
   try {
+    // read the YAML Stream
     var treeDoc = loadYamlStream(testYaml);
-    print(treeDoc);
 
+    // convert the YamlList into a Map<dynamic, dynamic>
     for (var entry in treeDoc) {
       treeIdMap.addAll(entry);
     }
-
-    print(treeIdMap);
   }
   catch(e) {
+    // TODO better error handling than this
     print("An error occured while loading the YAML manifest!");
     print(e);
   }
   
   try{
+    // create treePageData entries for expected trees in the yaml manifest
     for (var id in treeIdMap.keys) {
+      /* TODO 
+        'body' value will need to be pulled from firebase
+        Where should images go?
+      */
       treePageData[id] = {'id': id, 'name': treeIdMap[id], 'body': "Body text."};
     }
   }
   catch(e) {
+    // TODO better error handling than this
     print("An error occured while building tree info pages!");
     print(e);
   }
+  /*
+  final storage = FirebaseStorage.instance;
+  final storageRef = storage.ref();
+  final imageRef = storageRef.child('images/');
+  final textRef = storageRef.child('text/');
+
+  var testMap = {'1-18': "shingle oak"};
+
+  for (var id in testMap.keys) {
+    
+  }
+  */
+
 
   // begin rendering the app widget, bootstrap the render tree
   runApp(const MainApp());

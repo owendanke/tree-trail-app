@@ -8,9 +8,7 @@ class HomePage extends StatelessWidget {
   HomePage({
     super.key, 
     this.onTabChange,
-  }) {
-    print('HomePage onTabChange is null: ${onTabChange == null}');
-  }
+  });
   
   final String title = 'Welcome';
   final void Function(int, {String? routeName})? onTabChange;
@@ -31,7 +29,7 @@ class HomePage extends StatelessWidget {
 
     return Scaffold(appBar: AppBar(
         backgroundColor: theme.colorScheme.primary,
-        title: Text(title),
+        title: Text(title, style: TextStyle(color: Theme.of(context).colorScheme.onPrimary)),
       ),
       body: Center(
         child: Column(

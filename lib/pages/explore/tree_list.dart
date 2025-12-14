@@ -26,9 +26,7 @@ class TreeListPage extends StatefulWidget {
   TreeListPage({
     super.key,
     this.onTabChange,
-    }) {
-    print('TreeListPage onTabChange is null: ${onTabChange == null}');
-  }
+    });
   
   final String title = 'Featured Trees';
   final void Function(int, {String? routeName})? onTabChange;
@@ -43,7 +41,7 @@ class _TreeListPageState extends State<TreeListPage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.primary,
-        title: Text(widget.title),
+        title: Text(widget.title, style: TextStyle(color: Theme.of(context).colorScheme.onPrimary)),
       ),
       body: LayoutBuilder(
         builder: (context, constraints) {

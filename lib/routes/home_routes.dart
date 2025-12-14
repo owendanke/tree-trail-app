@@ -20,7 +20,6 @@ class HomeRoutes implements AppRoutes{
 
   @override
   Map<String, WidgetBuilder> getRoutes(BuildContext context, {void Function(int newIndex, {String? routeName})? onTabChange}) {
-    print('HomePage received onTabChange: ${onTabChange != null}');
     return {
       '/': (context) => HomePage(onTabChange: onTabChange),
       '/tree_list': (context) => TreeListPage(onTabChange: onTabChange),

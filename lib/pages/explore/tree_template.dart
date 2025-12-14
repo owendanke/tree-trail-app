@@ -108,7 +108,8 @@ class TreeTemplatePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(name),
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        title: Text(name, style: TextStyle(color: Theme.of(context).colorScheme.onPrimary)),
       ),
       body: Text("Tree Template Page"),
     );

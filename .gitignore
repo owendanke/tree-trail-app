@@ -48,6 +48,8 @@ app.*.map.json
 lib/firebase_options.dart
 firebase.json
 android/app/google-services.json
+ios/Runner/GoogleService-Info.plist
+storage.rules
 
 # Assets, I don't want to track these, yet
 /lib/assets
