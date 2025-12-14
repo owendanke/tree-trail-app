@@ -23,9 +23,15 @@ class TreeEntry extends StatelessWidget {
 */
 
 class TreeListPage extends StatefulWidget {
-  const TreeListPage({super.key});
+  TreeListPage({
+    super.key,
+    this.onTabChange,
+    }) {
+    print('TreeListPage onTabChange is null: ${onTabChange == null}');
+  }
   
   final String title = 'Featured Trees';
+  final void Function(int, {String? routeName})? onTabChange;
   
   @override
   State<TreeListPage> createState() => _TreeListPageState();

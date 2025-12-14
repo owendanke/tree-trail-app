@@ -22,7 +22,7 @@ class TreeListRoutes implements AppRoutes{
   String get initialRoute => '/';
 
   @override
-  Map<String, WidgetBuilder> getRoutes(BuildContext context) {
+  Map<String, WidgetBuilder> getRoutes(BuildContext context, {Function(int)? onTabChange}) {
     final Map<String, Widget Function(BuildContext)> routes = {'/': (context) => TreeListPage()};
 
     print('External routes: ${externalRoutes.keys}');

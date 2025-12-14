@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+//import 'package:flutter/cupertino.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -22,15 +23,20 @@ class _SettingsPageState extends State<SettingsPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text('Settings Page'),
             SwitchListTile(
               title: Text('Example Switch'),
               value: _value,
               onChanged: (bool value) {
                 setState(() {
                 _value = value;
-              });
-            },)
+                });
+              },
+            ),
+            ListTile(title: Text("Reset cached data"), 
+              onTap: () {
+                // TODO call method from file manager class
+              },
+            ),
           ],
         ),
       ),

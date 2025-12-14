@@ -23,7 +23,7 @@ class ExploreRoutes implements AppRoutes{
   String get initialRoute => '/';
 
   @override
-  Map<String, WidgetBuilder> getRoutes(BuildContext context) {
+  Map<String, WidgetBuilder> getRoutes(BuildContext context, {Function(int)? onTabChange}) {
 
     for (var page in externalRoutes.entries) {
       // add '/treePage/' before each key as to not confuse what the route is for

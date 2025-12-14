@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:yaml/yaml.dart';
 
-import 'package:holcomb_tree_trail/ui/nav_bar.dart';
+import 'package:holcomb_tree_trail/ui/main_navigation.dart';
 import 'package:holcomb_tree_trail/ui/theme.dart';
 
 //import 'package:firebase_core/firebase_core.dart';

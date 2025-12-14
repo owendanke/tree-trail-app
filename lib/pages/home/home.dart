@@ -4,10 +4,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:holcomb_tree_trail/routes/home_routes.dart';
 
-class HomePage extends StatefulWidget {
-  HomePage({super.key});
+class HomePage extends StatelessWidget {
+  HomePage({
+    super.key, 
+    this.onTabChange,
+  }) {
+    print('HomePage onTabChange is null: ${onTabChange == null}');
+  }
   
   final String title = 'Welcome';
+  final void Function(int, {String? routeName})? onTabChange;
   
   // TODO, clean this up
   // getting screen pixels
@@ -20,17 +26,12 @@ class HomePage extends StatefulWidget {
   late final double screenHeight = size.height;
 
   @override
-  State<HomePage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
-  @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
     return Scaffold(appBar: AppBar(
         backgroundColor: theme.colorScheme.primary,
-        title: Text(widget.title),
+        title: Text(title),
       ),
       body: Center(
         child: Column(
@@ -38,7 +39,7 @@ class _HomePageState extends State<HomePage> {
             Padding(padding: EdgeInsets.symmetric(vertical: 16.0)),
 
             // image from asset bundle with 20 pixel horizontal padding
-            Image.asset('lib/assets/tree_trail_logo.png', fit: BoxFit.scaleDown, width: (widget.screenWidth - 40)),
+            Image.asset('lib/assets/tree_trail_logo.png', fit: BoxFit.scaleDown, width: (screenWidth - 40)),
 
             Padding(padding: EdgeInsets.symmetric(vertical: 20.0)),
 
@@ -65,7 +66,7 @@ class _HomePageState extends State<HomePage> {
             CupertinoButton.filled(
               borderRadius: BorderRadius.circular(5.0),
               onPressed: () {
-                Navigator.pushNamed(context, HomeRoutes.treeList);
+                onTabChange?.call(1, routeName: HomeRoutes.treeList);
               },
               child: const Text('Featured Trees'),
             ),
