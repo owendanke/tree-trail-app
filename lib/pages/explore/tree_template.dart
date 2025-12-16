@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
+
 class TreeTemplateItem extends StatelessWidget {
   /*
   TreeListItem builds a widget that can be displayed in a list
@@ -111,7 +113,11 @@ class TreeTemplatePage extends StatelessWidget {
         backgroundColor: Theme.of(context).colorScheme.primary,
         title: Text(name, style: TextStyle(color: Theme.of(context).colorScheme.onPrimary)),
       ),
-      body: Text("Tree Template Page"),
+      //body: Text("Tree Template Page"),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16.0),
+        child: MarkdownBody(data: body)
+        ),
     );
   }
 }
