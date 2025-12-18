@@ -1,4 +1,4 @@
-import 'dart:io'; // for File
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:yaml/yaml.dart';
@@ -12,19 +12,54 @@ import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 
 
-// Create global lists for featured tree list items and pages
+/// Global Map from [id] to [name]
+/// 
+/// Used for parsing from tree_manifest.yaml
 var treeIdMap = {};
+
+/// Global Map from [id] to the Map {'id': String, 'name': String, 'body': String}
+/// 
+/// This is for the [TreeTemplatePage] constructor
 Map<String, Map<String, String >> treePageData = {};
 
+/// Get path to the Application Support folder on the device.
+/// Creates the path if it doesn't exist
 Future<String> get _localPath async {
-  // get path to the documents folder on the device
-  final directory = await getApplicationDocumentsDirectory();
+  final directory = await getApplicationSupportDirectory();
   return directory.path;
 }
 
+/// Get path to the text directory in ApplicationSupport.
+/// Creates the path if it doesn't exist
+Future<String> get _localTextPath async {
+  final directory = await Directory("${await _localPath}/text").create();
+  return directory.path;
+}
+
+/// Get path to the images directory in ApplicationSupport.
+Future<String> get _localImagePath async {
+  final directory = await Directory("${getApplicationSupportDirectory()}/images").create();
+  return directory.path;
+}
+
+/// Creates a File object with [fileName] in ApplicationSupport directory
+/// and returns the reference to the file.
 Future<File> _localFile(String fileName) async {
-  // create reference to file location
   final path = await _localPath;
+  return File('$path/$fileName');
+}
+
+/// Creates a File object with [fileName] in ApplicationSupport/text directory
+/// and returns the reference to the file.
+Future<File> _localTextFile(String fileName) async {
+  final path = await _localTextPath;
+  return File('$path/$fileName');
+}
+
+/// Creates a File object with [fileName] in ApplicationSupport/images directory
+/// and returns the reference to the file.
+Future<File> _localImageFile(String fileName) async {
+  final path = await _localImagePath;
   return File('$path/$fileName');
 }
 
@@ -46,12 +81,17 @@ Future<void> downloadFile(String localFileName, String fileToDownload) async {
 }
 */
 
-Future<void> downloadFile(String localFileName, String fileToDownload) async {
+/// Using [firebase_storage], downloads [fileToDownload] from the configured storage bucket to [localFileName].
+/// [localFileName] has the Application Support directory as its root.
+/// 
+/// Firebase must be initialized prior to invoking [downloadFile], otherwise an exception is thrown.
+Future<void> downloadFile(String localPath, String localFileName, String fileToDownload) async {
   print('Starting download: $fileToDownload -> $localFileName');
   
   try {
-    File downloadToFile = await _localFile(localFileName);
-    print('File path created: ${downloadToFile.path}');
+    //File downloadToFile = await _localFile(localFileName);
+    File downloadToFile = File('$localPath/$localFileName');
+    print('File reference created: ${downloadToFile.path}');
     
     final storage = FirebaseStorage.instance;
     final ref = storage.ref(fileToDownload);
@@ -100,21 +140,25 @@ Future<void> downloadFile(String localFileName, String fileToDownload) async {
   }
 }
 
-Future<String> readFile(String localFileName) async {
+/// Reads [localFileName] from Application Support directory and returns the contents as a string.
+/// 
+/// Returns empty string on exception.
+Future<String> readFile(String localPath, String localFileName) async {
   print('Attempting to read file: $localFileName');
   
   try {
-    final file = await _localFile(localFileName);
-    print('File path: ${file.path}');
+    //final file = await _localFile(localFileName);
+    File fileToRead = File('$localPath/$localFileName');
+    print('File path: ${fileToRead.path}');
     
     // Check if file exists
-    if (!await file.exists()) {
-      print('File does not exist: ${file.path}');
+    if (!await fileToRead.exists()) {
+      print('File does not exist: ${fileToRead.path}');
       return "";
     }
     
     print('File exists, reading...');
-    final contents = await file.readAsString();
+    final contents = await fileToRead.readAsString();
     print('File read successfully, length: ${contents.length}');
     return contents;
   } catch (e) {
@@ -123,21 +167,48 @@ Future<String> readFile(String localFileName) async {
   }
 }
 
+/// Getter for tree description files from firebase or Application Support directory.
+/// 
+/// Requires the firebase side file name to follow the scheme {id}_description.markdown
+/// and be located at text/{id}_description.markdown
+/// 
+/// Returns the contents of the file as a string
+Future<String> _treeDescription(String id) async {
+  var descFileName = '${id}_description.markdown';
+
+  final file = await _localTextFile(descFileName);
+
+  try {
+    if (await file.exists()) {  // TODO: make this check for file changes too (metadata, checksum, etc.)
+      print('File exists on disk');
+    } else {
+      print("downloading description for tree $id");
+      downloadFile(await _localTextPath, descFileName, 'text/$descFileName');
+    }
+    
+    print("reading contents of description to string");
+    return await readFile(await _localTextPath, descFileName);
+  } on FirebaseException catch(e) {
+    print('Firebase error code: ${e.code}');
+    print('Firebase error message: ${e.message}');
+    print('Full error: $e');
+
+    // return empty string
+    return "An error occured when downloading the description.";
+  } catch (e) {
+    print("An exception has occured in _treeDescription!");
+    print('Full error: $e');
+
+    // return empty string
+    return "An error occured when fetching the description.";
+  }
+}
+
 Future<void> main() async {
-
-  /* TODO:
-    * implement firebase initialization
-    * load and verify assets
-    * build list of Trees - DONE
-    * build pages and routes for every Tree - DONE
-  */
-
-  var treeIdMap = {};
   String yamlString;
-  var treeManifestFile = "tree_manifest.yaml";
+  var treeIdMap = {};
+  final treeManifestFile = "tree_manifest.yaml";
   var treeManifestFirebasePath = "text/$treeManifestFile";
-
-  var testBody = "**shingle oak** (1-18)\n\n*Quercus imbricaria*\n\nNative to North America, found mainly in the Midwestern and Upper South regions.\n\nThe shingle oak has oval-shaped leaves which look very different than the lobed leaves of most oak species. Its name derives from early Midwestern settlers’ use of this oak to make shingles, *imbricaria* means to place in overlapping pattern, like shingles.\n\nThis shingle oak was one of the first 16 trees planted in 2018, establishing the Holcomb Tree Trail arboretum at Holcomb Farm.";
 
   /*
    Begin building map of ID to Tree name
@@ -151,18 +222,18 @@ Future<void> main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  // check if tree_manifest.yaml exists locally
-  // otherwise download from firebase
-  final file = await _localFile(treeManifestFile);
+  // check if tree_manifest.yaml exists in local text directory, otherwise download from firebase
+  var file = await _localTextFile(treeManifestFile);
   if (await file.exists()) {  // TODO: make this check for file changes too (metadata, checksum, etc.)
     print('File exists on disk');
-  } else {
+  } 
+  else {
     print("downloading the YAML manifest!");
-    downloadFile(treeManifestFile, treeManifestFirebasePath);
+    downloadFile(await _localTextPath, treeManifestFile, treeManifestFirebasePath);
   }
   
   print("reading contents of YAML manifest to string");
-  yamlString = await readFile(treeManifestFile);
+  yamlString = await readFile(await _localTextPath, treeManifestFile);
 
   try {
     // read the YAML Stream
@@ -179,14 +250,13 @@ Future<void> main() async {
     print(e);
   }
   
+  // create treePageData entries for expected trees in the yaml manifest
+  // TODO Where do images go? 
   try{
-    // create treePageData entries for expected trees in the yaml manifest
     for (var id in treeIdMap.keys) {
-      /* TODO 
-        'body' value will need to be pulled from firebase
-        Where should images go?
-      */
-      treePageData[id] = {'id': id, 'name': treeIdMap[id], 'body': testBody};
+      var descriptionString = await _treeDescription(id);
+      
+      treePageData[id] = {'id': id, 'name': treeIdMap[id], 'body': descriptionString};
     }
   }
   catch(e) {
@@ -195,16 +265,6 @@ Future<void> main() async {
     print(e);
   }
   
-  
-
-  var testMap = {'1-18': "shingle oak"};
-
-  for (var id in testMap.keys) {
-    
-  }
-  
-
-
   // begin rendering the app widget, bootstrap the render tree
   runApp(const MainApp());
 }
