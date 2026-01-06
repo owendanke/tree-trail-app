@@ -116,8 +116,13 @@ class TreeTemplatePage extends StatelessWidget {
       //body: Text("Tree Template Page"),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
-        child: MarkdownBody(data: body)
-        ),
+        child: Column(
+          children: [
+            //Container(),
+            MarkdownBody(data: body)
+          ],
+        )
+      ),
     );
   }
 }

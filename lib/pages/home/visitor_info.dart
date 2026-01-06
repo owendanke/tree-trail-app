@@ -1,4 +1,3 @@
-import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -7,16 +6,7 @@ class VisitorInfoPage extends StatefulWidget {
   VisitorInfoPage({super.key});
   
   final String title = 'Visitor Info';
-
-    // TODO, clean this up
-  // getting screen pixels
-  // first get the FlutterView.
-  final FlutterView view = WidgetsBinding.instance.platformDispatcher.views.first;
-
-  // pixel dimensions
-  late final Size size = view.physicalSize;
-  late final double screenWidth = size.width;
-  late final double screenHeight = size.height;
+  final AssetImage _assetImage = AssetImage('lib/assets/HTT_farm_view.png');
   
   @override
   State<VisitorInfoPage> createState() => _VisitorInfoPageState();
@@ -54,14 +44,18 @@ class _VisitorInfoPageState extends State<VisitorInfoPage> {
         child: Column(
           children: [
             // image from asset bundle with no horizontal padding
-            Image.asset('lib/assets/HTT_farm_view.png', fit: BoxFit.scaleDown, width: widget.screenWidth),
+            AspectRatio(
+              aspectRatio: (2.21 / 1), // replace
+              child: Image(
+                image: widget._assetImage,
+                fit: BoxFit.cover,
+              )
+            ),
 
-            Padding(padding: EdgeInsets.symmetric(vertical: 16.0)),
-            
-            Container(
-              width: (widget.screenWidth - 40),
-              child: Text(_textContent),
-              ),
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 40.0),
+              child: Text(_textContent)
+            ),
           ]
         ),
       ),
