@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -48,7 +47,9 @@ class _AboutPageState extends State<AboutPage> {
             // image from asset bundle with no horizontal padding
             AspectRatio(
               aspectRatio: (2.21 / 1), // replace
-              child: Image(
+              child: FadeInImage(
+                placeholder: AssetImage('lib/assets/rotating_leaf.gif'),
+                placeholderFit: BoxFit.scaleDown,
                 image: widget._assetImage,
                 fit: BoxFit.cover,
               )

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 
 class TreeTemplateItem extends StatelessWidget {
@@ -21,17 +20,23 @@ class TreeTemplateItem extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
       child: AspectRatio(
-        aspectRatio: 16 / 9,
+        aspectRatio: 4/3, //16 / 9,
         child: ClipRRect(
           borderRadius: BorderRadius.circular(16),
             child: TapRegion(
               onTapInside: (event) {
                 Navigator.pushNamed(context, '/treePage/$id'); // id is the tree number, and key for the page
               },
-              child: Stack(children: [
-              _buildBackground(context),
-              _buildTitle(),
-              ],)
+              child: LayoutBuilder(
+            builder: (context, constraints) {
+              return Stack(
+                children: [
+                  _buildBackground(context),
+                  _buildTitle(constraints), // Pass constraints
+                ],
+              );
+            },
+          ),
             ),
         ),
       ),
@@ -64,23 +69,29 @@ class TreeTemplateItem extends StatelessWidget {
     );
   }
 
-  Widget _buildTitle() {
+  Widget _buildTitle(BoxConstraints constraints) {
     return Positioned(
       left: 20,
+      right: 20,
       bottom: 20,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        alignment: Alignment.bottomLeft,
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+            maxWidth: constraints.maxWidth - 40, // Subtract left + right padding
+          ),
+          child: Text(
             name,
             style: const TextStyle(
               color: Colors.white,
-              fontSize: 20,
+              fontSize: 18,
               fontWeight: FontWeight.bold,
             ),
+            maxLines: 2,
+            softWrap: true,
           ),
-        ],
+        ),
       ),
     );
   }
@@ -118,7 +129,12 @@ class TreeTemplatePage extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            //Container(),
+            /*
+            AspectRatio(
+              aspectRatio: aspectRatio,
+              child: CarouselView(itemExtent: itemExtent, children: children),
+            )
+            */
             MarkdownBody(data: body)
           ],
         )

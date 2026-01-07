@@ -81,38 +81,66 @@ Future<void> downloadFile(String localFileName, String fileToDownload) async {
 }
 */
 
+///
+///
+/// Returns true or false if a file exists or does not
+Future<bool> remoteFileExists(String remoteFile) async {
+  final storageRef = FirebaseStorage.instance.ref();
+
+  try {
+    // if the file exists getMetadata() will succeed and won't throw an exception
+    await storageRef.child(remoteFile).getMetadata();
+    return true;
+  } on FirebaseException catch (e) {
+    // getMetadata() threw an exception
+    if (e.code == 'storage/object-not-found') {
+      // This exception indicates the file does not exist
+      return false;
+    }
+    else {
+      // Something else happened and we don't know if the file does or does not exist
+      rethrow;
+    }
+  }
+}
+
 /// Using [firebase_storage], downloads [fileToDownload] from the configured storage bucket to [localFileName].
 /// [localFileName] has the Application Support directory as its root.
 /// 
 /// Firebase must be initialized prior to invoking [downloadFile], otherwise an exception is thrown.
 Future<void> downloadFile(String localPath, String localFileName, String fileToDownload) async {
-  print('Starting download: $fileToDownload -> $localFileName');
-  
+  print('[$fileToDownload] Starting download: $fileToDownload -> $localFileName');
+
   try {
+    // Check if remote file exists before attempting a download
+    if (!await remoteFileExists(fileToDownload)) {
+      // file doesn't exist
+      throw Exception('[$fileToDownload] Remote file does not exist');
+    }
     //File downloadToFile = await _localFile(localFileName);
     File downloadToFile = File('$localPath/$localFileName');
-    print('File reference created: ${downloadToFile.path}');
+    print('[$fileToDownload] File reference created: ${downloadToFile.path}');
     
     final storage = FirebaseStorage.instance;
     final ref = storage.ref(fileToDownload);
-    print('Firebase reference: ${ref.fullPath}');
-    
+    print('[$fileToDownload] Firebase reference: ${ref.fullPath}');
+
     // Method 1: getData() - Best for small/medium files (avoids threading issue)
     final bytes = await ref.getData();
     if (bytes == null) {
-      throw Exception('Failed to download file: no data received');
+      throw Exception('[$fileToDownload] Failed to download file: no data received');
     }
     
-    print('Downloaded ${bytes.length} bytes');
+    print('[$fileToDownload] Downloaded ${bytes.length} bytes');
     await downloadToFile.writeAsBytes(bytes);
-    print('File written successfully to: ${downloadToFile.path}');
+    print('[$fileToDownload] File written successfully to: ${downloadToFile.path}');
     
     // Verify file exists
     if (await downloadToFile.exists()) {
       final fileSize = await downloadToFile.length();
-      print('File verified on disk: $fileSize bytes');
+      print('[$fileToDownload] File verified on disk: $fileSize bytes');
     } else {
-      print('WARNING: File not found after write');
+      print('[$fileToDownload] WARNING: File not found after write');
     }
     
     /* Alternative Method 2: writeToFile with proper error handling
@@ -131,11 +159,11 @@ Future<void> downloadFile(String localPath, String localFileName, String fileToD
     }
     */
   } on FirebaseException catch (e) {
-    print('Firebase error code: ${e.code}');
-    print('Firebase error message: ${e.message}');
-    print('Full error: $e');
+    print('[$fileToDownload] Firebase error code: ${e.code}');
+    print('[$fileToDownload] Firebase error message: ${e.message}');
+    print('[$fileToDownload] Full error: $e');
   } catch (e) {
-    print('Unexpected error during download: $e');
+    print('[$fileToDownload] Unexpected error during download: $e');
     rethrow;
   }
 }
@@ -170,35 +198,56 @@ Future<String> readFile(String localPath, String localFileName) async {
 /// Getter for tree description files from firebase or Application Support directory.
 /// 
 /// Requires the firebase side file name to follow the scheme {id}_description.markdown
-/// and be located at text/{id}_description.markdown
+/// and be located at descriptions/{id}_description
 /// 
 /// Returns the contents of the file as a string
 Future<String> _treeDescription(String id) async {
-  var descFileName = '${id}_description.markdown';
-
-  final file = await _localTextFile(descFileName);
+  // extensions hold possible markdown file extensions
+  // descFileTilte is only the name, doesn't include extension, example: '88-22_description'
+  var extensions = ['.md', '.markdown'];
+  var descFileTitle = '${id}_description';
 
   try {
-    if (await file.exists()) {  // TODO: make this check for file changes too (metadata, checksum, etc.)
-      print('File exists on disk');
-    } else {
-      print("downloading description for tree $id");
-      downloadFile(await _localTextPath, descFileName, 'text/$descFileName');
+    // iterate through markdown file extension possibilites
+    for (final ext in extensions) {
+      // localFileName is the full file, example: '88-22_description.md'
+      final localFileName = '$descFileTitle$ext';
+      final file = await _localTextFile(localFileName);
+      
+      // check if local file with extension exists
+      if (await file.exists()) {
+        // TODO: make this check for file changes too (metadata, checksum, etc.)
+        // return the contents of the file as a string
+        return await readFile(await _localTextPath, localFileName);
+      }
+      // else: continue search and either find it and return or come up empty and move on
     }
-    
-    print("reading contents of description to string");
-    return await readFile(await _localTextPath, descFileName);
+    // incremental search fails to find local file
+    // download file, but we don't know the extension
+    // again we iterate through markdown file extension possibilites
+    for (final ext in extensions) {
+      final localFileName = '$descFileTitle$ext';
+      final remoteFileName = 'descriptions/$localFileName';
+
+      if (await remoteFileExists(remoteFileName)) {
+
+        print("downloading description for tree $id");
+        // download the file to the appropriate location
+        downloadFile(await _localTextPath, localFileName, remoteFileName);
+        // return the contents of the file as a string
+        return await readFile(await _localTextPath, localFileName);
+      }
+      // else: continue search and either find it and return or come up empty and move on
+    }
+    // if we haven't returned any string yet it means we haven't found a local or remote file (Bad!)
+    throw Exception('No description exists locally or remote.');
+
   } on FirebaseException catch(e) {
-    print('Firebase error code: ${e.code}');
-    print('Firebase error message: ${e.message}');
-    print('Full error: $e');
-
+    print('[$id] FirebaseException occured: $e');
     // return empty string
-    return "An error occured when downloading the description.";
+    return "An error occured when fetching the description.";
   } catch (e) {
-    print("An exception has occured in _treeDescription!");
-    print('Full error: $e');
-
+    print('[$id] $e');
     // return empty string
     return "An error occured when fetching the description.";
   }
@@ -254,7 +303,7 @@ Future<void> main() async {
   // TODO Where do images go? 
   try{
     for (var id in treeIdMap.keys) {
-      var descriptionString = await _treeDescription(id);
+      var descriptionString = await _treeDescription(id); //_treeDescription handles missing files
       
       treePageData[id] = {'id': id, 'name': treeIdMap[id], 'body': descriptionString};
     }
