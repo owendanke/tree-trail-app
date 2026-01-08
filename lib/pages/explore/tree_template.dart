@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 
@@ -23,8 +24,8 @@ class TreeTemplateItem extends StatelessWidget {
         aspectRatio: 4/3, //16 / 9,
         child: ClipRRect(
           borderRadius: BorderRadius.circular(16),
-            child: TapRegion(
-              onTapInside: (event) {
+            child: GestureDetector(
+              onTap: () {
                 Navigator.pushNamed(context, '/treePage/$id'); // id is the tree number, and key for the page
               },
               child: LayoutBuilder(
@@ -97,13 +98,85 @@ class TreeTemplateItem extends StatelessWidget {
   }
 }
 
+class ImageCarousel extends StatefulWidget {
+  @override
+  State<ImageCarousel> createState() => _ImageCarouselState();
+}
 
+class _ImageCarouselState extends State<ImageCarousel> {
+  late PageController controller;
+  int currentpage = 0;
 
-class TreeTemplatePage extends StatelessWidget {
-  /*
-   TreeTemplatePage defines the layout for every tree information page.
-   The page will contain a the name, an image, and a description of the tree.
-  */
+  @override
+  initState() {
+    super.initState();
+    controller = PageController(
+      initialPage: currentpage,   // The page to show when first creating the [PageView].
+      keepPage: false,            // Save the current [page] with [PageStorage] and restore it if this controller's scrollable is recreated.
+      viewportFraction: 0.75,     // The fraction of the viewport that each page should occupy.
+    );
+  }
+
+  @override
+  dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: AspectRatio(
+          aspectRatio: 16 / 9,
+          child: PageView(
+            onPageChanged: (value) {
+              setState(() {
+                currentpage = value;
+              });
+            },
+            controller: controller,
+            children: [
+              Padding(
+                padding: EdgeInsetsDirectional.symmetric(horizontal: 20),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(16),
+                  child: SizedBox(width: 50, height: 100, child: ColoredBox(color: Colors.red)),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsetsDirectional.symmetric(horizontal: 20),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(16),
+                  child: SizedBox(width: 50, height: 100, child: ColoredBox(color: Colors.green)),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsetsDirectional.symmetric(horizontal: 20),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(16),
+                  child: SizedBox(width: 50, height: 100, child: ColoredBox(color: Colors.blue)),
+                ),
+              ),
+            ],
+          )
+        ),
+        /*
+        child: PageView.builder(
+            onPageChanged: (value) {
+              setState(() {
+                currentpage = value;
+              });
+            },
+            controller: controller,
+            itemBuilder: (context, index) => builder(index)
+          ),*/
+        ),
+    );
+  }
+}
+
+class TreeTemplatePage extends StatefulWidget {
   const TreeTemplatePage({
     super.key,
     required this.id,
@@ -111,31 +184,50 @@ class TreeTemplatePage extends StatelessWidget {
     required this.body,
     //required this.imageName
   });
-
+  
   final String id;
   final String name;
   final String body;
-  //final String imageName; //imageName will be used to access a local file downloaded from firebase
+
+  @override
+  State<TreeTemplatePage> createState() => _TreeTemplatePage();
+}
+
+class _TreeTemplatePage extends State<TreeTemplatePage> {
+  /*
+   TreeTemplatePage defines the layout for every tree information page.
+   The page will contain a the name, an image, and a description of the tree.
+  */
   
+  @override
+    void initState() {
+      super.initState();
+    }
+  
+  //final String imageName; //imageName will be used to access a local file downloaded from firebase
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.primary,
-        title: Text(name, style: TextStyle(color: Theme.of(context).colorScheme.onPrimary)),
+        title: Text(widget.name, style: TextStyle(color: Theme.of(context).colorScheme.onPrimary)),
       ),
       //body: Text("Tree Template Page"),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            /*
-            AspectRatio(
-              aspectRatio: aspectRatio,
-              child: CarouselView(itemExtent: itemExtent, children: children),
+            Padding(
+              padding: EdgeInsetsGeometry.fromLTRB(0, 40, 0, 40),
+              child: AspectRatio(
+                aspectRatio: 16/ 9,
+                child: ImageCarousel(),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsetsGeometry.fromLTRB(20, 40, 20, 40),
+              child: MarkdownBody(data: widget.body)
             )
-            */
-            MarkdownBody(data: body)
           ],
         )
       ),

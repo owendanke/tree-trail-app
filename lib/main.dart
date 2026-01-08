@@ -22,6 +22,9 @@ var treeIdMap = {};
 /// This is for the [TreeTemplatePage] constructor
 Map<String, Map<String, String >> treePageData = {};
 
+// track current downloads to prevent race conditions
+final Set<String> _downloadingFiles = {};
+
 /// Get path to the Application Support folder on the device.
 /// Creates the path if it doesn't exist
 Future<String> get _localPath async {
@@ -36,6 +39,13 @@ Future<String> get _localTextPath async {
   return directory.path;
 }
 
+/// Get path to the descriptions directory in ApplicationSupport.
+/// Creates the path if it doesn't exist
+Future<String> get _localDescPath async {
+  final directory = await Directory("${await _localPath}/descriptions").create();
+  return directory.path;
+}
+
 /// Get path to the images directory in ApplicationSupport.
 Future<String> get _localImagePath async {
   final directory = await Directory("${getApplicationSupportDirectory()}/images").create();
@@ -44,63 +54,36 @@ Future<String> get _localImagePath async {
 
 /// Creates a File object with [fileName] in ApplicationSupport directory
 /// and returns the reference to the file.
-Future<File> _localFile(String fileName) async {
-  final path = await _localPath;
-  return File('$path/$fileName');
+Future<File> _localFile(Future<String> path, String fileName) async {
+  return File('${await path}/$fileName');
 }
 
-/// Creates a File object with [fileName] in ApplicationSupport/text directory
-/// and returns the reference to the file.
-Future<File> _localTextFile(String fileName) async {
-  final path = await _localTextPath;
-  return File('$path/$fileName');
-}
-
-/// Creates a File object with [fileName] in ApplicationSupport/images directory
-/// and returns the reference to the file.
-Future<File> _localImageFile(String fileName) async {
-  final path = await _localImagePath;
-  return File('$path/$fileName');
-}
-
-/*
-Future<void> downloadFile(String localFileName, String fileToDownload) async {
-  // Downloads a file from firebase and saves it with the given name
-  File downloadToFile = await _localFile(localFileName);
-
-  final storage = FirebaseStorage.instance;
-
-  //Now you can try to download the specified file, and write it to the downloadToFile.
-  try {
-    // try to download the specified file and write to the file
-    await storage.ref(fileToDownload).writeToFile(downloadToFile);
-  } on FirebaseException catch (e) {
-    // e.g, e.code == 'canceled'
-    print('Download error: $e');
-  }
-}
-*/
-
-///
-///
 /// Returns true or false if a file exists or does not
+/// 
+/// Passes exceptions through
 Future<bool> remoteFileExists(String remoteFile) async {
-  final storageRef = FirebaseStorage.instance.ref();
-
   try {
     // if the file exists getMetadata() will succeed and won't throw an exception
-    await storageRef.child(remoteFile).getMetadata();
+    await FirebaseStorage.instance.ref(remoteFile).getMetadata();
+    print('[remoteFileExists] File exists: $remoteFile');
     return true;
   } on FirebaseException catch (e) {
     // getMetadata() threw an exception
-    if (e.code == 'storage/object-not-found') {
+    if (e.code == 'storage/object-not-found' || 
+        e.code == 'object-not-found' ||
+        e.code == 'not-found') {
       // This exception indicates the file does not exist
+      print('[remoteFileExists] File does not exist: $remoteFile');
       return false;
     }
     else {
       // Something else happened and we don't know if the file does or does not exist
+      print('[remoteFileExists] Unexpected error: ${e.code} - ${e.message}');
       rethrow;
     }
+  } catch (e) {
+    print('[remoteFileExists] Unexpected non-Firebase error: $e');
+    rethrow;
   }
 }
 
@@ -108,24 +91,52 @@ Future<bool> remoteFileExists(String remoteFile) async {
 /// [localFileName] has the Application Support directory as its root.
 /// 
 /// Firebase must be initialized prior to invoking [downloadFile], otherwise an exception is thrown.
-Future<void> downloadFile(String localPath, String localFileName, String fileToDownload) async {
+Future<void> downloadFile(String pathToLocalFile, String localFileName, String fileToDownload) async {
   print('[$fileToDownload] Starting download: $fileToDownload -> $localFileName');
-
+  
+  final downloadToFile = File('$pathToLocalFile/$localFileName');
+  
+  // Check if file already exists locally
+  if (await downloadToFile.exists()) {
+    final fileSize = await downloadToFile.length();
+    print('[$fileToDownload] File already exists locally ($fileSize bytes), skipping download');
+    return;
+  }
+  
+  // Prevent duplicate simultaneous downloads of the same file
+  if (_downloadingFiles.contains(fileToDownload)) {
+    print('[$fileToDownload] Download already in progress, waiting...');
+    // Wait for the other download to complete
+    while (_downloadingFiles.contains(fileToDownload)) {
+      await Future.delayed(Duration(milliseconds: 100));
+    }
+    // Check if file now exists after waiting
+    if (await downloadToFile.exists()) {
+      print('[$fileToDownload] File downloaded by concurrent request');
+      return;
+    } else {
+      print('[$fileToDownload] WARNING: Concurrent download completed but file not found');
+    }
+    return;
+  }
+  
   try {
+    _downloadingFiles.add(fileToDownload);
+    
     // Check if remote file exists before attempting a download
     if (!await remoteFileExists(fileToDownload)) {
-      // file doesn't exist
       throw Exception('[$fileToDownload] Remote file does not exist');
     }
-    //File downloadToFile = await _localFile(localFileName);
-    File downloadToFile = File('$localPath/$localFileName');
+    
+    // Ensure directory exists before writing
+    await downloadToFile.parent.create(recursive: true);
     print('[$fileToDownload] File reference created: ${downloadToFile.path}');
     
     final storage = FirebaseStorage.instance;
     final ref = storage.ref(fileToDownload);
     print('[$fileToDownload] Firebase reference: ${ref.fullPath}');
-
-    // Method 1: getData() - Best for small/medium files (avoids threading issue)
+    
+    // Method 1: getData() - Best for small/medium files
     final bytes = await ref.getData();
     if (bytes == null) {
       throw Exception('[$fileToDownload] Failed to download file: no data received');
@@ -140,58 +151,43 @@ Future<void> downloadFile(String localPath, String localFileName, String fileToD
       final fileSize = await downloadToFile.length();
       print('[$fileToDownload] File verified on disk: $fileSize bytes');
     } else {
-      print('[$fileToDownload] WARNING: File not found after write');
+      throw Exception('[$fileToDownload] File not found after write');
     }
     
-    /* Alternative Method 2: writeToFile with proper error handling
-    // Use this for large files if needed (but upgrade plugin first!)
-    try {
-      final task = ref.writeToFile(downloadToFile);
-      await task;
-      print('Download successful: $localFileName');
-    } catch (e) {
-      // Ignore threading warnings, check if file was written
-      if (await downloadToFile.exists()) {
-        print('File downloaded despite threading warning');
-      } else {
-        rethrow;
-      }
-    }
-    */
   } on FirebaseException catch (e) {
-    print('[$fileToDownload] Firebase error code: ${e.code}');
-    print('[$fileToDownload] Firebase error message: ${e.message}');
-    print('[$fileToDownload] Full error: $e');
+    print('[$fileToDownload] Firebase exception: $e');
+    rethrow;
   } catch (e) {
     print('[$fileToDownload] Unexpected error during download: $e');
     rethrow;
+  } finally {
+    // Always remove from set when done (success or failure)
+    _downloadingFiles.remove(fileToDownload);
   }
 }
 
 /// Reads [localFileName] from Application Support directory and returns the contents as a string.
 /// 
 /// Returns empty string on exception.
-Future<String> readFile(String localPath, String localFileName) async {
-  print('Attempting to read file: $localFileName');
-  
+Future<String> readFile(String pathToLocalFile, String localFileName) async {
   try {
     //final file = await _localFile(localFileName);
-    File fileToRead = File('$localPath/$localFileName');
-    print('File path: ${fileToRead.path}');
+    File fileToRead = File('$pathToLocalFile/$localFileName');
+    print('[readFile] File path: ${fileToRead.path}');
     
     // Check if file exists
     if (!await fileToRead.exists()) {
-      print('File does not exist: ${fileToRead.path}');
-      return "";
+      print('[readFile] File does not exist: ${fileToRead.path}');
+      throw Exception('[readFile] File does not exist');
     }
     
-    print('File exists, reading...');
-    final contents = await fileToRead.readAsString();
-    print('File read successfully, length: ${contents.length}');
-    return contents;
+    print('[readFile] File exists, reading');
+    //final contents = await fileToRead.readAsString();
+    //print('File read successfully, length: ${contents.length}');
+    return await fileToRead.readAsString();
   } catch (e) {
-    print('Read error: $e');
-    return "";
+    print('[readFile] Unexpected exception: $e');
+    rethrow;
   }
 }
 
@@ -212,13 +208,13 @@ Future<String> _treeDescription(String id) async {
     for (final ext in extensions) {
       // localFileName is the full file, example: '88-22_description.md'
       final localFileName = '$descFileTitle$ext';
-      final file = await _localTextFile(localFileName);
+      final file = await _localFile(_localDescPath, localFileName);
       
       // check if local file with extension exists
       if (await file.exists()) {
         // TODO: make this check for file changes too (metadata, checksum, etc.)
         // return the contents of the file as a string
-        return await readFile(await _localTextPath, localFileName);
+        return await readFile(await _localDescPath, localFileName);
       }
       // else: continue search and either find it and return or come up empty and move on
     }
@@ -233,9 +229,9 @@ Future<String> _treeDescription(String id) async {
 
         print("downloading description for tree $id");
         // download the file to the appropriate location
-        downloadFile(await _localTextPath, localFileName, remoteFileName);
+        await downloadFile(await _localDescPath, localFileName, remoteFileName);
         // return the contents of the file as a string
-        return await readFile(await _localTextPath, localFileName);
+        return await readFile(await _localDescPath, localFileName);
       }
       // else: continue search and either find it and return or come up empty and move on
     }
@@ -253,11 +249,40 @@ Future<String> _treeDescription(String id) async {
   }
 }
 
+///
+/// On success: returns yaml manifest as string
+///
+/// On exception: returns empty string
+Future<String> _loadManifest(String localFileName, remoteFileName) async {
+  var manifestPath = _localPath;
+
+  try {
+    var localFile = await _localFile(manifestPath, localFileName);
+    // check file is local
+    if (await localFile.exists()) {
+      print('[loadManifest] File exists locally, reading');
+      return await readFile(await manifestPath, localFileName);
+    }
+    else {
+      print('[loadManifest] File does not exists locally, downloading');
+      await downloadFile(await manifestPath, localFileName, remoteFileName);
+      print('[loadManifest] File downloaded, reading');
+      return await readFile(await manifestPath, localFileName);
+    }
+  } on FirebaseException catch(e) {
+    print('[loadManifest] Firebase Exception: $e');
+    return '';
+  } catch (e) {
+    print('[loadManifest] Unexpected Exception: $e');
+    return '';
+  }
+}
+
 Future<void> main() async {
   String yamlString;
   var treeIdMap = {};
   final treeManifestFile = "tree_manifest.yaml";
-  var treeManifestFirebasePath = "text/$treeManifestFile";
+  final remoteTreeManifest = "text/$treeManifestFile";
 
   /*
    Begin building map of ID to Tree name
@@ -271,20 +296,10 @@ Future<void> main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  // check if tree_manifest.yaml exists in local text directory, otherwise download from firebase
-  var file = await _localTextFile(treeManifestFile);
-  if (await file.exists()) {  // TODO: make this check for file changes too (metadata, checksum, etc.)
-    print('File exists on disk');
-  } 
-  else {
-    print("downloading the YAML manifest!");
-    downloadFile(await _localTextPath, treeManifestFile, treeManifestFirebasePath);
-  }
-  
-  print("reading contents of YAML manifest to string");
-  yamlString = await readFile(await _localTextPath, treeManifestFile);
-
   try {
+    // read tree_manifest.yaml
+    yamlString = await _loadManifest(treeManifestFile, remoteTreeManifest);
+
     // read the YAML Stream
     var treeDoc = loadYamlStream(yamlString);
 
