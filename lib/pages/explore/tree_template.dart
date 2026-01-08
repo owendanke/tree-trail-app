@@ -11,10 +11,12 @@ class TreeTemplateItem extends StatelessWidget {
     super.key,
     required this.id,
     required this.name,
+    required this.imageFile
   });
 
   final String id;
   final String name;
+  final File? imageFile;
 
   @override
   Widget build(BuildContext context) {
@@ -33,6 +35,7 @@ class TreeTemplateItem extends StatelessWidget {
               return Stack(
                 children: [
                   _buildBackground(context),
+                  _buildGradient(),
                   _buildTitle(constraints), // Pass constraints
                 ],
               );
@@ -52,7 +55,12 @@ class TreeTemplateItem extends StatelessWidget {
   */
 
   Widget _buildBackground(BuildContext context) {
-    return Positioned.fill(child: SizedBox(width: 50, height: 100, child: ColoredBox(color: Colors.grey)));
+    if (imageFile == null) {
+      return Positioned.fill(child: SizedBox(width: 50, height: 100, child: ColoredBox(color: Colors.grey)));
+    }
+    else {
+      return Image.file(imageFile!, fit: BoxFit.contain);
+    }
   }
 
   Widget _buildGradient() {
@@ -99,6 +107,13 @@ class TreeTemplateItem extends StatelessWidget {
 }
 
 class ImageCarousel extends StatefulWidget {
+    const ImageCarousel ({
+    super.key,
+    required this.imageFileList,
+  });
+
+  final List<File?>? imageFileList;
+
   @override
   State<ImageCarousel> createState() => _ImageCarouselState();
 }
@@ -123,57 +138,46 @@ class _ImageCarouselState extends State<ImageCarousel> {
     super.dispose();
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: AspectRatio(
-          aspectRatio: 16 / 9,
-          child: PageView(
-            onPageChanged: (value) {
-              setState(() {
-                currentpage = value;
-              });
-            },
-            controller: controller,
-            children: [
+@override
+Widget build(BuildContext context) {
+  return Scaffold(
+    body: Center(
+      child: AspectRatio(
+        aspectRatio: 4/ 3,
+        child: PageView(
+          onPageChanged: (value) {
+            setState(() {
+              currentpage = value;
+            });
+          },
+          controller: controller,
+          children: [
+            if (widget.imageFileList != null && widget.imageFileList!.isNotEmpty)
+              ...[
+                for (File imgFile in widget.imageFileList!.whereType<File>()) // Filter out nulls
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(16),
+                    child: Image.file(imgFile, fit: BoxFit.contain,),
+                  ),
+              ]
+            else 
               Padding(
                 padding: EdgeInsetsDirectional.symmetric(horizontal: 20),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(16),
-                  child: SizedBox(width: 50, height: 100, child: ColoredBox(color: Colors.red)),
+                  child: SizedBox(
+                    width: 50, 
+                    height: 100, 
+                    child: ColoredBox(color: Colors.grey),
+                  ),
                 ),
               ),
-              Padding(
-                padding: EdgeInsetsDirectional.symmetric(horizontal: 20),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(16),
-                  child: SizedBox(width: 50, height: 100, child: ColoredBox(color: Colors.green)),
-                ),
-              ),
-              Padding(
-                padding: EdgeInsetsDirectional.symmetric(horizontal: 20),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(16),
-                  child: SizedBox(width: 50, height: 100, child: ColoredBox(color: Colors.blue)),
-                ),
-              ),
-            ],
-          )
-        ),
-        /*
-        child: PageView.builder(
-            onPageChanged: (value) {
-              setState(() {
-                currentpage = value;
-              });
-            },
-            controller: controller,
-            itemBuilder: (context, index) => builder(index)
-          ),*/
-        ),
-    );
-  }
+          ],
+        )
+      ),
+    ),
+  );
+}
 }
 
 class TreeTemplatePage extends StatefulWidget {
@@ -182,12 +186,13 @@ class TreeTemplatePage extends StatefulWidget {
     required this.id,
     required this.name,
     required this.body,
-    //required this.imageName
+    required this.imageFileList
   });
   
   final String id;
   final String name;
   final String body;
+  final List<File> imageFileList;
 
   @override
   State<TreeTemplatePage> createState() => _TreeTemplatePage();
@@ -221,7 +226,7 @@ class _TreeTemplatePage extends State<TreeTemplatePage> {
               padding: EdgeInsetsGeometry.fromLTRB(0, 40, 0, 40),
               child: AspectRatio(
                 aspectRatio: 16/ 9,
-                child: ImageCarousel(),
+                child: ImageCarousel(imageFileList: widget.imageFileList),
               ),
             ),
             Padding(

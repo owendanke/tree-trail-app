@@ -31,7 +31,8 @@ class ExploreRoutes implements AppRoutes{
       routes[routeName] = (context) => TreeTemplatePage(
           id: page.value['id'], 
           name: page.value['name'], 
-          body: page.value['body']
+          body: page.value['body'],
+          imageFileList: page.value['imageFileList'],
         );
     }
 

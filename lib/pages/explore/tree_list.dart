@@ -53,6 +53,10 @@ class _TreeListPageState extends State<TreeListPage> {
                   TreeTemplateItem(
                     id: id,
                     name: treePageData[id]!['name']!,
+                    imageFile: (treePageData[id]!['imageFileList'] != null && 
+                                treePageData[id]!['imageFileList']!.isNotEmpty)
+                                ? treePageData[id]!['imageFileList']![0]
+                                : null,
                   ),
               ]
             ),
