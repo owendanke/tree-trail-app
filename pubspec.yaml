@@ -1,7 +1,7 @@
-name: holcomb_tree_trail
+name: httapp
 description: "A project to educate and showcase the Holcomb Tree Trail arboretum."
 publish_to: 'none'
-version: 0.2.0-alpha
+version: 0.2.0
 
 environment:
   sdk: ^3.9.2
@@ -15,6 +15,12 @@ dependencies:
     sdk: flutter
   firebase_storage: ^13.0.4
   path_provider: ^2.1.5
+  flutter_map: ^8.2.2
+  latlong2: ^0.9.1
+  package_info_plus: ^9.0.0
+  geolocator: ^14.0.2
+  firebase_app_check: ^0.4.1+4
+  
 
 dev_dependencies:
   flutter_test:

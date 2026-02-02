@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'app_routes.dart';
 
 // Import page files
-import 'package:holcomb_tree_trail/pages/home/home.dart';
-import 'package:holcomb_tree_trail/pages/home/about.dart';
-import 'package:holcomb_tree_trail/pages/home/visitor_info.dart';
-import 'package:holcomb_tree_trail/pages/explore/tree_list.dart';
+import 'package:httapp/pages/home/home.dart';
+import 'package:httapp/pages/home/about.dart';
+import 'package:httapp/pages/home/visitor_info.dart';
+import 'package:httapp/pages/explore/tree_list.dart';
 
 class HomeRoutes implements AppRoutes{
   // Route name constants

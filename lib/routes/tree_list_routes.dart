@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'app_routes.dart';
-import 'package:holcomb_tree_trail/pages/explore/tree_template.dart';
+import 'package:httapp/pages/explore/tree_template.dart';
 
 /*
   Creates routes for navigating generated tree list items and pages
 */
 
 // Import Pages
-import 'package:holcomb_tree_trail/pages/explore/tree_list.dart';
+import 'package:httapp/pages/explore/tree_list.dart';
 
 class TreeListRoutes implements AppRoutes{
   // Route name constants

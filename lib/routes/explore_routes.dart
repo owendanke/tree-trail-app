@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'app_routes.dart';
 
 // Import page files
-import 'package:holcomb_tree_trail/pages/explore/explore.dart';
-import 'package:holcomb_tree_trail/pages/explore/tree_list.dart';
-import 'package:holcomb_tree_trail/pages/explore/tree_template.dart';
+import 'package:httapp/pages/explore/explore.dart';
+import 'package:httapp/pages/explore/tree_list.dart';
+import 'package:httapp/pages/explore/tree_template.dart';
 
 class ExploreRoutes implements AppRoutes{
   // Route name constants

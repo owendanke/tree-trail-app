@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 //import 'package:flutter/cupertino.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -12,9 +13,26 @@ class SettingsPage extends StatefulWidget {
 
 class _SettingsPageState extends State<SettingsPage> {
   bool _value = false;
+  late PackageInfo packageInfo;
+  late String _versionNumber;
+
+  Future<void> _loadVersionNumber() async {
+    try {
+      packageInfo = await PackageInfo.fromPlatform();
+      setState(() {
+        _versionNumber = packageInfo.version;
+      });
+    } catch (e) {
+      setState(() {
+        _versionNumber = '';
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    _loadVersionNumber();
+    
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.primary,
@@ -38,6 +56,8 @@ class _SettingsPageState extends State<SettingsPage> {
                 // TODO call method from file manager class
               },
             ),
+
+            Text("Version: $_versionNumber")
           ],
         ),
       ),

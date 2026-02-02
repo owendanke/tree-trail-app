@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:holcomb_tree_trail/main.dart';
-import 'package:holcomb_tree_trail/routes/app_routes.dart';
+import 'package:httapp/main.dart';
+import 'package:httapp/routes/app_routes.dart';
 
 // Routes (correspond to tabs on the navigation bar)
-import 'package:holcomb_tree_trail/routes/home_routes.dart';
-import 'package:holcomb_tree_trail/routes/explore_routes.dart';
-import 'package:holcomb_tree_trail/routes/map_routes.dart';
-import 'package:holcomb_tree_trail/routes/settings_routes.dart';
+import 'package:httapp/routes/home_routes.dart';
+import 'package:httapp/routes/explore_routes.dart';
+import 'package:httapp/routes/map_routes.dart';
+import 'package:httapp/routes/settings_routes.dart';
 
 
 class MainNavigation extends StatefulWidget {

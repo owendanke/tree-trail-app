@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:holcomb_tree_trail/main.dart';
-import 'package:holcomb_tree_trail/pages/explore/tree_template.dart';
+import 'package:httapp/main.dart';
+import 'package:httapp/pages/explore/tree_template.dart';
 
 /*
 class TreeEntry extends StatelessWidget {
@@ -53,10 +53,7 @@ class _TreeListPageState extends State<TreeListPage> {
                   TreeTemplateItem(
                     id: id,
                     name: treePageData[id]!['name']!,
-                    imageFile: (treePageData[id]!['imageFileList'] != null && 
-                                treePageData[id]!['imageFileList']!.isNotEmpty)
-                                ? treePageData[id]!['imageFileList']![0]
-                                : null,
+                    imageFile: (treePageData[id]!['thmFile']!.existsSync()) ? treePageData[id]!['thmFile'] : null,
                   ),
               ]
             ),

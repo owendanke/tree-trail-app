@@ -59,7 +59,7 @@ class TreeTemplateItem extends StatelessWidget {
       return Positioned.fill(child: SizedBox(width: 50, height: 100, child: ColoredBox(color: Colors.grey)));
     }
     else {
-      return Image.file(imageFile!, fit: BoxFit.contain);
+      return Image.file(imageFile!, fit: BoxFit.cover);
     }
   }
 
@@ -121,6 +121,8 @@ class ImageCarousel extends StatefulWidget {
 class _ImageCarouselState extends State<ImageCarousel> {
   late PageController controller;
   int currentpage = 0;
+
+  Future<void> _preloadImages() async {}
 
   @override
   initState() {

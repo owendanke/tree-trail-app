@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
-import 'package:holcomb_tree_trail/routes/explore_routes.dart';
+import 'package:httapp/routes/explore_routes.dart';
 
 class ExplorePage extends StatefulWidget {
   const ExplorePage({super.key});

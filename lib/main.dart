@@ -2,14 +2,16 @@ import 'dart:io';
 import 'dart:core';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:yaml/yaml.dart';
 import 'package:path_provider/path_provider.dart'; // for directory.path
 
-import 'package:holcomb_tree_trail/ui/main_navigation.dart';
-import 'package:holcomb_tree_trail/ui/theme.dart';
+import 'package:httapp/ui/main_navigation.dart';
+import 'package:httapp/ui/theme.dart';
 
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_app_check/firebase_app_check.dart';
 import 'firebase_options.dart';
 
 
@@ -18,7 +20,7 @@ import 'firebase_options.dart';
 /// Used for parsing from tree_manifest.yaml
 var treeIdMap = {};
 
-/// Global Map from [id] to the Map {'id': String, 'name': String, 'body': String, 'imageFileList': List`<`File`>`}
+/// Global Map from [id] to the Map {'id': String, 'name': String, 'body': String, 'imageFileList': List`<`File`>`, 'thmFile': File}
 /// 
 /// This is for the [TreeTemplatePage] constructor
 Map<String, Map<String, dynamic >> treePageData = {};
@@ -29,6 +31,7 @@ final Set<String> _downloadingFiles = {};
 final _remoteTextPath = 'text/';
 final _remoteDescriptionPath = 'description/';
 final _remoteImagePath = 'images/';
+final _remoteThumbnailPath = 'images/thumbnails/';
 
 /// Get path to the Application Support folder on the device.
 /// Creates the path if it doesn't exist
@@ -54,6 +57,12 @@ Future<String> get _localDescPath async {
 /// Get path to the images directory in ApplicationSupport.
 Future<String> get _localImagePath async {
   final directory = await Directory("${await _localPath}/images").create();
+  return directory.path;
+}
+
+/// Get path to the thumbnails directory in ApplicationSupport.
+Future<String> get _localThumbnailPath async {
+  final directory = await Directory("${await _localPath}/thumbnails").create();
   return directory.path;
 }
 
@@ -254,8 +263,9 @@ Future<String> _treeDescription(String id) async {
   }
 }
 
-Future<ListResult> get _listRemoteImgFiles async {
+Future<ListResult> get _listRemoteImageFiles async {
   try {
+    print('[listRemoteImgFiles] Calling listAll()');
     return await FirebaseStorage.instance.ref(_remoteImagePath).listAll();
   } catch (e) {
     print('[listRemoteImgFiles] $e');
@@ -265,15 +275,18 @@ Future<ListResult> get _listRemoteImgFiles async {
 
 Future<List<File>> _treeImgFileList(String id, ListResult resultList) async {
   // images have the format '{tree-id}_{number}.jpg'
-  RegExp filePattern = RegExp(r'^\d{2,3}-\d{2}_\d+\.jpg$');
+  //RegExp filePattern = RegExp(r'^\d{2,3}-\d{2}_\d+\.jpg$');
 
   List<File> imageFileList = List.empty(growable: true);  // list to return
 
+  print('[treeImgFileList $id] resultList length: ${imageFileList.length}');
   try {
     for (var item in resultList.items) {
       final fileName = item.name;
-        
-      if (fileName.startsWith('${id}_') && filePattern.hasMatch(fileName)) {
+      final remoteFileName = '$_remoteImagePath$fileName';
+
+      //if (fileName.startsWith('${id}_') && filePattern.hasMatch(fileName)) { 
+      if (fileName.startsWith('${id}_')) {
         // Check if file matches pattern and starts with the correct tree ID
         print('[treeImgFileList $id] Matching file: $fileName');
 
@@ -288,14 +301,22 @@ Future<List<File>> _treeImgFileList(String id, ListResult resultList) async {
           imageFileList.add(localFile);
         }
         else { // file is not on device and needs to be downloaded
-          // download image to the local image directory
-          print('[treeImgFileList $id] downloading file: $_remoteImagePath$fileName');
-          await downloadFile(await _localImagePath, fileName, '$_remoteImagePath$fileName');
-  
-          // append a File object that points to the newly downloaded file
-          print('[treeImgFileList $id] adding downloaded file to list: $_remoteImagePath$fileName');
-          imageFileList.add(localFile);
+          if (await remoteFileExists(remoteFileName)) {
+            // download image to the local image directory
+            print('[treeImgFileList $id] downloading file: remoteFileName');
+            await downloadFile(await _localImagePath, fileName, remoteFileName);
+    
+            // append a File object that points to the newly downloaded file
+            print('[treeImgFileList $id] adding downloaded file to list: remoteFileName');
+            imageFileList.add(localFile);
+          }
+          else {
+            print('[treeImgFileList $id] remote file does not exist: remoteFileName');
+          }
         }
+      }
+      else {
+        print('[treeImgFileList $id] No matching files');
       }
     } // for
 
@@ -313,6 +334,45 @@ Future<List<File>> _treeImgFileList(String id, ListResult resultList) async {
 }
 
 
+Future<File> _thmFile(String id) async {
+  final fileName = '${id}_thm.jpg';    // thumbnails have the format '{tree-id}_thm.jpg'
+  final remoteFileName = '$_remoteThumbnailPath$fileName';  // directory to the remote file
+
+  File thmFile = await _localFile(_localThumbnailPath, fileName);    // File object to return
+
+  try {
+    
+      // check if file exists locally or needs to be downloaded
+      if (thmFile.existsSync()) {
+        // no need to download, just return file
+        print('[thmFile $id] Returning matching file: ${thmFile.path}');
+        return thmFile;
+      }
+      else { 
+        // file is not on device and needs to be downloaded
+        if (await remoteFileExists(remoteFileName)){
+          print('[thmFile $id] downloading file: $remoteFileName');
+          // download thumbnail to the local directory
+          await downloadFile(await _localThumbnailPath, fileName, remoteFileName);
+          // return file
+          print('[thmFile $id] Returning downloaded file: ${thmFile.path}');
+          return thmFile;
+        }
+        else {
+          throw Exception('Remote file does not exist');
+        }
+      }
+
+  } on FirebaseException catch(e) {
+    print('[thmFile $id] FirebaseException occured: $e');
+    // return empty list
+    return thmFile;
+  } catch (e) {
+    print('[thmFile $id] $e');
+    // return empty list
+    return thmFile;
+  }
+}
 
 ///
 /// On success: returns yaml manifest as string
@@ -361,6 +421,22 @@ Future<void> main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
+  // Activate App Check with automatic provider selection
+  await FirebaseAppCheck.instance.activate(
+    // On Android, use debug provider in debug mode, Play Integrity in release
+    providerAndroid: kDebugMode
+        ? AndroidDebugProvider()
+        : AndroidPlayIntegrityProvider(),
+    
+    // On iOS, use debug provider in debug mode, App Attest in release
+    //providerApple: kDebugMode 
+    //    ? AppleProvider.debug 
+    //    : AppleProvider.appAttest,
+    providerApple: kDebugMode
+      ? AppleDebugProvider()
+      : AppleDeviceCheckProvider()
+  );
+
   try {
     // read tree_manifest.yaml
     yamlString = await _loadManifest(treeManifestFile, remoteTreeManifest);
@@ -382,14 +458,19 @@ Future<void> main() async {
   // create treePageData entries for expected trees in the yaml manifest
   try{
     // save a ListResult to reference during loop
-    final listResult = await _listRemoteImgFiles;
+    final imageListResult = await _listRemoteImageFiles;
 
     for (var id in treeIdMap.keys) {
-      var descriptionString = await _treeDescription(id); //_treeDescription handles missing files
-      List<File> imageFileList = await _treeImgFileList(id, listResult);
+      // retrieve the description, images, and thumbnails
+      var descriptionString = await _treeDescription(id);   // description is pulled from internet here
+      File thmFile = await _thmFile(id);   // thumbnail is pulled from internet here
+      List<File> imageFileList = await _treeImgFileList(id, imageListResult);   // image is pulled from internet here
+      
+
       print('[main][treePageData $id] imageFileList: $imageFileList');
       
-      treePageData[id] = {'id': id, 'name': treeIdMap[id], 'body': descriptionString, 'imageFileList': imageFileList};
+      // add the matching remote data to the 
+      treePageData[id] = {'id': id, 'name': treeIdMap[id], 'body': descriptionString, 'imageFileList': imageFileList, 'thmFile': thmFile};
     }
   }
   catch(e) {

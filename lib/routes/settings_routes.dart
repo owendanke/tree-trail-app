@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'app_routes.dart';
 
 // Import page files
-import 'package:holcomb_tree_trail/pages/settings/settings.dart';
+import 'package:httapp/pages/settings/settings.dart';
 
 class SettingsRoutes implements AppRoutes{
   // Route name constants

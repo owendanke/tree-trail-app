@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:holcomb_tree_trail/routes/home_routes.dart';
+import 'package:httapp/routes/home_routes.dart';
 
 class HomePage extends StatelessWidget {
   HomePage({
