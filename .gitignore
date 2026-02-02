@@ -18,6 +18,12 @@ migrate_working_dir/
 *.iws
 .idea/
 
+# Xcode
+*.xcworkspace
+*.xcuserstate
+*.xcuserdatad
+DerivedData/
+
 # The .vscode folder contains launch configuration and tasks you configure in
 # VS Code which you may wish to be included in version control, so this line
 # is commented out by default.
@@ -33,16 +39,40 @@ migrate_working_dir/
 /build/
 /coverage/
 
+
 # Symbolication related
 app.*.symbols
 
 # Obfuscation related
 app.*.map.json
 
-# Android Studio will place build artifacts here
+# Android
+/android/.gradle/
+/android/.idea/
+/android/local.properties
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# iOS
+ios/Flutter/App.framework
+ios/Flutter/Flutter.framework
+ios/Pods/
+ios/.generated/
+ios/.idea/
+ios/Runner.xcworkspace/
+macos/Pods/
+macos/.generated/
+macos/Flutter/ephemeral/
+# CocoaPods – commit Podfile.lock if you need reproducible iOS builds
+Podfile.lock
+Pods/
+
+# Not targeting these
+linux/
+macos/
+web/
+windows/
 
 # Possibly sensitive Firebase files
 lib/firebase_options.dart
