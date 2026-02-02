@@ -38,6 +38,7 @@ DerivedData/
 .pub/
 /build/
 /coverage/
+.metadata
 
 
 # Symbolication related
@@ -80,6 +81,7 @@ firebase.json
 android/app/google-services.json
 ios/Runner/GoogleService-Info.plist
 storage.rules
+.firebaserc
 
 # Assets, I don't want to track these, yet
 /lib/assets
