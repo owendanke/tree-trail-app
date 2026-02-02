@@ -7,10 +7,13 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:geolocator/geolocator.dart';
 
 import 'package:httapp/services/location/geolocator.dart';
+import 'package:httapp/models/poi.dart';
+import 'package:httapp/models/poi_node.dart';
+import 'package:httapp/models/map_compass.dart';
 
 class MapPage extends StatefulWidget {
   final String title = 'Map';
-  final List<Marker> markerList;
+  final List<PointOfInterest> markerList;
 
   static const LatLng center = LatLng(41.947186, -72.832672);         // Center (over kiosk)
   static const LatLng boundsCorner1 = LatLng(41.959917, -72.849722);  // NW
@@ -35,6 +38,19 @@ class _MapPageState extends State<MapPage> {
   LatLng _userLocation = MapPage.center;
 
   late Marker _userLocationMarker;
+
+  List<PointOfInterest> debugPOIs = [
+    PointOfInterest(
+      name: 'Tree 1',
+      description: 'Test of tree 1',
+      location: LatLng(41.947833, -72.832095),
+    ),
+    PointOfInterest(
+      name: 'Tree 2',
+      description: 'Test of tree 2',
+      location: LatLng(41.944949, -72.831543),
+    ),
+  ];
 
   /*
   Future<void> _loadVersionNumber() async {
@@ -94,13 +110,18 @@ class _MapPageState extends State<MapPage> {
       ),
       body: Stack(
         children: [
+
+          // Map widget
           FlutterMap(
             mapController: MapPage.mapController,
             options: MapOptions(
-              initialCenter: MapPage.center, // Center the map over kiosk
+              // Center the map over kiosk
+              initialCenter: MapPage.center,
               initialZoom: 17,
+              // Constraint the zoom
               minZoom: 15,
               maxZoom: 20,
+              // Constrain the camera to the regional focus of the app
               cameraConstraint: CameraConstraint.contain(bounds: LatLngBounds(MapPage.boundsCorner1, MapPage.boundsCorner2)),
               interactionOptions: const InteractionOptions(
                 flags: InteractiveFlag.all, // includes rotate
@@ -113,6 +134,7 @@ class _MapPageState extends State<MapPage> {
               },
             ),
             children: [
+              // Tile layer, the map itself, using OSM
               TileLayer( // Bring your own tiles
                 urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                 userAgentPackageName: _packageName, // app identifier
@@ -120,16 +142,14 @@ class _MapPageState extends State<MapPage> {
                   cachingProvider: BuiltInMapCachingProvider.getOrCreateInstance(maxCacheSize: 512_000_000)
                   ),
               ),
-              /*
-              RichAttributionWidget(
-                attributions: [
-                  TextSourceAttribution(
-                    'OpenStreetMap contributors',
-                    onTap: () => _osmDialogBuilder(context),
-                  ),
-                ],
-              ),*/
-              MarkerLayer(markers: [...widget.markerList, ...UserLocationMarker.build(_userLocation)]),  // markers placed on map
+
+              // Marker layer for trees, user location, etc.
+              MarkerLayer(markers: [
+                ...widget.markerList.map((tree) {return PoiNode.build(context, tree);}),
+                ...UserLocationMarker.build(_userLocation),
+                ]),
+
+              // attributions to give credit to map creators
               SimpleAttributionWidget(
                 source: Text('OpenStreetMap contributors'),
               ),
@@ -143,70 +163,6 @@ class _MapPageState extends State<MapPage> {
   }
 }
 
-Future<void> _osmDialogBuilder(BuildContext context) {
-  return showDialog<void>(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: const Text('Map Attribution'),
-        content: const Text(
-          '© OpenStreetMap contributors',
-        ),
-        actions: <Widget>[
-          TextButton(
-            style: TextButton.styleFrom(textStyle: Theme.of(context).textTheme.labelLarge),
-            child: const Text('Close'),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
-        ],
-      );
-    },
-  );
-}
-
-class MapCompass extends StatelessWidget {
-  final MapController mapController;
-
-  const MapCompass({super.key, required this.mapController});
-
-  @override
-  Widget build(BuildContext context) {
-    return Positioned(
-      top: 16,
-      right: 16,
-      child: StreamBuilder<MapEvent>(
-        stream: mapController.mapEventStream,
-        builder: (context, snapshot) {
-          final rotation = mapController.camera.rotation;
-
-          return AnimatedOpacity(
-            opacity: rotation.abs() < 0.5 ? 0 : 1,
-            duration: const Duration(milliseconds: 250),
-            child: IgnorePointer(
-              ignoring: rotation.abs() < 0.5,
-              child: FloatingActionButton(
-                mini: true,
-                backgroundColor: Colors.white,
-                onPressed: () {
-                  mapController.rotate(0);
-                },
-                child: Transform.rotate(
-                  angle: -rotation * pi / 180,
-                  child: const Icon(
-                    Icons.navigation,
-                    color: Colors.red,
-                  ),
-                ),
-              ),
-            ),
-          );
-        },
-      ),
-    );
-  }
-}
 
 class UserLocationMarker {
   static List<Marker> build(LatLng? location) {
