@@ -5,7 +5,7 @@ class VisitorInfoPage extends StatefulWidget {
   VisitorInfoPage({super.key});
   
   final String title = 'Visitor Info';
-  final AssetImage _assetImage = AssetImage('lib/assets/HTT_farm_view.png');
+  final AssetImage _assetImage = AssetImage('lib/assets/north_field_fall_vista.jpg');
   
   @override
   State<VisitorInfoPage> createState() => _VisitorInfoPageState();
