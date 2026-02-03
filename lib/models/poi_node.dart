@@ -15,12 +15,11 @@ class PoiNode {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              
               // Title
               Padding(
                 padding: EdgeInsetsGeometry.only(bottom: 8),
                 child: Text(
-                  poi.name,
+                  '${poi.id}  ${poi.name}',
                   style: const TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
@@ -29,6 +28,7 @@ class PoiNode {
               ),
 
               // Description
+              /*
               Padding(
                 padding: EdgeInsetsGeometry.only(bottom: 8),
                 child: Text(
@@ -36,6 +36,7 @@ class PoiNode {
                   style: const TextStyle(fontSize: 16),
                 ),
               ),
+              */
               
               // Close button
               ElevatedButton(

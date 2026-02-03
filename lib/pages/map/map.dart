@@ -13,7 +13,7 @@ import 'package:httapp/models/map_compass.dart';
 
 class MapPage extends StatefulWidget {
   final String title = 'Map';
-  final List<PointOfInterest> markerList;
+  final List<PointOfInterest> poiList;
 
   static const LatLng center = LatLng(41.947186, -72.832672);         // Center (over kiosk)
   static const LatLng boundsCorner1 = LatLng(41.959917, -72.849722);  // NW
@@ -23,7 +23,7 @@ class MapPage extends StatefulWidget {
   
   MapPage({
     super.key, 
-    required this.markerList
+    required this.poiList
     });
 
   @override
@@ -41,13 +41,13 @@ class _MapPageState extends State<MapPage> {
 
   List<PointOfInterest> debugPOIs = [
     PointOfInterest(
+      id: '1-26',
       name: 'Tree 1',
-      description: 'Test of tree 1',
       location: LatLng(41.947833, -72.832095),
     ),
     PointOfInterest(
+      id: '2-26',
       name: 'Tree 2',
-      description: 'Test of tree 2',
       location: LatLng(41.944949, -72.831543),
     ),
   ];
@@ -145,7 +145,7 @@ class _MapPageState extends State<MapPage> {
 
               // Marker layer for trees, user location, etc.
               MarkerLayer(markers: [
-                ...widget.markerList.map((tree) {return PoiNode.build(context, tree);}),
+                ...widget.poiList.map((tree) {return PoiNode.build(context, tree);}),
                 ...UserLocationMarker.build(_userLocation),
                 ]),
 

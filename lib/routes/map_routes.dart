@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'app_routes.dart';
+import 'package:httapp/main.dart';
 
 // Import page files
 import 'package:httapp/pages/map/map.dart';
@@ -14,7 +15,7 @@ class MapRoutes implements AppRoutes{
   @override
   Map<String, WidgetBuilder> getRoutes(BuildContext context, {Function(int)? onTabChange}) {
     return {
-      '/': (context) => MapPage(markerList: List.empty(),),
+      '/': (context) => MapPage(poiList: poiData,),
     };
   }
 }
