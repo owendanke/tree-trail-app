@@ -156,6 +156,10 @@ class _MapPageState extends State<MapPage> {
             ],
           ),
 
+          // Map control buttons
+          // Show hide specific layers
+          _layerButton(), 
+          // When map is rotated, show north and return to north facing if pressed
           MapCompass(mapController: MapPage.mapController),
         ],
       ),
@@ -163,6 +167,20 @@ class _MapPageState extends State<MapPage> {
   }
 }
 
+Widget _layerButton() {
+  return Positioned(
+    top: 16,
+    right: 16,
+    child: FloatingActionButton.small(
+      shape: CircleBorder(),
+      backgroundColor: Colors.white,
+      onPressed: () {
+        // Hide or show a modal that allows modifying layers on the map
+      },
+      child: const Icon(Icons.layers_outlined),
+    )
+  );
+}
 
 class UserLocationMarker {
   static List<Marker> build(LatLng? location) {

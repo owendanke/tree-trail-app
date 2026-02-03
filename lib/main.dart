@@ -501,35 +501,42 @@ Future<void> main() async {
   */
   String debugGeoJSON = 
   '''
-    {
-      "type": "FeatureCollection",
-      "features": [
-        {
-          "type": "Feature",
-          "geometry": {
-            "type": "Point",
-            "coordinates": [-72.832095, 41.947833]
-          },
-          "properties": {
-            "id": "1-26",
-            "name": "Tree 1",
-            "description": "Test of tree 1"
-          }
-        },
-        {
-          "type": "Feature",
-          "geometry": {
-            "type": "Point",
-            "coordinates": [-72.831543, 41.944949]
-          },
-          "properties": {
-            "id": "2-26",
-            "name": "Tree 2",
-            "description": "Test of tree 2"
-          }
-        }
-      ]
-    }
+{
+"type": "FeatureCollection",
+"name": "Featured Trees",
+"features": [
+{ "type": "Feature", "properties": { "id": "", "name": "European larch" }, "geometry": { "type": "Point", "coordinates": [ -72.831315, 41.945618 ] } },
+{ "type": "Feature", "properties": { "id": "", "name": "Gold Rush, Dawn Redwood" }, "geometry": { "type": "Point", "coordinates": [ -72.835237, 41.946921 ] } },
+{ "type": "Feature", "properties": { "id": "", "name": "Kousa dogwood" }, "geometry": { "type": "Point", "coordinates": [ -72.833615, 41.948203 ] } },
+{ "type": "Feature", "properties": { "id": "", "name": "Shingle oak" }, "geometry": { "type": "Point", "coordinates": [ -72.831883, 41.947872 ] } },
+{ "type": "Feature", "properties": { "id": "", "name": "Red horsechestnut" }, "geometry": { "type": "Point", "coordinates": [ -72.831928, 41.945494 ] } },
+{ "type": "Feature", "properties": { "id": "", "name": "Kentucky coffeetree" }, "geometry": { "type": "Point", "coordinates": [ -72.83226, 41.947572 ] } },
+{ "type": "Feature", "properties": { "id": "", "name": "Golden Larch" }, "geometry": { "type": "Point", "coordinates": [ -72.831601, 41.945724 ] } },
+{ "type": "Feature", "properties": { "id": "", "name": "White oak" }, "geometry": { "type": "Point", "coordinates": [ -72.832888, 41.947738 ] } },
+{ "type": "Feature", "properties": { "id": "", "name": "Sour wood" }, "geometry": { "type": "Point", "coordinates": [ -72.833549, 41.948413 ] } },
+{ "type": "Feature", "properties": { "id": "", "name": "Bald Cypress" }, "geometry": { "type": "Point", "coordinates": [ -72.833652, 41.948499 ] } },
+{ "type": "Feature", "properties": { "id": "", "name": "Japanese tree lilac" }, "geometry": { "type": "Point", "coordinates": [ -72.834196, 41.947407 ] } },
+{ "type": "Feature", "properties": { "id": "", "name": "Chestnut Oak" }, "geometry": { "type": "Point", "coordinates": [ -72.831846, 41.947944 ] } },
+{ "type": "Feature", "properties": { "id": "", "name": "Donald Wyman Crabapple" }, "geometry": { "type": "Point", "coordinates": [ -72.832617, 41.947894 ] } },
+{ "type": "Feature", "properties": { "id": "", "name": "Tulip tree" }, "geometry": { "type": "Point", "coordinates": [ -72.829837, 41.944002 ] } },
+{ "type": "Feature", "properties": { "id": "", "name": "Swamp white oak" }, "geometry": { "type": "Point", "coordinates": [ -72.833409, 41.948174 ] } },
+{ "type": "Feature", "properties": { "id": "", "name": "Corneliancherry dogwood" }, "geometry": { "type": "Point", "coordinates": [ -72.833724, 41.947956 ] } },
+{ "type": "Feature", "properties": { "id": "", "name": "Cucumber magnolia" }, "geometry": { "type": "Point", "coordinates": [ -72.831523, 41.945251 ] } },
+{ "type": "Feature", "properties": { "id": "", "name": "Tamarack" }, "geometry": { "type": "Point", "coordinates": [ -72.835078, 41.946949 ] } },
+{ "type": "Feature", "properties": { "id": "", "name": "Northern red Oak" }, "geometry": { "type": "Point", "coordinates": [ -72.83151, 41.948072 ] } },
+{ "type": "Feature", "properties": { "id": "", "name": "Sweetgum moraine" }, "geometry": { "type": "Point", "coordinates": [ -72.832737, 41.947314 ] } },
+{ "type": "Feature", "properties": { "id": "", "name": "Bur oak urban pinnacle" }, "geometry": { "type": "Point", "coordinates": [ -72.832037, 41.947965 ] } },
+{ "type": "Feature", "properties": { "id": "", "name": "Japanese emperor oak" }, "geometry": { "type": "Point", "coordinates": [ -72.832356, 41.945524 ] } },
+{ "type": "Feature", "properties": { "id": "", "name": "Eastern redbud" }, "geometry": { "type": "Point", "coordinates": [ -72.833653, 41.948051 ] } },
+{ "type": "Feature", "properties": { "id": "", "name": "Dawn Redwood" }, "geometry": { "type": "Point", "coordinates": [ -72.83214, 41.945112 ] } },
+{ "type": "Feature", "properties": { "id": "", "name": "Willow oak" }, "geometry": { "type": "Point", "coordinates": [ -72.833145, 41.946976 ] } },
+{ "type": "Feature", "properties": { "id": "", "name": "Tulip tree" }, "geometry": { "type": "Point", "coordinates": [ -72.831838, 41.943946 ] } },
+{ "type": "Feature", "properties": { "id": "", "name": "American chestnut" }, "geometry": { "type": "Point", "coordinates": [ -72.832224, 41.945504 ] } },
+{ "type": "Feature", "properties": { "id": "", "name": "Bald cypress" }, "geometry": { "type": "Point", "coordinates": [ -72.833648, 41.949826 ] } },
+{ "type": "Feature", "properties": { "id": "", "name": "Shingle oak " }, "geometry": { "type": "Point", "coordinates": [ -72.831918, 41.947936 ] } }
+]
+}
+
   ''';
   try {
     poiData = GeojsonParse.parsePointOfInterests(debugGeoJSON);
