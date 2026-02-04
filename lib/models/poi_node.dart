@@ -17,9 +17,9 @@ class PoiNode {
             children: [
               // Title
               Padding(
-                padding: EdgeInsetsGeometry.only(bottom: 8),
+                padding: EdgeInsetsGeometry.only(bottom: 32),
                 child: Text(
-                  '${poi.id}  ${poi.name}',
+                  '${poi.name} (${poi.id})',
                   style: const TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
@@ -38,10 +38,30 @@ class PoiNode {
               ),
               */
               
-              // Close button
-              ElevatedButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text('Close'),
+              // layout tree info and close buttons in a row
+              Row(
+                children: [
+                  Expanded(
+                    child: Padding(
+                      padding: EdgeInsetsGeometry.symmetric(horizontal: 16),
+                      child: ElevatedButton(
+                      onPressed: () {},
+                      child: const Text('Learn More'),
+                      ),
+                    )
+                  ),
+
+
+                  Expanded(
+                    child: Padding(
+                      padding: EdgeInsetsGeometry.symmetric(horizontal: 16),
+                      child: ElevatedButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: const Text('Close'),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
