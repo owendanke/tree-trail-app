@@ -7,6 +7,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:geolocator/geolocator.dart';
 
 import 'package:httapp/services/location/geolocator.dart';
+import 'package:httapp/services/version_service.dart';
 import 'package:httapp/models/poi.dart';
 import 'package:httapp/models/poi_node.dart';
 import 'package:httapp/models/map_compass.dart';
@@ -32,7 +33,6 @@ class MapPage extends StatefulWidget {
 
 class _MapPageState extends State<MapPage> {
   late PackageInfo packageInfo;
-  String _packageName = 'org.odanke.HTTapp';
   double _rotation = 0.0;
   Stream<Position> _positionStream = const Stream.empty();
   LatLng _userLocation = MapPage.center;
@@ -105,6 +105,7 @@ class _MapPageState extends State<MapPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
         backgroundColor: Theme.of(context).colorScheme.primary,
         title: Text(widget.title, style: TextStyle(color: Theme.of(context).colorScheme.onPrimary)),
       ),
@@ -137,7 +138,7 @@ class _MapPageState extends State<MapPage> {
               // Tile layer, the map itself, using OSM
               TileLayer( // Bring your own tiles
                 urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                userAgentPackageName: _packageName, // app identifier
+                userAgentPackageName: VersionService().packageName, // app identifier
                 tileProvider: NetworkTileProvider(
                   cachingProvider: BuiltInMapCachingProvider.getOrCreateInstance(maxCacheSize: 512_000_000)
                   ),

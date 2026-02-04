@@ -3,10 +3,12 @@ import 'app_routes.dart';
 
 // Import page files
 import 'package:httapp/pages/settings/settings.dart';
+import 'package:httapp/pages/settings/advanced_settings.dart';
 
 class SettingsRoutes implements AppRoutes{
   // Route name constants
   static const String settings = '/';
+  static const String advanced = '/advanced';
 
   @override
   String get initialRoute => '/';
@@ -15,6 +17,7 @@ class SettingsRoutes implements AppRoutes{
   Map<String, WidgetBuilder> getRoutes(BuildContext context, {Function(int)? onTabChange}) {
     return {
       '/': (context) => SettingsPage(),
+      '/advanced' : (context) => AdvancedSettings(),
     };
   }
 }
