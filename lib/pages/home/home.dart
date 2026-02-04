@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:httapp/routes/home_routes.dart';
 
 class HomePage extends StatelessWidget {
@@ -16,7 +15,9 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    return Scaffold(appBar: AppBar(
+    return Scaffold(
+      appBar: AppBar(
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
         backgroundColor: theme.colorScheme.primary,
         title: Text(title, style: TextStyle(color: Theme.of(context).colorScheme.onPrimary)),
       ),
@@ -34,36 +35,43 @@ class HomePage extends StatelessWidget {
               ),
             ),
 
-            CupertinoButton.filled(
-              borderRadius: BorderRadius.circular(5.0),
+            ElevatedButton(
               onPressed: () {
                 Navigator.pushNamed(context, HomeRoutes.about);
               },
-              child: Text('About Us'),
+              child: _buttonContainer('About Us'),
             ),
 
             Padding(padding: EdgeInsets.symmetric(vertical: 16.0)),
 
-            CupertinoButton.filled(
-              borderRadius: BorderRadius.circular(5.0),
+            ElevatedButton(
               onPressed: () {
                 Navigator.pushNamed(context, HomeRoutes.visitorInfo);
               },
-              child: const Text('Visitor Info'),
+              child: _buttonContainer('Visitor Info'),
             ),
 
             Padding(padding: EdgeInsets.symmetric(vertical: 16.0)),
 
-            CupertinoButton.filled(
-              borderRadius: BorderRadius.circular(5.0),
+            ElevatedButton(
               onPressed: () {
                 onTabChange?.call(1, routeName: HomeRoutes.treeList);
               },
-              child: const Text('Featured Trees'),
+              child: _buttonContainer('Featured Trees'),
             ),
           ],
         ),
       ),
     );
   }
+}
+
+Widget _buttonContainer(String text) {
+  return Container(
+    width: 96.0,
+    //height: 24.0,
+    child: Column(
+      children: [Text(text),],
+    )
+  );
 }

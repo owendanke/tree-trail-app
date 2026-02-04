@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
 
 import 'package:httapp/routes/explore_routes.dart';
 
@@ -17,6 +16,7 @@ class _ExplorePageState extends State<ExplorePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
         backgroundColor: Theme.of(context).colorScheme.primary,
         title: Text(widget.title, style: TextStyle(color: Theme.of(context).colorScheme.onPrimary)),
       ),
@@ -24,16 +24,25 @@ class _ExplorePageState extends State<ExplorePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            CupertinoButton.filled(
-              borderRadius: BorderRadius.circular(5.0),
+            ElevatedButton(
               onPressed: () {
                 Navigator.pushNamed(context, ExploreRoutes.treeList);
               },
-              child: const Text('Featured Trees'),
+              child: _buttonContainer('Featured Trees'),
             ),
           ],
         ),
       ),
     );
   }
+}
+
+Widget _buttonContainer(String text) {
+  return Container(
+    width: 96.0,
+    //height: 24.0,
+    child: Column(
+      children: [Text(text),],
+    )
+  );
 }

@@ -217,6 +217,7 @@ class _TreeTemplatePage extends State<TreeTemplatePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
         backgroundColor: Theme.of(context).colorScheme.primary,
         title: Text(widget.name, style: TextStyle(color: Theme.of(context).colorScheme.onPrimary)),
       ),

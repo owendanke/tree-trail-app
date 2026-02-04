@@ -9,6 +9,8 @@ class AdvancedSettings extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
+        backgroundColor: Theme.of(context).colorScheme.primary, 
         title: Text(title),
       ),
       body: ListView(
@@ -23,7 +25,7 @@ class AdvancedSettings extends StatelessWidget {
   }
 }
 
-abstract class LocalFileSection extends StatefulWidget {
+class LocalFileSection extends StatefulWidget {
   const LocalFileSection({super.key});
 
   @override
@@ -41,7 +43,42 @@ class _LocalFileSection extends State<LocalFileSection> {
         ListTile(
           title: Text('Reload Local Files', style: Theme.of(context).textTheme.titleMedium),
           subtitle: Text('Permanently deletes asset data the app needs to function and downloads new copies.', style: TextStyle(fontSize: 12)),
-          onTap: () {},
+          onTap: () {
+            // Open dialog asking to confirm action
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: const Text('Confirm Choice'),
+                  content: const Text(
+                    '''
+This will permanently delete local asset data and download new copies.
+If the app is unable to make downloads, functionality will be extremely limited.
+                    ''',
+                  ),
+                  actions: [
+                    FilledButton.tonal(
+                      onPressed: () {
+                        Navigator.of(context).pop(); // close dialog
+                      },
+                      child: const Text('Cancel'),
+                      style: FilledButton.styleFrom(
+                        foregroundColor: Theme.of(context).colorScheme.onError,
+                        backgroundColor: Theme.of(context).colorScheme.error,
+                        )
+                    ),
+                    FilledButton(
+                      onPressed: () {
+                        // TODO: perform reload logic
+                        Navigator.of(context).pop(); // close dialog
+                      },
+                      child: const Text('Confirm'),
+                    ),
+                  ],
+                );
+              }
+            );
+          },
         )
       ],
     );
