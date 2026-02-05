@@ -2,26 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:httapp/main.dart';
 import 'package:httapp/pages/explore/tree_template.dart';
 
-/*
-class TreeEntry extends StatelessWidget {
-  const TreeEntry({super.key, required this.name});
-
-  final String name;
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-            leading: SizedBox(width: 128, height: 128, child: ColoredBox(color: Colors.grey)), // Image placeholder
-            title: Text(name),
-            minTileHeight: 256,
-            onTap: () {
-              // Navigate using named route
-            }
-          );
-  }
-}
-*/
-
 class TreeListPage extends StatefulWidget {
   TreeListPage({
     super.key,

@@ -67,9 +67,8 @@ class HomePage extends StatelessWidget {
 }
 
 Widget _buttonContainer(String text) {
-  return Container(
-    width: 96.0,
-    //height: 24.0,
+  return SizedBox(
+    width: 128.0,
     child: Column(
       children: [Text(text),],
     )

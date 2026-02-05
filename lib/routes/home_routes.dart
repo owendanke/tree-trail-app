@@ -13,7 +13,7 @@ class HomeRoutes implements AppRoutes{
   static const String treeList = '/tree_list';
   static const String about = '/about';
   static const String visitorInfo = '/visitor_info';
-  Function(int, {String? routeName})? onTabChange;
+  Function(int, {String? routeName})? _onTabChange;
 
   @override
   String get initialRoute => '/';
@@ -22,7 +22,7 @@ class HomeRoutes implements AppRoutes{
   Map<String, WidgetBuilder> getRoutes(BuildContext context, {void Function(int newIndex, {String? routeName})? onTabChange}) {
     return {
       '/': (context) => HomePage(onTabChange: onTabChange),
-      '/tree_list': (context) => TreeListPage(onTabChange: onTabChange),
+      '/tree_list': (context) => TreeListPage(onTabChange: _onTabChange),
       '/about' : (context) => AboutPage(),
       '/visitor_info' : (context) => VisitorInfoPage(),
     };
