@@ -26,7 +26,7 @@ class _MainNavigationState extends State<MainNavigation> {
   final List<AppRoutes> _routeModules = [
     HomeRoutes(),
     ExploreRoutes(externalRoutes: treePageData),
-    MapRoutes(),
+    MapRoutes(externalRoutes: treePageData),
     SettingsRoutes(),
   ];
   

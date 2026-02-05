@@ -22,9 +22,12 @@ class MapPage extends StatefulWidget {
 
   static MapController mapController = MapController();
   
+  final void Function(int, {String? routeName})? onTabChange;
+
   MapPage({
     super.key, 
-    required this.poiList
+    required this.poiList,
+    required this.onTabChange,
     });
 
   @override
@@ -146,7 +149,7 @@ class _MapPageState extends State<MapPage> {
 
               // Marker layer for trees, user location, etc.
               MarkerLayer(markers: [
-                ...widget.poiList.map((tree) {return PoiNode.build(context, tree);}),
+                ...widget.poiList.map((tree) {return PoiNode.build(context, tree, widget.onTabChange);}),
                 ...UserLocationMarker.build(_userLocation),
                 ]),
 

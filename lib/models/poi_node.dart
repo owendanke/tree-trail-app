@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:httapp/models/poi.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:httapp/routes/map_routes.dart';
 
 class PoiNode {
 
-  static void _showDetails(BuildContext context, PointOfInterest poi) {
+  static void _showDetails(BuildContext context, PointOfInterest poi, Function(int, {String? routeName})? onTabChange) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -26,17 +27,6 @@ class PoiNode {
                   ),
                 ),
               ),
-
-              // Description
-              /*
-              Padding(
-                padding: EdgeInsetsGeometry.only(bottom: 8),
-                child: Text(
-                  poi.description,
-                  style: const TextStyle(fontSize: 16),
-                ),
-              ),
-              */
               
               // layout tree info and close buttons in a row
               Row(
@@ -45,7 +35,9 @@ class PoiNode {
                     child: Padding(
                       padding: EdgeInsetsGeometry.symmetric(horizontal: 16),
                       child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        onTabChange?.call(1, routeName: '/treePage/${poi.id}');
+                      },
                       child: const Text('Learn More'),
                       ),
                     )
@@ -70,13 +62,13 @@ class PoiNode {
     );
   }
 
-  static Marker build(BuildContext context, PointOfInterest poi) {
+  static Marker build(BuildContext context, PointOfInterest poi, Function(int, {String? routeName})? onTabChange) {
     return Marker(
         point: poi.location,
         width: 40,
         height: 40,
         child: GestureDetector(
-          onTap:() => _showDetails(context, poi),
+          onTap:() => _showDetails(context, poi, onTabChange),
           child: Container(
             decoration: BoxDecoration(
             color: Colors.orange,
