@@ -162,7 +162,7 @@ class _MapPageState extends State<MapPage> {
 
           // Map control buttons
           // Show hide specific layers
-          _layerButton(), 
+          _layerButton(context), 
           // When map is rotated, show north and return to north facing if pressed
           MapCompass(mapController: MapPage.mapController),
         ],
@@ -171,7 +171,7 @@ class _MapPageState extends State<MapPage> {
   }
 }
 
-Widget _layerButton() {
+Widget _layerButton(BuildContext context) {
   return Positioned(
     top: 16,
     right: 16,
@@ -180,6 +180,35 @@ Widget _layerButton() {
       backgroundColor: Colors.white,
       onPressed: () {
         // Hide or show a modal that allows modifying layers on the map
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return Dialog(
+              child: SizedBox(
+                width: (MediaQuery.of(context).size.width) / 2,
+                height: (MediaQuery.of(context).size.height) / 2,
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: EdgeInsetsGeometry.symmetric(horizontal: 8, vertical: 16),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.layers_sharp),
+                          Text('Modify Visible Layers'),
+                          IconButton(
+                            onPressed: () => Navigator.pop(context),
+                            icon: const Icon(Icons.cancel_outlined),
+                            )
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            );
+          }
+        );
       },
       child: const Icon(Icons.layers_outlined),
     )
