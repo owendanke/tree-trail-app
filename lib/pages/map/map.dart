@@ -42,32 +42,8 @@ class _MapPageState extends State<MapPage> {
 
   late Marker _userLocationMarker;
 
-  List<PointOfInterest> debugPOIs = [
-    PointOfInterest(
-      id: '1-26',
-      name: 'Tree 1',
-      location: LatLng(41.947833, -72.832095),
-    ),
-    PointOfInterest(
-      id: '2-26',
-      name: 'Tree 2',
-      location: LatLng(41.944949, -72.831543),
-    ),
-  ];
-
-  /*
-  Future<void> _loadVersionNumber() async {
-    try {
-      packageInfo = await PackageInfo.fromPlatform();
-      setState(() {
-        _packageName = packageInfo.version;
-      });
-    } catch (e) {
-      setState(() {
-        _packageName = '';
-      });
-    }
-    */
+  /// Keeps track of the selected PoiNode
+  PointOfInterest? _selectedPoi;
 
   Future<void> _getPositionStream() async {
     try {
@@ -76,13 +52,11 @@ class _MapPageState extends State<MapPage> {
       print('An exception was thrown while initalizing _positionStream:');
       print(e);
     }
-    
   }
 
   @override
   void initState() {
     super.initState();
-    //determinePosition();
 
     _userLocationMarker = Marker(point: _userLocation, 
       child: Icon(Icons.gps_fixed, color: Colors.blue,),
@@ -91,17 +65,15 @@ class _MapPageState extends State<MapPage> {
     );
   
     _getPositionStream().then((_) {
-    _positionStream.listen((position) {
-      setState(() {
-        _userLocation = LatLng(
-          position.latitude,
-          position.longitude,
-        );
+      _positionStream.listen((position) {
+        setState(() {
+          _userLocation = LatLng(
+            position.latitude,
+            position.longitude,
+          );
+        });
       });
     });
-  });
-
-    
   }
 
   @override
@@ -149,7 +121,25 @@ class _MapPageState extends State<MapPage> {
 
               // Marker layer for trees, user location, etc.
               MarkerLayer(markers: [
-                ...widget.poiList.map((tree) {return PoiNode.build(context, tree, widget.onTabChange);}),
+                //
+                ...widget.poiList.map((poi) {
+                  return PoiNode.build(
+                    context, 
+                    poi,
+                    widget.onTabChange,
+                    isSelected: (_selectedPoi == poi),
+                    onSelect: () {
+                      setState(() {
+                        _selectedPoi = poi;
+                        debugPrint('[MapPage] selected poi ${poi.name}');
+                      });},
+                    onDeselect: () {
+                      setState(() {
+                        _selectedPoi = null;
+                        debugPrint('[MapPage] deselected poi ${poi.name}');
+                      });},
+                  );}
+                ),
                 ...UserLocationMarker.build(_userLocation),
                 ]),
 
@@ -198,7 +188,7 @@ Widget _layerButton(BuildContext context) {
                           Text('Modify Visible Layers'),
                           IconButton(
                             onPressed: () => Navigator.pop(context),
-                            icon: const Icon(Icons.cancel_outlined),
+                            icon: const Icon(Icons.close),
                             )
                         ],
                       ),
@@ -220,7 +210,6 @@ class UserLocationMarker {
     if (location == null) return const [];
 
     return [
-      
       Marker(
         point: location,
         width: 40,

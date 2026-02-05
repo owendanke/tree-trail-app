@@ -1,4 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:httapp/models/local_path.dart';
+import 'package:httapp/services/local_file_handling.dart';
 
 class AdvancedSettings extends StatelessWidget {
   final String title = 'Advanced Settings';
@@ -33,9 +37,20 @@ class LocalFileSection extends StatefulWidget {
 }
 
 class _LocalFileSection extends State<LocalFileSection> {
+  late String _localPath;
+  late String _localDescPath;
+  late String _localImagePath;
   
+  void _setPaths() async {
+    _localPath = await localPath;
+    _localDescPath = await localDescPath;
+    _localImagePath = await localImagePath;
+  }
+
   @override
   Widget build(BuildContext context) {
+    _setPaths();
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -58,18 +73,30 @@ If the app is unable to make downloads, functionality will be extremely limited.
                   ),
                   actions: [
                     FilledButton.tonal(
-                      onPressed: () {
-                        Navigator.of(context).pop(); // close dialog
-                      },
-                      child: const Text('Cancel'),
                       style: FilledButton.styleFrom(
                         foregroundColor: Theme.of(context).colorScheme.onError,
                         backgroundColor: Theme.of(context).colorScheme.error,
-                        )
+                        ),
+                      onPressed: () {
+                        Navigator.of(context).pop(); // close dialog
+                      },
+                      child: const Text('Cancel')
                     ),
                     FilledButton(
                       onPressed: () {
-                        // TODO: perform reload logic
+                        // Delete all local files
+
+                        // Delete manifest file
+                        LocalFileHandler.deleteFileSync('tree_manifest.yaml', _localPath);
+
+                        // Delete image files
+                        LocalFileHandler.deleteAllFilesSync(_localImagePath);
+
+                        // Delete description files
+                        LocalFileHandler.deleteAllFilesSync(_localDescPath);
+
+                        // Start downloading files again
+
                         Navigator.of(context).pop(); // close dialog
                       },
                       child: const Text('Confirm'),
