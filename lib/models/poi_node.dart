@@ -118,7 +118,7 @@ class PoiNode {
                             // close button
                             Expanded(
                               child: Padding(
-                                padding: EdgeInsetsGeometry.symmetric(horizontal: 16),
+                                padding: EdgeInsetsGeometry.directional(start: 8, end: 8, bottom: 16),
                                 child: ElevatedButton(
                                 onPressed: () {
                                   // deselct marker to reset size
