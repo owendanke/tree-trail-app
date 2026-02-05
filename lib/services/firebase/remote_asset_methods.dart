@@ -25,8 +25,9 @@ class RemoteAssets {
   /// On success: returns yaml manifest as string
   ///
   /// On exception: returns empty string
-  Future<String> loadManifest(String localFileName, remoteFileName) async {
+  Future<String> loadManifest(String localFileName) async {
     var manifestPath = localPath;
+    var remoteFileName = '$remoteTextPath/tree_manifest.yaml';
 
     try {
       var localManifestFile = await LocalFileHandler.localFile(manifestPath, localFileName);
@@ -68,23 +69,24 @@ class RemoteAssets {
       // iterate through markdown file extension possibilites
       for (final ext in extensions) {
         // localFileName is the full file, example: '88-22_description.md'
-        final localFileName = '$descFileTitle$ext';
-        final file = await LocalFileHandler.localFile(localDescPath, localFileName);
+        var localFileName = '$descFileTitle$ext';
+        var localDescFile = await LocalFileHandler.localFile(localDescPath, localFileName);
         
         // check if local file with extension exists
-        if (await file.exists()) {
+        if (localDescFile.existsSync()) {
           // TODO: make this check for file changes too (metadata, checksum, etc.)
           // return the contents of the file as a string
           return await LocalFileHandler.readFile(await localDescPath, localFileName);
         }
         // else: continue search and either find it and return or come up empty and move on
       }
+
       // incremental search fails to find local file
       // download file, but we don't know the extension
       // again we iterate through markdown file extension possibilites
       for (final ext in extensions) {
-        final localFileName = '$descFileTitle$ext';
-        final remoteFileName = 'descriptions/$localFileName';
+        var localFileName = '$descFileTitle$ext';
+        var remoteFileName = '$remoteDescriptionPath/$localFileName';
 
         if (await remoteFileHandler.remoteFileExists(remoteFileName)) {
 
@@ -114,19 +116,19 @@ class RemoteAssets {
 
   Future<List<File>> treeImgFileList(String id, ListResult resultList) async {
     // images have the format '{tree-id}_{number}.jpg'
-    //RegExp filePattern = RegExp(r'^\d{2,3}-\d{2}_\d+\.jpg$');
+    // tree-id format:' {incremental count starting with 1}-{year planted}'
+    RegExp filePattern = RegExp(r'^\d+-\d{2}_\d+\.jpg$');
 
     List<File> imageFileList = List.empty(growable: true);  // list to return
 
-    print('[treeImgFileList $id] resultList length: ${imageFileList.length}');
+    print('[treeImgFileList $id] resultList length: ${resultList.items.length}');
     try {
       for (var item in resultList.items) {
-        final fileName = item.name;
-        final remoteFileName = '$remoteImagePath$fileName';
+        var fileName = item.name;
+        var remoteFileName = '$remoteImagePath/$fileName';
 
-        //if (fileName.startsWith('${id}_') && filePattern.hasMatch(fileName)) { 
         if (fileName.startsWith('${id}_')) {
-          // Check if file matches pattern and starts with the correct tree ID
+          // Check if file with the correct tree ID exists in resultList
           print('[treeImgFileList $id] Matching file: $fileName');
 
           // create file object
@@ -134,7 +136,7 @@ class RemoteAssets {
           print('[treeImgFileList $id] created local file reference: ${localFile.path}');
 
           //check if file exists locally or needs to be downloaded
-          if (await localFile.exists()) {
+          if (localFile.existsSync()) {
             // no need to download, just add to the list and return at the end
             print('[treeImgFileList $id] adding local file to list: $fileName');
             imageFileList.add(localFile);
@@ -142,22 +144,21 @@ class RemoteAssets {
           else { // file is not on device and needs to be downloaded
             if (await remoteFileHandler.remoteFileExists(remoteFileName)) {
               // download image to the local image directory
-              print('[treeImgFileList $id] downloading file: remoteFileName');
+              print('[treeImgFileList $id] downloading file: $remoteFileName');
               await remoteFileHandler.downloadFile(await localImagePath, fileName, instance, remoteFileName, downloadingFilesSet);
       
               // append a File object that points to the newly downloaded file
-              print('[treeImgFileList $id] adding downloaded file to list: remoteFileName');
+              print('[treeImgFileList $id] adding downloaded file to list: $remoteFileName');
               imageFileList.add(localFile);
             }
             else {
-              print('[treeImgFileList $id] remote file does not exist: remoteFileName');
+              print('[treeImgFileList $id] remote file does not exist: $remoteFileName');
             }
           }
         }
-        else {
-          print('[treeImgFileList $id] No matching files');
-        }
       } // for
+
+      print('[treeImgFileList $id] number of images found: ${imageFileList.length}');
 
       return imageFileList;
 
@@ -175,7 +176,7 @@ class RemoteAssets {
 
   Future<File> thumbnailFile(String id) async {
     final fileName = '${id}_thm.jpg';    // thumbnails have the format '{tree-id}_thm.jpg'
-    final remoteFileName = '$remoteThumbnailPath$fileName';  // directory to the remote file
+    final remoteFileName = '$remoteThumbnailPath/$fileName';  // directory to the remote file
 
     File thmFile = await LocalFileHandler.localFile(localThumbnailPath, fileName);    // File object to return
 

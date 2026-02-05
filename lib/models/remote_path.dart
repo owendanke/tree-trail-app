@@ -1,12 +1,13 @@
 /*
   Definitions for remote paths
   Must match in Storage
+  No trailing slash as to match local_path.dart
 */
 
-final _remoteTextPath = 'text/';
-final _remoteDescriptionPath = 'description/';
-final _remoteImagePath = 'images/';
-final _remoteThumbnailPath = 'images/thumbnails/';
+final _remoteTextPath = 'text';
+final _remoteDescriptionPath = 'descriptions';
+final _remoteImagePath = 'images';
+final _remoteThumbnailPath = '$_remoteImagePath/thumbnails';
 
 
 String get remoteTextPath {

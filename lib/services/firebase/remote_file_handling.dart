@@ -16,9 +16,13 @@ class remoteFileHandler {
   /// 
   /// [instance], FirebaseStorage instance to use for remote file operations
   static Future<ListResult> listRemoteImageFiles(FirebaseStorage instance) async {
+    ListResult result;
     try {
       print('[listRemoteImgFiles] Calling listAll()');
-      return await instance.ref(remoteImagePath).listAll();
+      result = await instance.ref(remoteImagePath).listAll();
+      print('[listRemoteImageFiles] result:');
+      print(result);
+      return result;
     } catch (e) {
       print('[listRemoteImgFiles] $e');
       rethrow;

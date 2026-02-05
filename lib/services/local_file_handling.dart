@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
+
 /*
   Handle local file I/O
 */
@@ -22,22 +24,74 @@ class LocalFileHandler {
     try {
       //final file = await localFile(localFileName);
       File fileToRead = File('$pathToLocalFile/$localFileName');
-      print('[readFile] File path: ${fileToRead.path}');
+      debugPrint('[readFile] File path: ${fileToRead.path}');
       
       // Check if file exists
       if (!await fileToRead.exists()) {
-        print('[readFile] File does not exist: ${fileToRead.path}');
+        debugPrint('[readFile] File does not exist: ${fileToRead.path}');
         throw Exception('[readFile] File does not exist');
       }
       
-      print('[readFile] File exists, reading');
+      debugPrint('[readFile] File exists, reading');
       //final contents = await fileToRead.readAsString();
-      //print('File read successfully, length: ${contents.length}');
+      //debugPrint('File read successfully, length: ${contents.length}');
       return await fileToRead.readAsString();
     } catch (e) {
-      print('[readFile] Unexpected exception: $e');
+      debugPrint('[readFile] Unexpected exception: $e');
       rethrow;
     }
+  }
+
+  /// Delete a single file, synchonously.
+  /// 
+  /// [fileName], the name of the file to be deleted (only file name, no path).
+  /// 
+  /// [directoryPath], directory where the file is located (only path, no file name).
+  static bool deleteFileSync(String fileName, String directoryPath) {
+    final fileToDelete = File('$directoryPath/$fileName');
+    
+    if (!Directory(directoryPath).existsSync()) {
+      throw Exception('[deleteAllFilesSync] Directory not found: $directoryPath');
+    }
+    
+    if (!fileToDelete.existsSync()) {
+      debugPrint('[deleteAllFilesSync] $directoryPath/$fileName does not exist, exiting');
+      return true;
+    }
+
+    try {
+      fileToDelete.deleteSync();
+    } catch (e) {
+      debugPrint('[deleteAllFilesSync]Error deleting ${fileToDelete.path}: $e');
+    }
+    
+    return true;
+  }
+
+  /// Delete multiple files at once, synchonously.
+  /// 
+  /// [directoryPath], directory where the file is located (only path, no file names).
+  static int deleteAllFilesSync(String directoryPath, {bool recursive = false}) {
+    final directory = Directory(directoryPath);
+    
+    if (!directory.existsSync()) {
+      throw Exception('[deleteAllFilesSync] Directory not found: $directoryPath');
+    }
+    
+    int deletedCount = 0;
+    
+    for (final entity in directory.listSync(recursive: recursive, followLinks: false)) {
+      if (entity is File) {
+        try {
+          entity.deleteSync();
+          deletedCount++;
+        } catch (e) {
+          debugPrint('[deleteAllFilesSync]Error deleting ${entity.path}: $e');
+        }
+      }
+    }
+    
+    return deletedCount;
   }
 }
 

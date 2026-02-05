@@ -93,7 +93,7 @@ Future<void> main() async {
   */
   try {
     // read tree_manifest.yaml
-    yamlString = await assetHandler.loadManifest(treeManifestFile, remoteTreeManifest);
+    yamlString = await assetHandler.loadManifest(treeManifestFile);
 
     // read the YAML Stream
     var treeDoc = loadYamlStream(yamlString);
@@ -210,8 +210,11 @@ class MainApp extends StatelessWidget {
             foregroundColor: MaterialTheme.lightScheme().onPrimary,
             // color of the button (green)
             backgroundColor: MaterialTheme.lightScheme().primary,
+            surfaceTintColor: Colors.white,
             // make the buttons 'larger', increase density
             visualDensity: VisualDensity(vertical: 3, horizontal: 2),
+            textStyle: Theme.of(context).textTheme.bodyLarge,
+            elevation: 4,
           ),
         ),
         filledButtonTheme: FilledButtonThemeData(
