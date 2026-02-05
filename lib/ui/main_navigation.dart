@@ -58,21 +58,11 @@ class _MainNavigationState extends State<MainNavigation> {
           children: List.generate(_routeModules.length, (index) => _buildNavigator(index, _routeModules[index]),
           ),
         ),
+
         // NavigationBarTheme to set custom colors on the nav bar
         bottomNavigationBar: NavigationBarTheme(
-          // create a NavigationBarThemeData and set with colors from the current theme
-          data: NavigationBarThemeData(
-            backgroundColor: Theme.of(context).colorScheme.primary,
-            indicatorColor: Theme.of(context).colorScheme.secondary,
-            labelTextStyle: WidgetStateProperty.resolveWith<TextStyle>(
-                (Set<WidgetState> states) => TextStyle(color: Theme.of(context).colorScheme.onPrimary),
-              ),
-            iconTheme: WidgetStateProperty.resolveWith<IconThemeData>(
-                (Set<WidgetState> states) => states.contains(WidgetState.selected)
-                ? IconThemeData(color: Theme.of(context).colorScheme.secondaryContainer)
-                : IconThemeData(color: Theme.of(context).colorScheme.onPrimary),
-              ),
-          ),
+          // set theme data current theme from context
+          data: Theme.of(context).navigationBarTheme,
           child: NavigationBar(
             selectedIndex: _currentIndex,
             onDestinationSelected: 
@@ -124,10 +114,15 @@ class _MainNavigationState extends State<MainNavigation> {
       _currentIndex = newIndex;
     });
     // Navigate to specific route after switching tabs
+    /*
     if (routeName != null) {
       Future.delayed(Duration(milliseconds: 100), () {
         _navigatorKeys[newIndex].currentState?.pushNamed(routeName);
       });
+    }
+    */
+    if (routeName != null) {
+      _navigatorKeys[newIndex].currentState?.pushNamed(routeName);
     }
   }
 

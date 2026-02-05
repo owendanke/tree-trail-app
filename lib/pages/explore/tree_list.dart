@@ -34,7 +34,8 @@ class _TreeListPageState extends State<TreeListPage> {
                   TreeTemplateItem(
                     id: id,
                     name: treePageData[id]!['name']!,
-                    imageFile: (treePageData[id]!['thmFile']!.existsSync()) ? treePageData[id]!['thmFile'] : null,
+                    //imageFile: (treePageData[id]!['thmFile']!.existsSync()) ? treePageData[id]!['thmFile'] : null,
+                    imageFile: treePageData[id]!['thumbnail'],
                   ),
               ]
             ),

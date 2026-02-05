@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 
@@ -16,7 +17,8 @@ class TreeTemplateItem extends StatelessWidget {
 
   final String id;
   final String name;
-  final File? imageFile;
+  //final File? imageFile;
+  final Uint8List? imageFile;
 
   @override
   Widget build(BuildContext context) {
@@ -55,11 +57,20 @@ class TreeTemplateItem extends StatelessWidget {
   */
 
   Widget _buildBackground(BuildContext context) {
+    /*
     if (imageFile == null) {
       return Positioned.fill(child: SizedBox(width: 50, height: 100, child: ColoredBox(color: Colors.grey)));
     }
     else {
-      return Image.file(imageFile!, fit: BoxFit.cover);
+      //return Image.file(imageFile!, fit: BoxFit.cover);
+      return Image.memory(imageFile!, fit: BoxFit.cover);
+    }
+    */
+    if (imageFile == null) {
+      return Positioned.fill(child: SizedBox(width: 50, height: 100, child: ColoredBox(color: Colors.grey)));
+    }
+    else {
+      return Image.memory(imageFile!, fit: BoxFit.cover);
     }
   }
 

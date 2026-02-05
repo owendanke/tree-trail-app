@@ -3,10 +3,12 @@
 */
 
 // dart
+import 'dart:collection';
 import 'dart:io';
 import 'dart:core';
 
 // httapp
+import 'package:flutter/foundation.dart';
 import 'package:httapp/models/local_path.dart';
 import 'package:httapp/models/remote_path.dart';
 import 'package:httapp/services/firebase/remote_file_handling.dart';
@@ -34,21 +36,21 @@ class RemoteAssets {
 
       // check file exists locally
       if (await localManifestFile.exists()) {
-        print('[loadManifest] File exists locally, reading');
+        debugPrint('[loadManifest] File exists locally, reading');
         return await LocalFileHandler.readFile(await manifestPath, localFileName);
       }
       else {
-        print('[loadManifest] File does not exists locally, downloading');
+        debugPrint('[loadManifest] File does not exists locally, downloading');
         await remoteFileHandler.downloadFile(await manifestPath, localFileName, instance, remoteFileName, downloadingFilesSet);
 
-        print('[loadManifest] File downloaded, reading');
+        debugPrint('[loadManifest] File downloaded, reading');
         return await LocalFileHandler.readFile(await manifestPath, localFileName);
       }
     } on FirebaseException catch(e) {
-      print('[loadManifest] Firebase Exception: $e');
+      debugPrint('[loadManifest] Firebase Exception: $e');
       return '';
     } catch (e) {
-      print('[loadManifest] Unexpected Exception: $e');
+      debugPrint('[loadManifest] Unexpected Exception: $e');
       return '';
     }
   }
@@ -90,7 +92,7 @@ class RemoteAssets {
 
         if (await remoteFileHandler.remoteFileExists(remoteFileName)) {
 
-          print("[treeDescription $id] downloading description");
+          debugPrint("[treeDescription $id] downloading description");
           // download the file to the appropriate location
           await remoteFileHandler.downloadFile(await localDescPath, localFileName, instance, remoteFileName, downloadingFilesSet);
           // return the contents of the file as a string
@@ -102,11 +104,11 @@ class RemoteAssets {
       throw Exception('No description exists locally or remote.');
 
     } on FirebaseException catch(e) {
-      print('[treeDescription $id] FirebaseException occured: $e');
+      debugPrint('[treeDescription $id] FirebaseException occured: $e');
       // return empty string
       return "An error occured when fetching the description.";
     } catch (e) {
-      print('[treeDescription $id] $e');
+      debugPrint('[treeDescription $id] $e');
       // return empty string
       return "An error occured when fetching the description.";
     }
@@ -115,13 +117,11 @@ class RemoteAssets {
 
 
   Future<List<File>> treeImgFileList(String id, ListResult resultList) async {
-    // images have the format '{tree-id}_{number}.jpg'
-    // tree-id format:' {incremental count starting with 1}-{year planted}'
-    RegExp filePattern = RegExp(r'^\d+-\d{2}_\d+\.jpg$');
+    // images have the format '{tree-id}_{incremental-number}.jpg'
 
     List<File> imageFileList = List.empty(growable: true);  // list to return
 
-    print('[treeImgFileList $id] resultList length: ${resultList.items.length}');
+    debugPrint('[treeImgFileList $id] resultList length: ${resultList.items.length}');
     try {
       for (var item in resultList.items) {
         var fileName = item.name;
@@ -129,74 +129,93 @@ class RemoteAssets {
 
         if (fileName.startsWith('${id}_')) {
           // Check if file with the correct tree ID exists in resultList
-          print('[treeImgFileList $id] Matching file: $fileName');
+          debugPrint('[treeImgFileList $id] Matching file: $fileName');
 
           // create file object
           final localFile = await LocalFileHandler.localFile(localImagePath, fileName);
-          print('[treeImgFileList $id] created local file reference: ${localFile.path}');
+          debugPrint('[treeImgFileList $id] created local file reference: ${localFile.path}');
 
           //check if file exists locally or needs to be downloaded
           if (localFile.existsSync()) {
             // no need to download, just add to the list and return at the end
-            print('[treeImgFileList $id] adding local file to list: $fileName');
+            debugPrint('[treeImgFileList $id] adding local file to list: $fileName');
             imageFileList.add(localFile);
           }
           else { // file is not on device and needs to be downloaded
             if (await remoteFileHandler.remoteFileExists(remoteFileName)) {
               // download image to the local image directory
-              print('[treeImgFileList $id] downloading file: $remoteFileName');
+              debugPrint('[treeImgFileList $id] downloading file: $remoteFileName');
               await remoteFileHandler.downloadFile(await localImagePath, fileName, instance, remoteFileName, downloadingFilesSet);
       
               // append a File object that points to the newly downloaded file
-              print('[treeImgFileList $id] adding downloaded file to list: $remoteFileName');
+              debugPrint('[treeImgFileList $id] adding downloaded file to list: $remoteFileName');
               imageFileList.add(localFile);
             }
             else {
-              print('[treeImgFileList $id] remote file does not exist: $remoteFileName');
+              debugPrint('[treeImgFileList $id] remote file does not exist: $remoteFileName');
             }
           }
         }
       } // for
 
-      print('[treeImgFileList $id] number of images found: ${imageFileList.length}');
+      debugPrint('[treeImgFileList $id] number of images found: ${imageFileList.length}');
 
       return imageFileList;
 
     } on FirebaseException catch(e) {
-      print('[treeImgFileList $id] FirebaseException occured: $e');
+      debugPrint('[treeImgFileList $id] FirebaseException occured: $e');
       // return empty list
       return imageFileList;
     } catch (e) {
-      print('[treeImgFileList $id] $e');
+      debugPrint('[treeImgFileList $id] $e');
       // return empty list
       return imageFileList;
     }
   }
 
+  /// Loads the thumbnail image required for TreeTemplateItem
+  /// 
+  /// [id] the tree-id needed for finding correct file
+  /// 
+  /// This method returns `Future<Uint8List>` if the file is successfully aquired,
+  /// otherwise `null` is returned.
+  Future<Uint8List?> loadThumbnailFile(String id) async {
+    // thumbnails have the format '{tree-id}_thm.jpg'
+    final fileName = '${id}_thm.jpg';
 
-  Future<File> thumbnailFile(String id) async {
-    final fileName = '${id}_thm.jpg';    // thumbnails have the format '{tree-id}_thm.jpg'
-    final remoteFileName = '$remoteThumbnailPath/$fileName';  // directory to the remote file
+    // directory to the remote file
+    final remoteFileName = '$remoteThumbnailPath/$fileName';
 
-    File thmFile = await LocalFileHandler.localFile(localThumbnailPath, fileName);    // File object to return
+    // local thumbnail file
+    File thmFile = await LocalFileHandler.localFile(localThumbnailPath, fileName);
 
     try {
-      
         // check if file exists locally or needs to be downloaded
         if (thmFile.existsSync()) {
-          // no need to download, just return file
-          print('[thmFile $id] Returning matching file: ${thmFile.path}');
-          return thmFile;
+          // local file exists
+          debugPrint('[loadThumbnailFile $id] Local file exists: \'${thmFile.path}\'.');
+
+          debugPrint('[loadThumbnailFile $id] Reading entire file as list of bytes.');
+
+          // read and return the file
+          return thmFile.readAsBytes();
         }
         else { 
           // file is not on device and needs to be downloaded
+          debugPrint('[loadThumbnailFile $id] Local file does not exist, attempting download.');
+
           if (await remoteFileHandler.remoteFileExists(remoteFileName)){
-            print('[thmFile $id] downloading file: $remoteFileName');
+            // the thumbnail file exists on the server
+            debugPrint('[loadThumbnailFile $id] Downloading file: \'$remoteFileName\'.');
+
             // download thumbnail to the local directory
+
             await remoteFileHandler.downloadFile(await localThumbnailPath, fileName, instance, remoteFileName, downloadingFilesSet);
-            // return file
-            print('[thmFile $id] Returning downloaded file: ${thmFile.path}');
-            return thmFile;
+
+            // read and return the file
+            debugPrint('[loadThumbnailFile $id] Reading entire file as list of bytes.');
+            
+            return thmFile.readAsBytes();
           }
           else {
             throw Exception('Remote file does not exist');
@@ -204,13 +223,15 @@ class RemoteAssets {
         }
 
     } on FirebaseException catch(e) {
-      print('[thmFile $id] FirebaseException occured: $e');
+      debugPrint('[loadThumbnailFile $id] FirebaseException occured: $e');
+
       // return empty list
-      return thmFile;
+      return null;
     } catch (e) {
-      print('[thmFile $id] $e');
+      debugPrint('[loadThumbnailFile $id] An exception occurred: $e');
+      
       // return empty list
-      return thmFile;
+      return null;
     }
   }
 }

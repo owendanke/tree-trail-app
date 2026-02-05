@@ -119,14 +119,19 @@ Future<void> main() async {
     for (var id in treeIdMap.keys) {
       // retrieve the description, images, and thumbnails
       var descriptionString = await assetHandler.treeDescription(id);   // description is pulled from internet here
-      File thmFile = await assetHandler.thumbnailFile(id);   // thumbnail is pulled from internet here
+
+      // Load the thumbnail either from a local file or downloaded from the server
+      // Stored in memory as a `Uint8List` so `Image.memory()` may be used instead of `Image.file()`.
+      // Results in more memory usage, but much better performance because the app doesn't wait for slow disk read.
+      Uint8List? thmFileBytes = await assetHandler.loadThumbnailFile(id);
+
       List<File> imageFileList = await assetHandler.treeImgFileList(id, imageListResult);   // image is pulled from internet here
       
 
       print('[main][treePageData $id] imageFileList: $imageFileList');
       
       // add the matching remote data to the 
-      treePageData[id] = {'id': id, 'name': treeIdMap[id], 'body': descriptionString, 'imageFileList': imageFileList, 'thmFile': thmFile};
+      treePageData[id] = {'id': id, 'name': treeIdMap[id], 'body': descriptionString, 'imageFileList': imageFileList, 'thumbnail': thmFileBytes};
     }
   }
   catch(e) {
@@ -194,35 +199,49 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ColorScheme colorScheme = MaterialTheme.lightScheme();
+    final TextTheme textTheme = GoogleFonts.latoTextTheme();
     return MaterialApp(
       title: 'Holcomb Tree Trail',
 
       // create custom theme here
       theme: ThemeData(
         // use lightScheme from theme.dart
-        colorScheme: MaterialTheme.lightScheme(), 
+        colorScheme: colorScheme, 
         // use Lato from Google Fonts
-        textTheme: GoogleFonts.latoTextTheme(),
+        textTheme: textTheme,
         // create custom button themes
+        navigationBarTheme: NavigationBarThemeData(
+            backgroundColor: colorScheme.primary,
+            indicatorColor: colorScheme.secondary,
+            labelTextStyle: WidgetStateProperty.resolveWith<TextStyle>(
+                (Set<WidgetState> states) => TextStyle(color: colorScheme.onPrimary),
+              ),
+            iconTheme: WidgetStateProperty.resolveWith<IconThemeData>(
+                (Set<WidgetState> states) => states.contains(WidgetState.selected)
+                ? IconThemeData(color: colorScheme.secondaryContainer)
+                : IconThemeData(color: colorScheme.onPrimary),
+              ),
+          ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
             // text/icons displayed on the button (white)
-            foregroundColor: MaterialTheme.lightScheme().onPrimary,
+            foregroundColor: colorScheme.onPrimary,
             // color of the button (green)
-            backgroundColor: MaterialTheme.lightScheme().primary,
+            backgroundColor: colorScheme.primary,
             surfaceTintColor: Colors.white,
             // make the buttons 'larger', increase density
             visualDensity: VisualDensity(vertical: 3, horizontal: 2),
-            textStyle: Theme.of(context).textTheme.bodyLarge,
+            textStyle: textTheme.bodyLarge,
             elevation: 4,
           ),
         ),
         filledButtonTheme: FilledButtonThemeData(
           style: FilledButton.styleFrom(
             // text/icons displayed on the button (white)
-            foregroundColor: MaterialTheme.lightScheme().onPrimary,
+            foregroundColor: colorScheme.onPrimary,
             // color of the button (green)
-            backgroundColor: MaterialTheme.lightScheme().primary,
+            backgroundColor: colorScheme.primary,
           )
         ),
       ),
