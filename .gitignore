@@ -84,4 +84,4 @@ storage.rules
 .firebaserc
 
 # Assets, I don't want to track these, yet
-/lib/assets
+assets

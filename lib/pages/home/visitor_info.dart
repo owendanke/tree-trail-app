@@ -5,7 +5,8 @@ class VisitorInfoPage extends StatefulWidget {
   VisitorInfoPage({super.key});
   
   final String title = 'Visitor Info';
-  final AssetImage _assetImage = AssetImage('lib/assets/north_field_fall_vista.jpg');
+  final AssetImage _assetImage = AssetImage('assets/north_field_fall_vista.jpg');
+  final AssetImage _placeholder = AssetImage('assets/rotating_leaf.gif');
   
   @override
   State<VisitorInfoPage> createState() => _VisitorInfoPageState();
@@ -22,7 +23,7 @@ class _VisitorInfoPageState extends State<VisitorInfoPage> {
 
   Future<void> _loadTextAsset() async {
     try {
-      final text = await rootBundle.loadString('lib/assets/VISITOR_INFO.txt');
+      final text = await rootBundle.loadString('assets/VISITOR_INFO.txt');
       setState(() {
         _textContent = text;
       });
@@ -36,25 +37,28 @@ class _VisitorInfoPageState extends State<VisitorInfoPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        foregroundColor: Theme.of(context).colorScheme.onPrimary,
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        title: Text(widget.title, style: TextStyle(color: Theme.of(context).colorScheme.onPrimary)),
-        ),
+      appBar: AppBar(title: Text(widget.title),),
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // image from asset bundle with no horizontal padding
-            AspectRatio(
-              aspectRatio: (2.21 / 1), // replace
-              child: FadeInImage(
-                placeholder: AssetImage('lib/assets/rotating_leaf.gif'),
-                placeholderFit: BoxFit.scaleDown,
-                image: widget._assetImage,
-                fit: BoxFit.cover,
-              )
+            // Image from asset bundle with no horizontal padding
+            Padding(
+              padding: EdgeInsetsGeometry.all(8),
+              child: AspectRatio(
+                aspectRatio: 4/3,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(16),
+                  child: FadeInImage(
+                    placeholder: widget._placeholder,
+                    placeholderFit: BoxFit.scaleDown,
+                    image: widget._assetImage,
+                    fit: BoxFit.cover,
+                  )
+                ),
+              ),
             ),
 
+            // Text displayed under the image
             Padding(
               padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 40.0),
               child: Text(_textContent)

@@ -9,6 +9,7 @@ import 'package:flutter/foundation.dart';
 // pub.dev packages
 import 'package:yaml/yaml.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 
 // httapp
 import 'package:httapp/ui/main_navigation.dart';
@@ -52,7 +53,8 @@ Future<void> main() async {
   final remoteTreeManifest = "text/$treeManifestFile";
 
   //Bind, or create, the Widget tree for the Flutter engine.
-  WidgetsFlutterBinding.ensureInitialized();
+  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 
   // Initialize version service to get app version, name, package name, etc.
   VersionService().init();
@@ -201,6 +203,9 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     final ColorScheme colorScheme = MaterialTheme.lightScheme();
     final TextTheme textTheme = GoogleFonts.latoTextTheme();
+
+    FlutterNativeSplash.remove();
+
     return MaterialApp(
       title: 'Holcomb Tree Trail',
 
@@ -210,7 +215,12 @@ class MainApp extends StatelessWidget {
         colorScheme: colorScheme, 
         // use Lato from Google Fonts
         textTheme: textTheme,
-        // create custom button themes
+        // app bar theme
+        appBarTheme: AppBarThemeData(
+          foregroundColor: colorScheme.onPrimary,
+          backgroundColor: colorScheme.primary,
+        ),
+        // bottom navigation bar theme
         navigationBarTheme: NavigationBarThemeData(
             backgroundColor: colorScheme.primary,
             indicatorColor: colorScheme.secondary,
@@ -223,6 +233,7 @@ class MainApp extends StatelessWidget {
                 : IconThemeData(color: colorScheme.onPrimary),
               ),
           ),
+        // create custom button themes
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
             // text/icons displayed on the button (white)

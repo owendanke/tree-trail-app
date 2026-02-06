@@ -5,7 +5,8 @@ class AboutPage extends StatefulWidget {
   AboutPage({super.key});
   
   final String title = 'About';
-  final AssetImage _assetImage = AssetImage('lib/assets/HTT_farm_view.png');
+  final AssetImage _assetImage = AssetImage('assets/HTT_farm_view.png');
+  final AssetImage _placeholder = AssetImage('assets/rotating_leaf.gif');
   
   @override
   State<AboutPage> createState() => _AboutPageState();
@@ -24,7 +25,7 @@ class _AboutPageState extends State<AboutPage> {
 
   Future<void> _loadTextAsset() async {
     try {
-      final text = await rootBundle.loadString('lib/assets/ABOUT_THE_TRAIL.txt');
+      final text = await rootBundle.loadString('assets/ABOUT_THE_TRAIL.txt');
       setState(() {
         _textContent = text;
       });
@@ -38,30 +39,31 @@ class _AboutPageState extends State<AboutPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        foregroundColor: Theme.of(context).colorScheme.onPrimary,
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        title: Text(widget.title, style: TextStyle(color: Theme.of(context).colorScheme.onPrimary)),
-        ),
+      appBar: AppBar(title: Text(widget.title),),
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // image from asset bundle with no horizontal padding
-            AspectRatio(
-              aspectRatio: (2.21 / 1), // replace
-              child: FadeInImage(
-                placeholder: AssetImage('lib/assets/rotating_leaf.gif'),
-                placeholderFit: BoxFit.scaleDown,
-                image: widget._assetImage,
-                fit: BoxFit.cover,
-              )
+            // Image from asset bundle with no horizontal padding
+            Padding(
+              padding: EdgeInsetsGeometry.all(8),
+              child: AspectRatio(
+                aspectRatio: 4/3,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(16),
+                  child: FadeInImage(
+                    placeholder: widget._placeholder,
+                    placeholderFit: BoxFit.scaleDown,
+                    image: widget._assetImage,
+                    fit: BoxFit.cover,
+                  )
+                ),
+              ),
             ),
 
-            //Image.asset('lib/assets/HTT_farm_view.png', fit: BoxFit.scaleDown, width: widget.screenWidth),
-
+            // Text displayed under the image
             Padding(
               padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 40.0),
-              child: Text(_textContent)
+              child: Text(_textContent, style: Theme.of(context).textTheme.bodyMedium,)
             ),
           ]
         ),

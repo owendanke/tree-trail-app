@@ -8,19 +8,13 @@ class HomePage extends StatelessWidget {
   });
   
   final String title = 'Welcome';
-  final AssetImage _assetLogo = AssetImage('lib/assets/tree_trail_logo.png');
+  final AssetImage _assetLogo = AssetImage('assets/tree_trail_logo.png');
   final void Function(int, {String? routeName})? onTabChange;
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     return Scaffold(
-      appBar: AppBar(
-        foregroundColor: Theme.of(context).colorScheme.onPrimary,
-        backgroundColor: theme.colorScheme.primary,
-        title: Text(title, style: TextStyle(color: Theme.of(context).colorScheme.onPrimary)),
-      ),
+      appBar: AppBar(title: Text(title)),
       body: Center(
         child: Column(
           children: <Widget>[

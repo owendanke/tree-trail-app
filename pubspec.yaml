@@ -7,19 +7,23 @@ environment:
   sdk: ^3.9.2
 
 dependencies:
+  flutter:
+    sdk: flutter
   firebase_core: ^4.2.0
+  firebase_app_check: ^0.4.1+4
+  firebase_storage: ^13.0.4
+
+  path_provider: ^2.1.5
+  package_info_plus: ^9.0.0
+  flutter_native_splash: ^2.4.7
+
   google_fonts: ^7.0.0
   flutter_markdown_plus: ^1.0.5
   yaml: ^3.1.3
-  flutter:
-    sdk: flutter
-  firebase_storage: ^13.0.4
-  path_provider: ^2.1.5
+  
   flutter_map: ^8.2.2
   latlong2: ^0.9.1
-  package_info_plus: ^9.0.0
   geolocator: ^14.0.2
-  firebase_app_check: ^0.4.1+4
   
 
 dev_dependencies:
@@ -30,9 +34,9 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-    - lib/assets/tree_trail_logo.png
-    - lib/assets/HTT_farm_view.png
-    - lib/assets/ABOUT_THE_TRAIL.txt
-    - lib/assets/VISITOR_INFO.txt
-    - lib/assets/rotating_leaf.gif
-    - lib/assets/north_field_fall_vista.jpg
+    - assets/tree_trail_logo.png
+    - assets/HTT_farm_view.png
+    - assets/ABOUT_THE_TRAIL.txt
+    - assets/VISITOR_INFO.txt
+    - assets/rotating_leaf.gif
+    - assets/north_field_fall_vista.jpg
