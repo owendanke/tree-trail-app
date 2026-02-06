@@ -23,7 +23,7 @@ class TreeTemplateItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+      padding: const EdgeInsetsGeometry.symmetric(horizontal: 8, vertical: 4),
       child: AspectRatio(
         aspectRatio: 4/3, //16 / 9,
         child: ClipRRect(
@@ -57,15 +57,6 @@ class TreeTemplateItem extends StatelessWidget {
   */
 
   Widget _buildBackground(BuildContext context) {
-    /*
-    if (imageFile == null) {
-      return Positioned.fill(child: SizedBox(width: 50, height: 100, child: ColoredBox(color: Colors.grey)));
-    }
-    else {
-      //return Image.file(imageFile!, fit: BoxFit.cover);
-      return Image.memory(imageFile!, fit: BoxFit.cover);
-    }
-    */
     if (imageFile == null) {
       return Positioned.fill(child: SizedBox(width: 50, height: 100, child: ColoredBox(color: Colors.grey)));
     }
