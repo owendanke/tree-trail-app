@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:httapp/services/text_theme_manager.dart';
 
 class AboutPage extends StatefulWidget {
   AboutPage({super.key});
@@ -63,7 +64,8 @@ class _AboutPageState extends State<AboutPage> {
             // Text displayed under the image
             Padding(
               padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 40.0),
-              child: Text(_textContent, style: Theme.of(context).textTheme.bodyMedium,)
+              //child: Text(_textContent, style: Theme.of(context).textTheme.bodyMedium,)
+              child: Text(_textContent, style: TextThemeService().getBodySize)
             ),
           ]
         ),

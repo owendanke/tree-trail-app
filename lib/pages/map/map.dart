@@ -45,6 +45,9 @@ class _MapPageState extends State<MapPage> {
   /// Keeps track of the selected PoiNode
   PointOfInterest? _selectedPoi;
 
+  /// 
+  PersistentBottomSheetController? _bottomSheetController;
+
   Future<void> _getPositionStream() async {
     try {
       _positionStream = await getPositionStream();
@@ -77,13 +80,16 @@ class _MapPageState extends State<MapPage> {
   }
 
   @override
+  void dispose() {
+    // Clean up controller on dispose, dismissing the bottom sheet
+    _bottomSheetController?.close();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        foregroundColor: Theme.of(context).colorScheme.onPrimary,
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        title: Text(widget.title, style: TextStyle(color: Theme.of(context).colorScheme.onPrimary)),
-      ),
+      appBar: AppBar(title: Text(widget.title)),
       body: Stack(
         children: [
 
@@ -128,9 +134,14 @@ class _MapPageState extends State<MapPage> {
                     poi,
                     widget.onTabChange,
                     isSelected: (_selectedPoi == poi),
+                    onShowBottomSheet: (controller) {
+                        _bottomSheetController = controller;  // Store the controller
+                      },
                     onSelect: () {
                       setState(() {
                         _selectedPoi = poi;
+                        _bottomSheetController?.close();  // Close sheet on deselect
+                        _bottomSheetController = null;    // set controller to null
                         debugPrint('[MapPage] selected poi ${poi.name}');
                       });},
                     onDeselect: () {

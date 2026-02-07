@@ -10,14 +10,21 @@ class SettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        foregroundColor: Theme.of(context).colorScheme.onPrimary,
-        backgroundColor: Theme.of(context).colorScheme.primary, 
-        title: Text(title,)
-        ),
+      appBar: AppBar(title: Text(title)),
       body: ListView(
         padding: EdgeInsets.fromLTRB(16, 16, 16, 16),
         children: [
+          // customization settings
+          _navigationTile(
+            context,
+            icon: Icons.edit_square,
+            title: 'Customization Settings',
+            subtitle: 'Text and display settings',
+            onTap: () => Navigator.pushNamed(context, SettingsRoutes.customization),
+          ),
+
+          Divider(),
+
           // advanced settings
           _navigationTile(
             context,
@@ -35,31 +42,6 @@ class SettingsPage extends StatelessWidget {
             child: Text('Version: ${VersionService().version}', textAlign: TextAlign.center,))
         ],
       )
-      /*
-      SingleChildScrollView(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            SwitchListTile(
-              title: Text('Example Switch'),
-              value: _value,
-              onChanged: (bool value) {
-                setState(() {
-                _value = value;
-                });
-              },
-            ),
-            ListTile(title: Text("Reset cached data"), 
-              onTap: () {
-                // TODO call method from file manager class
-              },
-            ),
-
-            Text("Version: $_versionNumber")
-          ],
-        ),
-      ),
-      */
     );
   }
 }
