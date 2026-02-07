@@ -82,6 +82,3 @@ android/app/google-services.json
 ios/Runner/GoogleService-Info.plist
 storage.rules
 .firebaserc
-
-# Assets, I don't want to track these, yet
-assets
