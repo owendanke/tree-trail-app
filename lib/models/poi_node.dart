@@ -92,16 +92,16 @@ class PoiNode {
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
-                        // Title
+                        // Common name
                         Padding(
-                          padding: EdgeInsetsGeometry.directional(start: 8, end: 8, bottom: 8),
-                          child: Text(
-                            '${poi.name} (${poi.id})',
-                            style: const TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+                          padding: EdgeInsetsGeometry.symmetric(horizontal: 8),
+                          child: Text(poi.name, style: Theme.of(context).textTheme.titleLarge),
+                        ),
+
+                        // Accession number
+                        Padding(
+                          padding: EdgeInsetsGeometry.symmetric(vertical: 4, horizontal: 8),
+                          child: Text('(${poi.id})', style: Theme.of(context).textTheme.titleMedium),
                         ),
                         
                         // layout tree info and close buttons in a row

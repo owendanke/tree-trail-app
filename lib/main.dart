@@ -79,18 +79,22 @@ Future<void> main() async {
     If built with debug mode, FirebaseAppCheck will use the debug provider.
     Otherwise it will use the platform specific provider.
   */
-  await FirebaseAppCheck.instance.activate(
-    // On Android, use debug provider in debug mode, Play Integrity in release
-    providerAndroid: kDebugMode
-        ? AndroidDebugProvider()
-        : AndroidPlayIntegrityProvider(),
-    
-    // On iOS, use debug provider in debug mode, App Attest in release
-    providerApple: kDebugMode
-      ? AppleDebugProvider()
-      : AppleAppAttestProvider(),
-  );
-
+  try {
+    await FirebaseAppCheck.instance.activate(
+      // On Android, use debug provider in debug mode, Play Integrity in release
+      providerAndroid: kDebugMode
+          ? AndroidDebugProvider()
+          : AndroidPlayIntegrityProvider(),
+      
+      // On iOS, use debug provider in debug mode, App Attest in release
+      providerApple: kDebugMode
+        ? AppleDebugProvider()
+        : AppleAppAttestProvider(),
+    );
+  } catch(e) {
+    debugPrint('[main] Exception during Appcheck activate: $e');
+    rethrow;
+  }
   /*
     Download and/or read the tree_manifest.yaml file as a string.
     Parse the string and return it as a YamlList.

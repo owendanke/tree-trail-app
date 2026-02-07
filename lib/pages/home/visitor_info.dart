@@ -60,7 +60,7 @@ class _VisitorInfoPageState extends State<VisitorInfoPage> {
 
             // Text displayed under the image
             Padding(
-              padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 40.0),
+              padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0),
               child: Text(_textContent)
             ),
           ]
