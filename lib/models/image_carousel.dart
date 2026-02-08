@@ -100,7 +100,7 @@ class _ImageCarouselState extends State<ImageCarousel> {
           height: MediaQuery.of(context).size.width,
           //color: Colors.black54,
           child: Padding(
-            padding: EdgeInsetsGeometry.all(8),
+            padding: EdgeInsetsGeometry.symmetric(vertical: 8.0),
             child: AspectRatio(
               aspectRatio: 4/ 3,
               child: PageView(
