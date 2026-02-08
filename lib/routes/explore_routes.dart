@@ -4,7 +4,7 @@ import 'app_routes.dart';
 // Import page files
 import 'package:httapp/pages/explore/explore.dart';
 import 'package:httapp/pages/explore/tree_list.dart';
-import 'package:httapp/pages/explore/tree_template.dart';
+import 'package:httapp/models/tree_template.dart';
 
 class ExploreRoutes implements AppRoutes{
   // Route name constants

@@ -5,7 +5,7 @@ import 'package:httapp/main.dart';
 // Import page files
 import 'package:httapp/pages/map/map.dart';
 import 'package:httapp/pages/explore/tree_list.dart';
-import 'package:httapp/pages/explore/tree_template.dart';
+import 'package:httapp/models/tree_template.dart';
 
 class MapRoutes implements AppRoutes{
   // Route name constants

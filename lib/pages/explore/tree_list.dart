@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:httapp/main.dart';
-import 'package:httapp/pages/explore/tree_template.dart';
+import 'package:httapp/models/tree_template.dart';
 
 class TreeListPage extends StatefulWidget {
   TreeListPage({

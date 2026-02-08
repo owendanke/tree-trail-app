@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'app_routes.dart';
-import 'package:httapp/pages/explore/tree_template.dart';
+import 'package:httapp/models/tree_template.dart';
 
 /*
   Creates routes for navigating generated tree list items and pages
