@@ -14,7 +14,6 @@ class MapRoutes implements AppRoutes{
 
   late final Map<String, Widget Function(BuildContext)> routes;
 
-  Function(int, {String? routeName})? _onTabChange;
   Map<dynamic, dynamic> externalRoutes;
   
   MapRoutes({required this.externalRoutes});

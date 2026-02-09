@@ -116,62 +116,76 @@ class RemoteAssets {
 
 
 
-  Future<List<File>> treeImgFileList(String id, ListResult resultList) async {
-    // images have the format '{tree-id}_{incremental-number}.jpg'
-
-    List<File> imageFileList = List.empty(growable: true);  // list to return
-
-    debugPrint('[treeImgFileList $id] resultList length: ${resultList.items.length}');
-    try {
-      for (var item in resultList.items) {
-        var fileName = item.name;
-        var remoteFileName = '$remoteImagePath/$fileName';
-
-        if (fileName.startsWith('${id}_')) {
-          // Check if file with the correct tree ID exists in resultList
-          debugPrint('[treeImgFileList $id] Matching file: $fileName');
-
-          // create file object
+  Future<List<File>> treeImgFileList(
+  String id, 
+  List<File> fileList, 
+  {required bool isLocal}
+) async {
+  // images have the format '{tree-id}_{incremental-number}.jpg'
+  List<File> imageFileList = List.empty(growable: true); // list to return
+  debugPrint('[treeImgFileList $id] fileList length: ${fileList.length}');
+  
+  try {
+    for (var file in fileList) {
+      var fileName = file.path.split('/').last; // Extract filename from path
+      
+      if (fileName.startsWith('${id}_')) {
+        // Check if file with the correct tree ID exists in fileList
+        debugPrint('[treeImgFileList $id] Matching file: $fileName');
+        
+        if (isLocal) {
+          // If local, just verify existence and add to list
+          if (file.existsSync()) {
+            debugPrint('[treeImgFileList $id] adding local file to list: $fileName');
+            imageFileList.add(file);
+          } else {
+            debugPrint('[treeImgFileList $id] local file does not exist: $fileName');
+          }
+        } else {
+          // If remote, check local existence and download if needed
           final localFile = await LocalFileHandler.localFile(localImagePath, fileName);
           debugPrint('[treeImgFileList $id] created local file reference: ${localFile.path}');
-
-          //check if file exists locally or needs to be downloaded
+          
+          // Check if file exists locally
           if (localFile.existsSync()) {
-            // no need to download, just add to the list and return at the end
+            // No need to download, just add to the list
             debugPrint('[treeImgFileList $id] adding local file to list: $fileName');
             imageFileList.add(localFile);
-          }
-          else { // file is not on device and needs to be downloaded
+          } else {
+            // File is not on device and needs to be downloaded
+            var remoteFileName = '$remoteImagePath/$fileName';
+            
             if (await remoteFileHandler.remoteFileExists(remoteFileName)) {
-              // download image to the local image directory
+              // Download image to the local image directory
               debugPrint('[treeImgFileList $id] downloading file: $remoteFileName');
-              await remoteFileHandler.downloadFile(await localImagePath, fileName, instance, remoteFileName, downloadingFilesSet);
-      
-              // append a File object that points to the newly downloaded file
+              await remoteFileHandler.downloadFile(
+                await localImagePath, 
+                fileName, 
+                instance, 
+                remoteFileName, 
+                downloadingFilesSet
+              );
+              // Append a File object that points to the newly downloaded file
               debugPrint('[treeImgFileList $id] adding downloaded file to list: $remoteFileName');
               imageFileList.add(localFile);
-            }
-            else {
+            } else {
               debugPrint('[treeImgFileList $id] remote file does not exist: $remoteFileName');
             }
           }
         }
-      } // for
-
-      debugPrint('[treeImgFileList $id] number of images found: ${imageFileList.length}');
-
-      return imageFileList;
-
-    } on FirebaseException catch(e) {
-      debugPrint('[treeImgFileList $id] FirebaseException occured: $e');
-      // return empty list
-      return imageFileList;
-    } catch (e) {
-      debugPrint('[treeImgFileList $id] $e');
-      // return empty list
-      return imageFileList;
-    }
+      }
+    } // for
+    
+    debugPrint('[treeImgFileList $id] number of images found: ${imageFileList.length}');
+    return imageFileList;
+  } on FirebaseException catch(e) {
+    debugPrint('[treeImgFileList $id] FirebaseException occurred: $e');
+    return imageFileList;
+  } catch (e) {
+    debugPrint('[treeImgFileList $id] $e');
+    return imageFileList;
   }
+}
 
   /// Loads the thumbnail image required for TreeTemplateItem
   /// 

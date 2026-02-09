@@ -5,6 +5,7 @@ import 'dart:core';
 // flutter
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
+import 'package:httapp/services/local_file_handling.dart';
 import 'package:httapp/services/text_theme_manager.dart';
 
 // pub.dev packages
@@ -18,6 +19,7 @@ import 'package:httapp/ui/theme.dart';
 // httapp models
 import 'package:httapp/models/geojson_parse.dart';
 import 'package:httapp/models/poi.dart';
+import 'package:httapp/models/local_path.dart';
 // httapp services
 import 'package:httapp/services/firebase/remote_file_handling.dart';
 import 'package:httapp/services/firebase/remote_asset_methods.dart';
@@ -50,6 +52,8 @@ List<PointOfInterest> poiData = [];
 
 Future<void> main() async {
   String yamlString;
+  List<File>? imageListResult;
+  bool localImageList = false;
   var treeIdMap = {};
   final treeManifestFile = "tree_manifest.yaml";
 
@@ -123,8 +127,20 @@ Future<void> main() async {
   */
   try{
     // save a ListResult to reference during loop
-    final imageListResult = await remoteFileHandler.listRemoteImageFiles(FirebaseStorage.instance);
+    ListResult resultList = await remoteFileHandler.listRemoteImageFiles(FirebaseStorage.instance);
+    imageListResult = resultList.items.map((ref) => File(ref.fullPath)).toList();
+    localImageList = false;
+    
 
+  } catch(e) {
+    debugPrint('istRemoteImageFiles exception');
+    if (imageListResult == null) {
+      imageListResult = LocalFileHandler.listFiles(await localImagePath);
+      localImageList = true;
+    }
+  }
+
+  try {
     for (var id in treeIdMap.keys) {
       // retrieve the description, images, and thumbnails
       var descriptionString = await assetHandler.treeDescription(id);   // description is pulled from internet here
@@ -134,7 +150,7 @@ Future<void> main() async {
       // Results in more memory usage, but much better performance because the app doesn't wait for slow disk read.
       Uint8List? thmFileBytes = await assetHandler.loadThumbnailFile(id);
 
-      List<File> imageFileList = await assetHandler.treeImgFileList(id, imageListResult);   // image is pulled from internet here
+      List<File> imageFileList = await assetHandler.treeImgFileList(id, imageListResult!, isLocal: localImageList);   // image is pulled from internet here
       
 
       print('[main][treePageData $id] imageFileList: $imageFileList');

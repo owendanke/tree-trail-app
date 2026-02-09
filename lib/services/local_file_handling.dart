@@ -42,6 +42,37 @@ class LocalFileHandler {
     }
   }
 
+  /// List number of files in the given directory
+  /// 
+  static int countFiles(String directoryPath) {
+    try {
+      var entityList = Directory(directoryPath).listSync(recursive: false, followLinks: false);
+      return entityList.length;
+    } catch(e) {
+      rethrow;
+    }
+  }
+  
+  /// Retrieve all the files in the given directory
+  /// 
+  /// Returns a `List<File>`
+  static List<File> listFiles(String directoryPath) {
+    List<File> fileList = List.empty(growable: true);
+    try {
+      var entityList = Directory(directoryPath).listSync(recursive: false, followLinks: false);
+
+      for (var entity in entityList) {
+        if (entity is File) {
+          fileList.add(entity);
+        }
+      }
+
+      return fileList;
+    } catch(e) {
+      rethrow;
+    }
+  }
+
   /// Delete a single file, synchonously.
   /// 
   /// [fileName], the name of the file to be deleted (only file name, no path).
