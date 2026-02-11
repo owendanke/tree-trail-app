@@ -21,13 +21,10 @@ class MapPage extends StatefulWidget {
   static const LatLng boundsCorner2 = LatLng(41.934444, -72.815611);  // SE
 
   static MapController mapController = MapController();
-  
-  //final void Function(int, {String? routeName})? onTabChange;
 
   MapPage({
     super.key, 
     required this.poiList,
-    //required this.onTabChange,
     });
 
   @override
@@ -45,8 +42,6 @@ class _MapPageState extends State<MapPage> {
   /// Keeps track of the selected PoiNode
   PointOfInterest? _selectedPoi;
 
-  /// 
-  PersistentBottomSheetController? _bottomSheetController;
 
   Future<void> _getPositionStream() async {
     try {
@@ -55,6 +50,18 @@ class _MapPageState extends State<MapPage> {
       print('An exception was thrown while initalizing _positionStream:');
       print(e);
     }
+  }
+
+  void selectPoi(PointOfInterest poi) {
+    setState(() {
+      _selectedPoi = poi;
+    });
+  }
+
+  void deselectPoi() {
+    setState(() {
+      _selectedPoi = null;
+    });
   }
 
   @override
@@ -81,8 +88,6 @@ class _MapPageState extends State<MapPage> {
 
   @override
   void dispose() {
-    // Clean up controller on dispose, dismissing the bottom sheet
-    _bottomSheetController?.close();
     super.dispose();
   }
 
@@ -97,12 +102,15 @@ class _MapPageState extends State<MapPage> {
           FlutterMap(
             mapController: MapPage.mapController,
             options: MapOptions(
+
               // Center the map over kiosk
               initialCenter: MapPage.center,
               initialZoom: 17,
+
               // Constraint the zoom
               minZoom: 15,
               maxZoom: 20,
+
               // Constrain the camera to the regional focus of the app
               cameraConstraint: CameraConstraint.contain(bounds: LatLngBounds(MapPage.boundsCorner1, MapPage.boundsCorner2)),
               interactionOptions: const InteractionOptions(
@@ -116,6 +124,7 @@ class _MapPageState extends State<MapPage> {
               },
             ),
             children: [
+
               // Tile layer, the map itself, using OSM
               TileLayer( // Bring your own tiles
                 urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
@@ -132,28 +141,10 @@ class _MapPageState extends State<MapPage> {
                   return PoiNode.build(
                     context, 
                     poi,
-                    //widget.onTabChange,
-                    isSelected: (_selectedPoi == poi),
-                    onShowBottomSheet: (controller) {
-                        _bottomSheetController = controller;  // Store the controller
-                      },
-                    onSelect: () {
-                      setState(() {
-                        _selectedPoi = poi;
-                        _bottomSheetController?.close();  // Close sheet on deselect
-                        _bottomSheetController = null;    // set controller to null
-                        debugPrint('[MapPage] selected poi ${poi.name}');
-                      });},
-                    onDeselect: () {
-                      setState(() {
-                        _selectedPoi = null;
-                        debugPrint('[MapPage] deselected poi ${poi.name}');
-                      });},
-                    onLearnMore: () {
-                      Navigator.pushNamed(context, '/map/${poi.id}');
-                    }
-                  );}
-                ),
+                    isSelected: _selectedPoi == poi,
+                    onTap: () => selectPoi(poi),
+                  );
+                }),
                 ...UserLocationMarker.build(_userLocation),
                 ]),
 
@@ -165,10 +156,74 @@ class _MapPageState extends State<MapPage> {
           ),
 
           // Map control buttons
-          // Show hide specific layers
           _layerButton(context), 
-          // When map is rotated, show north and return to north facing if pressed
           MapCompass(mapController: MapPage.mapController),
+
+          // Draggable bottom sheet
+          if (_selectedPoi != null)
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: BottomSheet(
+              enableDrag: false,
+              onClosing: () {},
+              builder: (BuildContext context) {
+                return IntrinsicHeight(
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+
+                        // Common name
+                        Padding(
+                          padding: EdgeInsetsGeometry.fromLTRB(8, 8, 8, 4),
+                          child: Text('${_selectedPoi!.name}', style: Theme.of(context).textTheme.titleLarge),
+                        ),
+
+                        // Accession number
+                        Padding(
+                          padding: EdgeInsetsGeometry.symmetric(vertical: 4, horizontal: 8),
+                          child: Text('(${_selectedPoi!.id})', style: Theme.of(context).textTheme.titleMedium),
+                        ),
+                        
+                        // layout tree info and close buttons in a row
+                        Row(
+                          children: [
+                            // Learn more button
+                            Expanded(
+                              child: Padding(
+                                padding: EdgeInsetsGeometry.directional(start: 8, end: 8, bottom: 16),
+                                child: ElevatedButton(
+                                  onPressed: () => Navigator.pushNamed(context, '/map/${_selectedPoi!.id}'),
+                                  child: const Text('Learn More'),
+                                ),
+                              )
+                            ),
+
+                            // close button
+                            Expanded(
+                              child: Padding(
+                                padding: EdgeInsetsGeometry.directional(start: 8, end: 8, bottom: 16),
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      _selectedPoi = null;
+                                    });
+                                  },
+                                  child: const Text('Close'),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+          )
         ],
       ),
     );
