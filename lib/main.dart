@@ -127,7 +127,7 @@ Future<void> main() async {
   */
   try{
     // save a ListResult to reference during loop
-    ListResult resultList = await remoteFileHandler.listRemoteImageFiles(FirebaseStorage.instance);
+    ListResult resultList = await RemoteFileHandler.listRemoteImageFiles(FirebaseStorage.instance);
     imageListResult = resultList.items.map((ref) => File(ref.fullPath)).toList();
     localImageList = false;
     
