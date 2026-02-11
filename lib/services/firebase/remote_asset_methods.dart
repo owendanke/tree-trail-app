@@ -41,7 +41,7 @@ class RemoteAssets {
       }
       else {
         debugPrint('[loadManifest] File does not exists locally, downloading');
-        await remoteFileHandler.downloadFile(await manifestPath, localFileName, instance, remoteFileName, downloadingFilesSet);
+        await RemoteFileHandler.downloadFile(await manifestPath, localFileName, instance, remoteFileName, downloadingFilesSet);
 
         debugPrint('[loadManifest] File downloaded, reading');
         return await LocalFileHandler.readFile(await manifestPath, localFileName);
@@ -90,11 +90,11 @@ class RemoteAssets {
         var localFileName = '$descFileTitle$ext';
         var remoteFileName = '$remoteDescriptionPath/$localFileName';
 
-        if (await remoteFileHandler.remoteFileExists(remoteFileName)) {
+        if (await RemoteFileHandler.remoteFileExists(remoteFileName)) {
 
           debugPrint("[treeDescription $id] downloading description");
           // download the file to the appropriate location
-          await remoteFileHandler.downloadFile(await localDescPath, localFileName, instance, remoteFileName, downloadingFilesSet);
+          await RemoteFileHandler.downloadFile(await localDescPath, localFileName, instance, remoteFileName, downloadingFilesSet);
           // return the contents of the file as a string
           return await LocalFileHandler.readFile(await localDescPath, localFileName);
         }
@@ -155,10 +155,10 @@ class RemoteAssets {
             // File is not on device and needs to be downloaded
             var remoteFileName = '$remoteImagePath/$fileName';
             
-            if (await remoteFileHandler.remoteFileExists(remoteFileName)) {
+            if (await RemoteFileHandler.remoteFileExists(remoteFileName)) {
               // Download image to the local image directory
               debugPrint('[treeImgFileList $id] downloading file: $remoteFileName');
-              await remoteFileHandler.downloadFile(
+              await RemoteFileHandler.downloadFile(
                 await localImagePath, 
                 fileName, 
                 instance, 
@@ -218,13 +218,13 @@ class RemoteAssets {
           // file is not on device and needs to be downloaded
           debugPrint('[loadThumbnailFile $id] Local file does not exist, attempting download.');
 
-          if (await remoteFileHandler.remoteFileExists(remoteFileName)){
+          if (await RemoteFileHandler.remoteFileExists(remoteFileName)){
             // the thumbnail file exists on the server
             debugPrint('[loadThumbnailFile $id] Downloading file: \'$remoteFileName\'.');
 
             // download thumbnail to the local directory
 
-            await remoteFileHandler.downloadFile(await localThumbnailPath, fileName, instance, remoteFileName, downloadingFilesSet);
+            await RemoteFileHandler.downloadFile(await localThumbnailPath, fileName, instance, remoteFileName, downloadingFilesSet);
 
             // read and return the file
             debugPrint('[loadThumbnailFile $id] Reading entire file as list of bytes.');

@@ -11,18 +11,14 @@ import 'package:httapp/models/remote_path.dart';
 // firebase
 import 'package:firebase_storage/firebase_storage.dart';
 
-class remoteFileHandler {
+class RemoteFileHandler {
   /// List all the image files at the _remoteImagePath
   /// 
   /// [instance], FirebaseStorage instance to use for remote file operations
   static Future<ListResult> listRemoteImageFiles(FirebaseStorage instance) async {
-    ListResult result;
     try {
       print('[listRemoteImgFiles] Calling listAll()');
-      result = await instance.ref(remoteImagePath).listAll();
-      print('[listRemoteImageFiles] result:');
-      print(result);
-      return result;
+      return await instance.ref(remoteImagePath).listAll();
     } catch (e) {
       print('[listRemoteImgFiles] $e');
       rethrow;
