@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:httapp/models/image_carousel.dart';
+import 'package:httapp/models/placeholder_image.dart';
 
 class TreeTemplateItem extends StatelessWidget {
   /*
@@ -58,7 +59,7 @@ class TreeTemplateItem extends StatelessWidget {
 
   Widget _buildBackground(BuildContext context) {
     if (imageFile == null) {
-      return Positioned.fill(child: SizedBox(width: 50, height: 100, child: ColoredBox(color: Colors.grey)));
+      return Positioned.fill(child: placeholderImage());
     }
     else {
       return Image.memory(imageFile!, fit: BoxFit.cover);

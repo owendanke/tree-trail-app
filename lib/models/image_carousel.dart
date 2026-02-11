@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:httapp/models/placeholder_image.dart';
 
 class ImageCarousel extends StatefulWidget {
     const ImageCarousel ({
@@ -22,11 +23,6 @@ class _ImageCarouselState extends State<ImageCarousel> {
   /// Load carousel images
   void _loadImages() {
     try {
-      /*
-      for (File imgFile in widget.imageFileList.whereType<File>()) {
-        imageList.add(imgFile.readAsBytesSync());
-      }
-      */
       imageList = List.generate(widget.imageFileList.length, (img) => widget.imageFileList[img]!.readAsBytesSync());
     } catch(e) {
       rethrow;
@@ -128,14 +124,7 @@ class _ImageCarouselState extends State<ImageCarousel> {
                       )
                     ]
                   else 
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(16),
-                      child: SizedBox(
-                        width: 50, 
-                        height: 100, 
-                        child: ColoredBox(color: Colors.grey),
-                      ),
-                    ),
+                    placeholderImage()
                 ],
               )
             ),
