@@ -61,7 +61,9 @@ ios/Flutter/Flutter.framework
 ios/Pods/
 ios/.generated/
 ios/.idea/
+ios/build/
 ios/Runner.xcworkspace/
+ios/GoogleService-Info.plist
 macos/Pods/
 macos/.generated/
 macos/Flutter/ephemeral/
