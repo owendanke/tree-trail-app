@@ -200,7 +200,6 @@ Future<void> main() async {
 { "type": "Feature", "properties": { "id": "59-21", "name": "dawn redwood" }, "geometry": { "type": "Point", "coordinates": [ -72.83214, 41.945112 ] } },
 { "type": "Feature", "properties": { "id": "125-25", "name": "willow oak" }, "geometry": { "type": "Point", "coordinates": [ -72.833145, 41.946976 ] } },
 { "type": "Feature", "properties": { "id": "88-22", "name": "tuliptree" }, "geometry": { "type": "Point", "coordinates": [ -72.831838, 41.943946 ] } },
-{ "type": "Feature", "properties": { "id": "", "name": "American chestnut" }, "geometry": { "type": "Point", "coordinates": [ -72.832224, 41.945504 ] } },
 { "type": "Feature", "properties": { "id": "45-20", "name": "bald cypress" }, "geometry": { "type": "Point", "coordinates": [ -72.833648, 41.949826 ] } },
 { "type": "Feature", "properties": { "id": "1-18", "name": "shingle oak " }, "geometry": { "type": "Point", "coordinates": [ -72.831918, 41.947936 ] } }
 ]
