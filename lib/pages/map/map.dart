@@ -22,12 +22,12 @@ class MapPage extends StatefulWidget {
 
   static MapController mapController = MapController();
   
-  final void Function(int, {String? routeName})? onTabChange;
+  //final void Function(int, {String? routeName})? onTabChange;
 
   MapPage({
     super.key, 
     required this.poiList,
-    required this.onTabChange,
+    //required this.onTabChange,
     });
 
   @override
@@ -132,7 +132,7 @@ class _MapPageState extends State<MapPage> {
                   return PoiNode.build(
                     context, 
                     poi,
-                    widget.onTabChange,
+                    //widget.onTabChange,
                     isSelected: (_selectedPoi == poi),
                     onShowBottomSheet: (controller) {
                         _bottomSheetController = controller;  // Store the controller
@@ -149,6 +149,9 @@ class _MapPageState extends State<MapPage> {
                         _selectedPoi = null;
                         debugPrint('[MapPage] deselected poi ${poi.name}');
                       });},
+                    onLearnMore: () {
+                      Navigator.pushNamed(context, '/map/${poi.id}');
+                    }
                   );}
                 ),
                 ...UserLocationMarker.build(_userLocation),

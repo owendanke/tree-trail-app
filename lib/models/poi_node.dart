@@ -79,7 +79,7 @@ class PoiNode {
     },);
   }
 
-  static PersistentBottomSheetController _showDetails(BuildContext context, PointOfInterest poi, VoidCallback? onSelect, VoidCallback? onDeselect, Function(int, {String? routeName})? onTabChange) {
+  static PersistentBottomSheetController _showDetails(BuildContext context, PointOfInterest poi, VoidCallback? onSelect, VoidCallback? onDeselect, VoidCallback? onLearnMore) {
     return showBottomSheet(
               context: context, 
               enableDrag: true,
@@ -116,7 +116,8 @@ class PoiNode {
                                   // deselct marker to reset size
                                   onDeselect?.call();
                                   Navigator.pop(context);
-                                  onTabChange?.call(1, routeName: '/treePage/${poi.id}');
+                                  //onTabChange?.call(1, routeName: '/treePage/${poi.id}');
+                                  onLearnMore?.call();
                                 },
                                 child: const Text('Learn More'),
                                 ),
@@ -151,12 +152,13 @@ class PoiNode {
   static Marker build(
     BuildContext context,
     PointOfInterest poi,
-    Function(int, {String? routeName})? onTabChange,
+    //Function(int, {String? routeName})? onTabChange,
     {
       bool isSelected = false,
       Function(PersistentBottomSheetController)? onShowBottomSheet,
       VoidCallback? onSelect,
       VoidCallback? onDeselect,
+      VoidCallback? onLearnMore,
     }) {
     final double size = isSelected ? 35 : 25;
     return Marker(
@@ -167,7 +169,8 @@ class PoiNode {
           //onTap:() => _showDetails(context, poi, onTabChange),
           onTap:() {
             onSelect?.call();
-            final controller = _showDetails(context, poi, onSelect, onDeselect, onTabChange);
+            //final controller = _showDetails(context, poi, onSelect, onDeselect, onTabChange);
+            final controller = _showDetails(context, poi, onSelect, onDeselect, onLearnMore);
             //_modalShowDetails(context, poi, onSelect, onDeselect, onTabChange);
             onShowBottomSheet?.call(controller);
           },

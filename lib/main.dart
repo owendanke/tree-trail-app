@@ -232,6 +232,7 @@ class MainApp extends StatelessWidget {
 
     return MaterialApp(
       title: 'Holcomb Tree Trail',
+      home: const MainNavigation(), // use MainNavigation instead of HomePage
 
       // create custom theme here
       theme: ThemeData(
@@ -246,16 +247,16 @@ class MainApp extends StatelessWidget {
         ),
         // bottom navigation bar theme
         navigationBarTheme: NavigationBarThemeData(
-            backgroundColor: colorScheme.primary,
-            indicatorColor: colorScheme.secondary,
-            labelTextStyle: WidgetStateProperty.resolveWith<TextStyle>(
-                (Set<WidgetState> states) => TextStyle(color: colorScheme.onPrimary),
-              ),
-            iconTheme: WidgetStateProperty.resolveWith<IconThemeData>(
-                (Set<WidgetState> states) => states.contains(WidgetState.selected)
-                ? IconThemeData(color: colorScheme.secondaryContainer)
-                : IconThemeData(color: colorScheme.onPrimary),
-              ),
+          backgroundColor: colorScheme.primary,
+          indicatorColor: colorScheme.secondary,
+          labelTextStyle: WidgetStateProperty.resolveWith<TextStyle>(
+              (Set<WidgetState> states) => TextStyle(color: colorScheme.onPrimary),
+            ),
+          iconTheme: WidgetStateProperty.resolveWith<IconThemeData>(
+              (Set<WidgetState> states) => states.contains(WidgetState.selected)
+              ? IconThemeData(color: colorScheme.secondaryContainer)
+              : IconThemeData(color: colorScheme.onPrimary),
+            ),
           ),
         // create custom button themes
         elevatedButtonTheme: ElevatedButtonThemeData(
@@ -280,7 +281,6 @@ class MainApp extends StatelessWidget {
           )
         ),
       ),
-      home: const MainNavigation(), // use MainNavigation instead of HomePage
     );
   }
 }

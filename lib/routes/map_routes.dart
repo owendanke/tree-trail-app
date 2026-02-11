@@ -10,10 +10,6 @@ import 'package:httapp/models/tree_template.dart';
 class MapRoutes implements AppRoutes{
   // Route name constants
   static const String map = '/';
-  static const String treePage = '/tree_list/treePage';
-
-  late final Map<String, Widget Function(BuildContext)> routes;
-
   Map<dynamic, dynamic> externalRoutes;
   
   MapRoutes({required this.externalRoutes});
@@ -24,14 +20,10 @@ class MapRoutes implements AppRoutes{
   @override
   Map<String, WidgetBuilder> getRoutes(BuildContext context, {void Function(int newIndex, {String? routeName})? onTabChange}) {
     
-    routes = {
-      '/': (context) => MapPage(poiList: poiData, onTabChange: onTabChange),
-      '/tree_list': (context) => TreeListPage(),
-    };
+    final Map<String, WidgetBuilder> routes = {'/': (context) => MapPage(poiList: poiData),};
 
     for (var page in externalRoutes.entries) {
-      // add '/treePage/' before each key as to not confuse what the route is for
-      var routeName = '/treePage/${page.key}';
+      var routeName = '/map/${page.key}';
       routes[routeName] = (context) => TreeTemplatePage(
           id: page.value['id'], 
           name: page.value['name'], 
@@ -40,6 +32,7 @@ class MapRoutes implements AppRoutes{
         );
     }
 
+    debugPrint('Map routes registered: ${routes.keys}');
     return routes;
   }
 }

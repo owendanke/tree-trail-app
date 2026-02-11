@@ -86,7 +86,7 @@ class _MainNavigationState extends State<MainNavigation> {
                 label: 'Home',
               ),
               NavigationDestination(
-                icon: Icon(Icons.search_outlined),
+                icon: Icon(Icons.explore_outlined),
                 selectedIcon: Icon(Icons.explore),
                 label: 'Explore',
               ),
@@ -96,8 +96,8 @@ class _MainNavigationState extends State<MainNavigation> {
                 label: 'Map',
               ),
               NavigationDestination(
-                icon: Icon(Icons.settings),
-                selectedIcon: Icon(Icons.settings_outlined),
+                icon: Icon(Icons.settings_outlined),
+                selectedIcon: Icon(Icons.settings),
                 label: 'Settings',
               ),
             ],
@@ -114,14 +114,8 @@ class _MainNavigationState extends State<MainNavigation> {
       _currentIndex = newIndex;
     });
     // Navigate to specific route after switching tabs
-    /*
     if (routeName != null) {
-      Future.delayed(Duration(milliseconds: 100), () {
-        _navigatorKeys[newIndex].currentState?.pushNamed(routeName);
-      });
-    }
-    */
-    if (routeName != null) {
+      _navigatorKeys[newIndex].currentState?.popUntil((route) => route.isFirst);
       _navigatorKeys[newIndex].currentState?.pushNamed(routeName);
     }
   }
