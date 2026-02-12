@@ -20,7 +20,7 @@ class MapRoutes implements AppRoutes{
   @override
   Map<String, WidgetBuilder> getRoutes(BuildContext context, {void Function(int newIndex, {String? routeName})? onTabChange}) {
     
-    final Map<String, WidgetBuilder> routes = {'/': (context) => MapPage(poiList: poiData),};
+    final Map<String, WidgetBuilder> routes = {'/': (context) => MapPage(poiList: poiData, signList: interpretiveSignData,),};
 
     for (var page in externalRoutes.entries) {
       var routeName = '/map/${page.key}';

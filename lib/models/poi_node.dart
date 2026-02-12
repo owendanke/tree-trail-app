@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:httapp/models/poi.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:httapp/ui/poi_node_style.dart';
 
 class PoiNode {
 
@@ -71,6 +72,7 @@ class PoiNode {
     {
       bool isSelected = false,
       required VoidCallback onTap,
+      required PoiNodeStyle style,
     }
   ) {
     final double size = isSelected ? 35 : 25;
@@ -82,23 +84,20 @@ class PoiNode {
           onTap: onTap,
           child: Container(
             decoration: BoxDecoration(
-              color: Colors.orange,
+              color: isSelected 
+                ? style.selectedFillColor
+                : style.fillColor,
               shape: BoxShape.circle,
               border: Border.all(
                 color: isSelected
-                  ? Color(0xFFEF6C00)
-                  : Color(0xFFFB8C00), 
+                  ? style.selectedBorderColor
+                  : style.borderColor,
                 width: isSelected
-                  ? 5
-                  : 3
+                  ? style.selectedBorderWidth
+                  : style.borderWidth,
               ),
               boxShadow: isSelected
-                ? [BoxShadow(
-                      color: Color(0x66000000),
-                      blurRadius: 4,
-                      spreadRadius: 3,
-                    )
-                  ]
+                ? style.selectedShadow
                 : null,
             ),
           )

@@ -46,7 +46,7 @@ Map<String, Map<String, dynamic >> treePageData = {};
 /// Global list of POIs
 List<PointOfInterest> poiData = [];
 
-
+List<PointOfInterest> interpretiveSignData = [];
 
 
 
@@ -168,6 +168,22 @@ Future<void> main() async {
   /*
     create POI marker list for map
   */
+
+  String signsGeoJSON= 
+  '''
+{
+"type": "FeatureCollection",
+"name": "Interpretive Signs",
+"features": [
+{ "type": "Feature", "properties": { "id": "0", "name": "Wood, Wide, Web" }, "geometry": { "type": "Point", "coordinates": [ -72.828877, 41.947907 ] } },
+{ "type": "Feature", "properties": { "id": "1", "name": "Stone Walls" }, "geometry": { "type": "Point", "coordinates": [ -72.827500, 41.946585 ] } },
+{ "type": "Feature", "properties": { "id": "2", "name": "Oaks" }, "geometry": { "type": "Point", "coordinates": [ -72.831137, 41.948152 ] } },
+{ "type": "Feature", "properties": { "id": "3", "name": "Eastern White Pine" }, "geometry": { "type": "Point", "coordinates": [ -72.829859, 41.948133 ] } },
+{ "type": "Feature", "properties": { "id": "4", "name": "Buck Rub" }, "geometry": { "type": "Point", "coordinates": [ -72.830831, 41.947969 ] } }
+]
+}
+  ''';
+
   String debugGeoJSON = 
   '''
 {
@@ -208,6 +224,7 @@ Future<void> main() async {
   ''';
   try {
     poiData = GeojsonParse.parsePointOfInterests(debugGeoJSON);
+    interpretiveSignData = GeojsonParse.parsePointOfInterests(signsGeoJSON);
   } catch(e) {
     // TODO better error handling than this
     print("An error occured while parsing GeoJSON!");

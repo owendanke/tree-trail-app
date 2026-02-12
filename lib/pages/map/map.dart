@@ -11,10 +11,12 @@ import 'package:httapp/services/version_service.dart';
 import 'package:httapp/models/poi.dart';
 import 'package:httapp/models/poi_node.dart';
 import 'package:httapp/models/map_compass.dart';
+import 'package:httapp/ui/map_marker_styles.dart';
 
 class MapPage extends StatefulWidget {
   final String title = 'Map';
   final List<PointOfInterest> poiList;
+  final List<PointOfInterest> signList;
 
   static const LatLng center = LatLng(41.947186, -72.832672);         // Center (over kiosk)
   static const LatLng boundsCorner1 = LatLng(41.959917, -72.849722);  // NW
@@ -25,6 +27,7 @@ class MapPage extends StatefulWidget {
   MapPage({
     super.key, 
     required this.poiList,
+    required this.signList,
     });
 
   @override
@@ -41,7 +44,8 @@ class _MapPageState extends State<MapPage> {
 
   /// Keeps track of the selected PoiNode
   PointOfInterest? _selectedPoi;
-
+  bool _treeMarkerVisible = true;
+  bool _signMarkerVisible = true;
 
   Future<void> _getPositionStream() async {
     try {
@@ -136,15 +140,32 @@ class _MapPageState extends State<MapPage> {
 
               // Marker layer for trees, user location, etc.
               MarkerLayer(markers: [
-                //
-                ...widget.poiList.map((poi) {
-                  return PoiNode.build(
-                    context, 
-                    poi,
-                    isSelected: _selectedPoi == poi,
-                    onTap: () => selectPoi(poi),
-                  );
-                }),
+                // Tree markers
+                if (_treeMarkerVisible)
+                  ...widget.poiList.map((poi) {
+                    return PoiNode.build(
+                      context, 
+                      poi,
+                      isSelected: _selectedPoi == poi,
+                      onTap: () => selectPoi(poi),
+                      style: treeMarkerTheme
+                    );
+                  }),
+
+                // Sign markers
+                if(_signMarkerVisible)
+                  ...widget.signList.map((poi) {
+                    return PoiNode.build(
+                      context, 
+                      poi,
+                      isSelected: _selectedPoi == poi,
+                      onTap: () => selectPoi(poi),
+                      //onTap: () {},
+                      style: signMarkerTheme
+                    );
+                  }),
+
+                // User location
                 ...UserLocationMarker.build(_userLocation),
                 ]),
 
@@ -228,50 +249,99 @@ class _MapPageState extends State<MapPage> {
       ),
     );
   }
-}
 
-Widget _layerButton(BuildContext context) {
-  return Positioned(
-    top: 16,
-    right: 16,
-    child: FloatingActionButton.small(
-      shape: CircleBorder(),
-      backgroundColor: Colors.white,
-      onPressed: () {
-        // Hide or show a modal that allows modifying layers on the map
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return Dialog(
-              child: SizedBox(
-                width: (MediaQuery.of(context).size.width) / 2,
-                height: (MediaQuery.of(context).size.height) / 2,
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: EdgeInsetsGeometry.symmetric(horizontal: 8, vertical: 16),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+  Widget _layerButton(BuildContext context) {
+    return Positioned(
+      top: 16,
+      right: 16,
+      child: FloatingActionButton.small(
+        shape: CircleBorder(),
+        backgroundColor: Colors.white,
+        onPressed: () async {
+
+          // Hide or show a modal that allows modifying layers on the map
+          await showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return StatefulBuilder(
+                builder: (context, setDialogState) {
+                  return Dialog(
+                    child: SizedBox(
+                      width: (MediaQuery.of(context).size.width) / 2,
+                      height: (MediaQuery.of(context).size.height) / 2,
+                      child: Column(
                         children: [
-                          Icon(Icons.layers_sharp),
-                          Text('Modify Visible Layers'),
-                          IconButton(
-                            onPressed: () => Navigator.pop(context),
-                            icon: const Icon(Icons.close),
-                            )
+
+                          // Header
+                          Padding(
+                            padding: EdgeInsetsGeometry.symmetric(horizontal: 8, vertical: 16),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                // Container holds icon and title together for proper alignment
+                                Container(
+                                  child: Row(
+                                    children: [
+                                      Padding(
+                                        padding: EdgeInsetsGeometry.symmetric(horizontal: 8),
+                                        child: Icon(Icons.layers_sharp),
+                                        ),
+                                      Padding(
+                                        padding: EdgeInsetsGeometry.symmetric(horizontal: 8),
+                                        child: Text('Map Layers'),
+                                        ),
+                                    ]
+                                  )
+                                ),
+                                Padding(
+                                  padding: EdgeInsetsGeometry.symmetric(horizontal: 8),
+                                  child: IconButton(
+                                    onPressed: () => Navigator.pop(context),
+                                    icon: const Icon(Icons.close),
+                                  )
+                                ),
+                              ],
+                            ),
+                          ),
+
+                          /* Layer options */
+                          // Tree Layer
+                          CheckboxListTile(
+                            value: _treeMarkerVisible,
+                            onChanged: (bool? value) {
+                              setDialogState(() {
+                                _treeMarkerVisible = value!;
+                              });
+                              setState(() {});
+                            },
+                            title: const Text('Featured Trees'),
+                            //subtitle: const Text('Supporting text'),
+                          ),
+                          const Divider(height: 0),
+                          CheckboxListTile(
+                            value: _signMarkerVisible,
+                            onChanged: (bool? value) {
+                              setDialogState(() {
+                                _signMarkerVisible = value!;
+                              });
+                              setState(() {});
+                            },
+                            title: const Text('Interpretive Signs'),
+                            //subtitle: const Text('Supporting text'),
+                          ),
                         ],
                       ),
-                    ),
-                  ],
-                ),
-              )
-            );
-          }
-        );
-      },
-      child: const Icon(Icons.layers_outlined),
-    )
-  );
+                    )
+                  );
+                }
+              );
+            }
+          );
+        },
+        child: const Icon(Icons.layers_outlined),
+      )
+    );
+  }
 }
 
 class UserLocationMarker {
