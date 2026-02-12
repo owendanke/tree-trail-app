@@ -32,7 +32,6 @@ class MapRoutes implements AppRoutes{
         );
     }
 
-    debugPrint('Map routes registered: ${routes.keys}');
     return routes;
   }
 }

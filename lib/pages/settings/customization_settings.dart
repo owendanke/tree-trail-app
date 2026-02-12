@@ -60,6 +60,7 @@ class _TextSizeSection extends State<TextSizeSection> {
               onPressed: () {
                 // Change body font size to TextTheme.bodySmall
                 TextThemeService().setBodySize = Size.small;
+                TextThemeService().setMarkdownTextScale = Size.small;
               },
             ),
             MenuItemButton(
@@ -67,6 +68,7 @@ class _TextSizeSection extends State<TextSizeSection> {
               onPressed: () {
                 // Change body font size to TextTheme.bodyMedium
                 TextThemeService().setBodySize = Size.medium;
+                TextThemeService().setMarkdownTextScale = Size.medium;
               },
             ),
             MenuItemButton(
@@ -74,6 +76,7 @@ class _TextSizeSection extends State<TextSizeSection> {
               onPressed: () {
                 // Change body font size to TextTheme.bodyLarge
                 TextThemeService().setBodySize = Size.large;
+                TextThemeService().setMarkdownTextScale = Size.large;
               },
             ),
           ],

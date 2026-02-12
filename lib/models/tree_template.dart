@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:httapp/models/image_carousel.dart';
 import 'package:httapp/models/placeholder_image.dart';
+import 'package:httapp/services/text_theme_manager.dart';
 
 class TreeTemplateItem extends StatelessWidget {
   /*
@@ -148,7 +149,7 @@ class _TreeTemplatePage extends State<TreeTemplatePage> {
       appBar: AppBar(
         foregroundColor: Theme.of(context).colorScheme.onPrimary,
         backgroundColor: Theme.of(context).colorScheme.primary,
-        title: Text(widget.name, style: TextStyle(color: Theme.of(context).colorScheme.onPrimary)),
+        //title: Text(widget.name, style: TextStyle(color: Theme.of(context).colorScheme.onPrimary)),
       ),
       //body: Text("Tree Template Page"),
       body: SingleChildScrollView(
@@ -164,7 +165,12 @@ class _TreeTemplatePage extends State<TreeTemplatePage> {
             ),
             Padding(
               padding: EdgeInsetsGeometry.symmetric(vertical: 16.0, horizontal: 24.0),
-              child: MarkdownBody(data: widget.body)
+              child: MarkdownBody(
+                data: widget.body,
+                styleSheet: MarkdownStyleSheet(
+                  //textScaler: TextThemeService().markdownTextScale,
+                ),
+                )
             )
           ],
         )

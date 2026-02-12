@@ -13,11 +13,14 @@ class TextThemeService {
   late final TextTheme textTheme;
   bool _initialized = false;
 
+  final List<double> _textScales = [1.0, 1.12, 1.22];
+
   //
   // body sizes
   TextStyle? displayStyle = TextStyle();
   TextStyle? headlineStyle = TextStyle();
   TextStyle? bodyStyle = TextStyle();
+  TextScaler markdownTextScale = TextScaler.noScaling;
   
   
   /// Initialize the service by loading a TextTheme
@@ -48,6 +51,22 @@ class TextThemeService {
       case Size.large:
         // set bodyLarge
         bodyStyle = textTheme.bodyLarge;
+      }
+  }
+
+  set setMarkdownTextScale(Size size) {
+    switch (size) {
+      case Size.small:
+        // set no scale
+        markdownTextScale = TextScaler.linear(_textScales[0]);
+        
+      case Size.medium:
+        // set medium
+        markdownTextScale = TextScaler.linear(_textScales[1]);
+
+      case Size.large:
+        // set large
+        markdownTextScale = TextScaler.linear(_textScales[2]);
       }
   }
 

@@ -1,7 +1,7 @@
 name: httapp
 description: "A project to educate and showcase the Holcomb Tree Trail arboretum."
 publish_to: 'none'
-version: 0.2.1
+version: 0.2.2
 
 environment:
   sdk: ^3.9.2
@@ -35,8 +35,11 @@ flutter:
   uses-material-design: true
   assets:
     - assets/tree_trail_logo.png
+    - assets/HTT_dropshadow.png
     - assets/HTT_farm_view.png
     - assets/ABOUT_THE_TRAIL.txt
     - assets/VISITOR_INFO.txt
     - assets/rotating_leaf.gif
     - assets/north_field_fall_vista.jpg
+    - assets/HTT_map_background.png
+    - assets/explore_page.jpg

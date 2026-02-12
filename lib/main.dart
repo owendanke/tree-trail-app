@@ -5,6 +5,7 @@ import 'dart:core';
 // flutter
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:httapp/services/local_file_handling.dart';
 import 'package:httapp/services/text_theme_manager.dart';
 
@@ -255,11 +256,12 @@ class MainApp extends StatelessWidget {
         // use lightScheme from theme.dart
         colorScheme: colorScheme, 
         // use Lato from Google Fonts
-        textTheme: textTheme,
+        textTheme: TextThemeService().textTheme,
         // app bar theme
         appBarTheme: AppBarThemeData(
           foregroundColor: colorScheme.onPrimary,
           backgroundColor: colorScheme.primary,
+          systemOverlayStyle: SystemUiOverlayStyle.light,
         ),
         // bottom navigation bar theme
         navigationBarTheme: NavigationBarThemeData(

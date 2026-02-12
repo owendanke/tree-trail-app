@@ -65,7 +65,7 @@ class _AboutPageState extends State<AboutPage> {
             Padding(
               padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0),
               //child: Text(_textContent, style: Theme.of(context).textTheme.bodyMedium,)
-              child: Text(_textContent, style: TextThemeService().getBodySize)
+              child: Text(_textContent, style: TextThemeService().bodyStyle)
             ),
           ]
         ),
