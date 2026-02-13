@@ -1,10 +1,20 @@
+// Dart
 import 'dart:io';
+
+// Flutter
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+
+// pub.dev
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
+import 'package:httapp/routes/map_routes.dart';
+
+// httapp
 import 'package:httapp/ui/image_carousel.dart';
 import 'package:httapp/models/placeholder_image.dart';
 import 'package:httapp/services/text_theme_service.dart';
+import 'package:httapp/services/map_controller_service.dart';
+import 'package:latlong2/latlong.dart';
 
 class TreeTemplateItem extends StatelessWidget {
   /*
@@ -118,13 +128,18 @@ class TreeTemplatePage extends StatefulWidget {
     required this.id,
     required this.name,
     required this.body,
-    required this.imageFileList
+    required this.location,
+    required this.imageFileList,
+    this.onTabChange,
   });
   
   final String id;
   final String name;
   final String body;
+  final LatLng? location;
   final List<File> imageFileList;
+
+  final void Function(int, {String? routeName})? onTabChange;
 
   @override
   State<TreeTemplatePage> createState() => _TreeTemplatePage();
@@ -178,19 +193,37 @@ class _TreeTemplatePage extends State<TreeTemplatePage> {
             ),
 
             // Find on map
+            // conditional if a location for this tree has been provided
+            if (widget.location != null)
             Padding(
-              padding: EdgeInsetsGeometry.symmetric(vertical: 16.0),
+              padding: EdgeInsetsGeometry.symmetric(vertical: 16.0, horizontal: 24.0),
               child: ElevatedButton(
                 onPressed: () {
-                  // Call MapController()
-                  // moveAndRotate(LatLng center, double zoom, double degree, {String? id}) → MoveAndRotateResult 
-                },
-                child: Row(children: [
-                  // Button icon
-                  Icon(Icons.location_pin),
+                  // Call moveAndRotate from MapControllerService
+                  //
+                  // Move map center to the point
+                  // Zoom in to the point
+                  // Rotate map to north
+                  MapControllerService().moveAndRotate(widget.location!, 19.0, 0.0);
 
-                  // Text
-                  Text('Find On Map')
+                  // navigate to the map
+                  widget.onTabChange?.call(2, routeName: MapRoutes.map);
+                },
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+
+                    // Button icon
+                    Padding(
+                      padding: EdgeInsetsGeometry.symmetric(horizontal: 8.0),
+                      child: Icon(Icons.location_pin)
+                    ),
+
+                    // Text
+                    Padding(
+                      padding: EdgeInsetsGeometry.symmetric(horizontal: 8.0),
+                      child: Text('Find On Map')
+                    ),
                   ])
                 )
             ),

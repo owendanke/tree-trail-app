@@ -26,6 +26,7 @@ import 'package:httapp/services/firebase/remote_asset_methods.dart';
 import 'package:httapp/services/version_service.dart';
 import 'package:httapp/services/local_file_handling.dart';
 import 'package:httapp/services/text_theme_service.dart';
+import 'package:httapp/services/map_controller_service.dart';
 
 // firebase api & options
 import 'package:firebase_storage/firebase_storage.dart';
@@ -41,7 +42,7 @@ import 'firebase_options.dart';
 var treeIdMap = {};
 
 /// Global Map from [id] to the Map 
-/// {'id': String, 'name': String, 'body': String, 'latlong': LatLng,
+/// {'id': String, 'name': String, 'body': String, 'location': LatLng,
 /// 'imageFileList': List`<`File`>`, 'thmFile': File}
 /// 
 /// This is for the [TreeTemplatePage] constructor
@@ -237,7 +238,7 @@ Future<void> main() async {
         'id': id,
         'name': treeIdMap[id],
         'body': descriptionString,
-        //'latlng': 
+        'location': poiData.keys.contains(id) ? poiData[id]!.location : null,
         'imageFileList': imageFileList,
         'thumbnail': thmFileBytes
         };

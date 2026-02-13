@@ -32,6 +32,7 @@ class ExploreRoutes implements AppRoutes{
           id: page.value['id'], 
           name: page.value['name'], 
           body: page.value['body'],
+          location: page.value['location'],
           imageFileList: page.value['imageFileList'],
         );
     }

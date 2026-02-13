@@ -20,19 +20,40 @@ import 'package:httapp/ui/map_compass.dart';
 import 'package:httapp/ui/map_marker_styles.dart';
 
 class MapPage extends StatefulWidget {
+  /// Title of the page, will appear on the appbar
   final String title = 'Map';
-  final List<PointOfInterest> poiList;
+
+  /// Data for the tree locations
+  final Map<String, PointOfInterest> poiMap;
+
+  /// Data for interpretive signs
   final List<PointOfInterest> signList;
 
-  static const LatLng center = LatLng(41.947186, -72.832672);         // Center (over kiosk)
-  static const LatLng boundsCorner1 = LatLng(41.959917, -72.849722);  // NW
-  static const LatLng boundsCorner2 = LatLng(41.934444, -72.815611);  // SE
+  /// Initial location where the map will be centered
+  /// 
+  /// Kiosk : [41.947186, -72.832672]
+  static const LatLng center = LatLng(41.947186, -72.832672);
 
-  static MapController mapController = MapController();
+  /// Map boundary 1, northwest corner
+  /// 
+  /// [41.959917, -72.849722]
+  /// 
+  /// This defines one extreme of the map, limiting the scope
+  static const LatLng boundsCorner1 = LatLng(41.959917, -72.849722);
+
+  /// Map boundary 1, southeast corner
+  /// 
+  /// [41.934444, -72.815611]
+  /// 
+  /// This defines one extreme of the map, limiting the scope
+  static const LatLng boundsCorner2 = LatLng(41.934444, -72.815611);
+
+  /// MapController provided by MapControllerService
+  static MapController mapController = MapControllerService().mapController;
 
   MapPage({
     super.key, 
-    required this.poiList,
+    required this.poiMap,
     required this.signList,
     });
 
@@ -148,12 +169,12 @@ class _MapPageState extends State<MapPage> {
               MarkerLayer(markers: [
                 // Tree markers
                 if (_treeMarkerVisible)
-                  ...widget.poiList.map((poi) {
+                  ...widget.poiMap.entries.map((MapEntry<String, PointOfInterest> poi) {
                     return PoiNode.build(
                       context, 
-                      poi,
-                      isSelected: _selectedPoi == poi,
-                      onTap: () => selectPoi(poi),
+                      poi.value,
+                      isSelected: _selectedPoi == poi.value,
+                      onTap: () => selectPoi(poi.value),
                       style: treeMarkerTheme
                     );
                   }),
