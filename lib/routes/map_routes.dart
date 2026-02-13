@@ -5,7 +5,7 @@ import 'package:httapp/main.dart';
 // Import page files
 import 'package:httapp/pages/map/map.dart';
 import 'package:httapp/pages/explore/tree_list.dart';
-import 'package:httapp/ui/tree_template.dart';
+import 'package:httapp/ui/template_tree_page.dart';
 
 class MapRoutes implements AppRoutes{
   // Route name constants
@@ -26,7 +26,7 @@ class MapRoutes implements AppRoutes{
 
     for (var page in externalRoutes.entries) {
       var routeName = '/map/${page.key}';
-      routes[routeName] = (context) => TreeTemplatePage(
+      routes[routeName] = (context) => TemplateTreePage(
           id: page.value['id'], 
           name: page.value['name'], 
           body: page.value['body'],
