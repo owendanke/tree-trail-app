@@ -173,7 +173,7 @@ class _MapPageState extends State<MapPage> {
                     return PoiNode.build(
                       context, 
                       poi.value,
-                      isSelected: _selectedPoi == poi.value,
+                      isSelected: (_selectedPoi == poi.value) || (MapControllerService().selectedPoiId == poi.key),
                       onTap: () => selectPoi(poi.value),
                       style: treeMarkerTheme
                     );
@@ -255,9 +255,9 @@ class _MapPageState extends State<MapPage> {
                                 padding: EdgeInsetsGeometry.directional(start: 8, end: 8, bottom: 16),
                                 child: ElevatedButton(
                                   onPressed: () {
-                                    setState(() {
-                                      _selectedPoi = null;
-                                    });
+                                    // deselect the poi, prevents this widget from rendering
+                                    deselectPoi();
+                                    MapControllerService().deselectPoi();
                                   },
                                   child: const Text('Close'),
                                 ),

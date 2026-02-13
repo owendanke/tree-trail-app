@@ -101,9 +101,10 @@ class _TemplateTreePage extends State<TemplateTreePage> {
                   // Rotate map to north
                   MapControllerService().moveAndRotate(widget.location!, 19.0, 0.0);
 
-                  // navigate to the map
-                  debugPrint('[TreeTemplatePage] onTabChange exists: ${widget.onTabChange != null}');
+                  // select the poi to highlight on the map
+                  MapControllerService().selectPoi(widget.id);
 
+                  // navigate to the map
                   // Do not use the routeName as it pushes a new map page onto the stack
                   // This will create:
                   //    setState() called after dispose()
