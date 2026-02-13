@@ -2,9 +2,9 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
-import 'package:httapp/models/image_carousel.dart';
+import 'package:httapp/ui/image_carousel.dart';
 import 'package:httapp/models/placeholder_image.dart';
-import 'package:httapp/services/text_theme_manager.dart';
+import 'package:httapp/services/text_theme_service.dart';
 
 class TreeTemplateItem extends StatelessWidget {
   /*
@@ -155,6 +155,8 @@ class _TreeTemplatePage extends State<TreeTemplatePage> {
       body: SingleChildScrollView(
         child: Column(
           children: [
+
+            // Image Carousel
             Padding(
               padding: EdgeInsetsGeometry.zero,
               child: SizedBox(
@@ -163,6 +165,8 @@ class _TreeTemplatePage extends State<TreeTemplatePage> {
                 child: ImageCarousel(imageFileList: widget.imageFileList),
               ),
             ),
+
+            // Markdown body
             Padding(
               padding: EdgeInsetsGeometry.symmetric(vertical: 16.0, horizontal: 24.0),
               child: MarkdownBody(
@@ -171,7 +175,25 @@ class _TreeTemplatePage extends State<TreeTemplatePage> {
                   //textScaler: TextThemeService().markdownTextScale,
                 ),
                 )
-            )
+            ),
+
+            // Find on map
+            Padding(
+              padding: EdgeInsetsGeometry.symmetric(vertical: 16.0),
+              child: ElevatedButton(
+                onPressed: () {
+                  // Call MapController()
+                  // moveAndRotate(LatLng center, double zoom, double degree, {String? id}) → MoveAndRotateResult 
+                },
+                child: Row(children: [
+                  // Button icon
+                  Icon(Icons.location_pin),
+
+                  // Text
+                  Text('Find On Map')
+                  ])
+                )
+            ),
           ],
         )
       ),

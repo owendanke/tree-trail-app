@@ -1,16 +1,22 @@
+// Dart
 import 'dart:async';
 
+// Flutter
 import 'package:flutter/material.dart';
+
+// pub.dev
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:geolocator/geolocator.dart';
 
+// httapp
+import 'package:httapp/services/map_controller_service.dart';
 import 'package:httapp/services/location/geolocator.dart';
 import 'package:httapp/services/version_service.dart';
 import 'package:httapp/models/poi.dart';
 import 'package:httapp/models/poi_node.dart';
-import 'package:httapp/models/map_compass.dart';
+import 'package:httapp/ui/map_compass.dart';
 import 'package:httapp/ui/map_marker_styles.dart';
 
 class MapPage extends StatefulWidget {

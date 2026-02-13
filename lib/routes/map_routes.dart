@@ -5,7 +5,7 @@ import 'package:httapp/main.dart';
 // Import page files
 import 'package:httapp/pages/map/map.dart';
 import 'package:httapp/pages/explore/tree_list.dart';
-import 'package:httapp/models/tree_template.dart';
+import 'package:httapp/ui/tree_template.dart';
 
 class MapRoutes implements AppRoutes{
   // Route name constants
@@ -20,7 +20,7 @@ class MapRoutes implements AppRoutes{
   @override
   Map<String, WidgetBuilder> getRoutes(BuildContext context, {void Function(int newIndex, {String? routeName})? onTabChange}) {
     
-    final Map<String, WidgetBuilder> routes = {'/': (context) => MapPage(poiList: poiData, signList: interpretiveSignData,),};
+    final Map<String, WidgetBuilder> routes = {'/': (context) => MapPage(poiMap: poiData, signList: interpretiveSignData,),};
 
     for (var page in externalRoutes.entries) {
       var routeName = '/map/${page.key}';

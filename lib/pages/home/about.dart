@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:httapp/services/text_theme_manager.dart';
+import 'package:httapp/services/text_theme_service.dart';
 
 class AboutPage extends StatefulWidget {
   AboutPage({super.key});
