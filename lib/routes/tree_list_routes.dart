@@ -26,7 +26,7 @@ class TreeListRoutes implements AppRoutes{
     final Map<String, Widget Function(BuildContext)> routes = {'/': (context) => TreeListPage()};
 
     print('External routes: ${externalRoutes.keys}');
-
+/*
     for (var page in externalRoutes.entries) {
       // add '/treePage/' before each key as to not confuse what the route is for
       final routeName = '/treePage/${page.key}';
@@ -39,6 +39,7 @@ class TreeListRoutes implements AppRoutes{
           onTabChange: onTabChange,
         );
     }
+    */
 
     print('Final routes: ${routes.keys}');
     return routes;

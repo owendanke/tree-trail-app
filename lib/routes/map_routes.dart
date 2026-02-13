@@ -15,12 +15,14 @@ class MapRoutes implements AppRoutes{
   MapRoutes({required this.externalRoutes});
 
   @override
-  String get initialRoute => '/';
+  String get initialRoute => map;
 
   @override
   Map<String, WidgetBuilder> getRoutes(BuildContext context, {void Function(int newIndex, {String? routeName})? onTabChange}) {
     
-    final Map<String, WidgetBuilder> routes = {'/': (context) => MapPage(poiMap: poiData, signList: interpretiveSignData,),};
+    final Map<String, WidgetBuilder> routes = {
+      map: (context) => MapPage(poiMap: poiData, signList: interpretiveSignData,),
+      };
 
     for (var page in externalRoutes.entries) {
       var routeName = '/map/${page.key}';
@@ -28,7 +30,8 @@ class MapRoutes implements AppRoutes{
           id: page.value['id'], 
           name: page.value['name'], 
           body: page.value['body'],
-          location: page.value['location'],
+          //location: page.value['location'],
+          location: null,
           imageFileList: page.value['imageFileList'],
         );
     }

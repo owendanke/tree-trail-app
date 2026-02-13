@@ -42,7 +42,7 @@ class TreeTemplateItem extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
             child: GestureDetector(
               onTap: () {
-                Navigator.pushNamed(context, '/treePage/$id'); // id is the tree number, and key for the page
+                Navigator.pushNamed(context, '/$id'); // id is the tree number, and key for the page
               },
               child: LayoutBuilder(
             builder: (context, constraints) {
@@ -207,7 +207,14 @@ class _TreeTemplatePage extends State<TreeTemplatePage> {
                   MapControllerService().moveAndRotate(widget.location!, 19.0, 0.0);
 
                   // navigate to the map
-                  widget.onTabChange?.call(2, routeName: MapRoutes.map);
+                  debugPrint('[TreeTemplatePage] onTabChange exists: ${widget.onTabChange != null}');
+
+                  // Do not use the routeName as it pushes a new map page onto the stack
+                  // This will create:
+                  //    setState() called after dispose()
+                  //    markNeedsBuild()
+                  //widget.onTabChange?.call(2, routeName: MapRoutes.map);
+                  widget.onTabChange?.call(2);
                 },
                 child: Row(
                   mainAxisSize: MainAxisSize.min,

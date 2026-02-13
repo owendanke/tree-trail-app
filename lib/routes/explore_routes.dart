@@ -16,6 +16,7 @@ class ExploreRoutes implements AppRoutes{
     };
 
   Map<dynamic, dynamic> externalRoutes;
+  Function(int, {String? routeName})? _onTabChange;
   
   ExploreRoutes({required this.externalRoutes});
 
@@ -23,17 +24,18 @@ class ExploreRoutes implements AppRoutes{
   String get initialRoute => '/';
 
   @override
-  Map<String, WidgetBuilder> getRoutes(BuildContext context, {Function(int)? onTabChange}) {
+  Map<String, WidgetBuilder> getRoutes(BuildContext context, {void Function(int newIndex, {String? routeName})? onTabChange}) {
 
     for (var page in externalRoutes.entries) {
       // add '/treePage/' before each key as to not confuse what the route is for
-      final routeName = '/treePage/${page.key}';
+      final routeName = '/${page.key}';
       routes[routeName] = (context) => TreeTemplatePage(
           id: page.value['id'], 
           name: page.value['name'], 
           body: page.value['body'],
           location: page.value['location'],
           imageFileList: page.value['imageFileList'],
+          onTabChange: onTabChange,
         );
     }
 
