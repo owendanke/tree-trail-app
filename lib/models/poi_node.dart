@@ -65,7 +65,9 @@ class PoiNode {
     );
   }
 
-  /// Builds the marker on the map
+  /// Builds a marker widget
+  /// 
+  /// 
   static Marker build(
     BuildContext context,
     PointOfInterest poi,
@@ -73,9 +75,10 @@ class PoiNode {
       bool isSelected = false,
       required VoidCallback onTap,
       required PoiNodeStyle style,
-    }
-  ) {
-    final double size = isSelected ? 35 : 25;
+    }) {
+
+    final double size = isSelected ? style.selectedSize : style.size;
+
     return Marker(
         point: poi.location,
         width: size,

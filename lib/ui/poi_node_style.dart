@@ -9,6 +9,8 @@ class PoiNodeStyle {
   final Color selectedBorderColor;
   final double borderWidth;
   final double selectedBorderWidth;
+  final double size;
+  final double selectedSize;
   final List<BoxShadow>? selectedShadow;
 
   const PoiNodeStyle({
@@ -18,6 +20,8 @@ class PoiNodeStyle {
     required this.selectedBorderColor,
     this.borderWidth = 3,
     this.selectedBorderWidth = 5,
+    this.size = 25,
+    this.selectedSize = 35,
     this.selectedShadow,
   });
 
