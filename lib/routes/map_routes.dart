@@ -4,7 +4,6 @@ import 'package:httapp/main.dart';
 
 // Import page files
 import 'package:httapp/pages/map/map.dart';
-import 'package:httapp/pages/explore/tree_list.dart';
 import 'package:httapp/ui/template_tree_page.dart';
 
 class MapRoutes implements AppRoutes{

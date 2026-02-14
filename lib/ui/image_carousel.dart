@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:httapp/models/placeholder_image.dart';
 
@@ -18,22 +17,10 @@ class ImageCarousel extends StatefulWidget {
 class _ImageCarouselState extends State<ImageCarousel> {
   late PageController controller;
   int currentpage = 0;
-  late List<Uint8List> imageList;
-
-  /// Load carousel images
-  void _loadImages() {
-    try {
-      imageList = List.generate(widget.imageFileList.length, (img) => widget.imageFileList[img]!.readAsBytesSync());
-    } catch(e) {
-      rethrow;
-    }
-  }
 
   @override
   initState() {
     super.initState();
-    // load the images into memory
-    _loadImages();
     controller = PageController(
       // The page to show when first creating the [PageView].
       initialPage: currentpage,
@@ -71,10 +58,9 @@ class _ImageCarouselState extends State<ImageCarousel> {
                     panEnabled: true,
                     minScale: 1.0,
                     maxScale: 4.0,
-                    child: Image.memory(
-                      imageList[currentpage],
-                      fit: BoxFit.cover,
-                    ),
+                    child: widget.imageFileList[currentpage] != null
+                      ? Image.file(widget.imageFileList[currentpage]!, fit: BoxFit.cover)
+                      : placeholderImage()
                   ),
                 ),
               ),
@@ -84,7 +70,6 @@ class _ImageCarouselState extends State<ImageCarousel> {
       },
     );
   }
-
 
 
   @override
@@ -107,18 +92,22 @@ class _ImageCarouselState extends State<ImageCarousel> {
                 },
                 controller: controller,
                 children: [
-                  if (imageList.isNotEmpty)
+                  if (widget.imageFileList.isNotEmpty)
                     ...[
-                      for (var img in imageList)
-                      Padding(
-                        padding: EdgeInsetsGeometry.symmetric(horizontal: 8.0),
-                        child: GestureDetector(
-                          onTap: () {
-                            _previewImage();
-                          },
+                      for (File img in widget.imageFileList.whereType<File>()) // Filter out nulls
+                        Padding(
+                          padding: EdgeInsetsGeometry.symmetric(horizontal: 8.0),
+                          child: GestureDetector(
+                            onTap: () {
+                              _previewImage();
+                            },
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(16),
-                            child: Image.memory(img, fit: BoxFit.cover),
+                            child: Image.file(
+                              img,
+                              fit: BoxFit.cover,
+                              cacheHeight: MediaQuery.sizeOf(context).width.toInt(),
+                            ),
                           ),
                         )
                       )

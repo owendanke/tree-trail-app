@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:httapp/main.dart';
 import 'package:httapp/services/text_theme_service.dart';
 
 class CustomizationSettings extends StatelessWidget {

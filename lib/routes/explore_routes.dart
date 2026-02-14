@@ -16,7 +16,6 @@ class ExploreRoutes implements AppRoutes{
     };
 
   Map<dynamic, dynamic> externalRoutes;
-  Function(int, {String? routeName})? _onTabChange;
   
   ExploreRoutes({required this.externalRoutes});
 

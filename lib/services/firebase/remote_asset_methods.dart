@@ -3,7 +3,6 @@
 */
 
 // dart
-import 'dart:collection';
 import 'dart:io';
 import 'dart:core';
 
@@ -193,7 +192,7 @@ class RemoteAssets {
   /// 
   /// This method returns `Future<Uint8List>` if the file is successfully aquired,
   /// otherwise `null` is returned.
-  Future<Uint8List?> loadThumbnailFile(String id) async {
+  Future<File?> loadThumbnailFile(String id) async {
     // thumbnails have the format '{tree-id}_thm.jpg'
     final fileName = '${id}_thm.jpg';
 
@@ -212,7 +211,7 @@ class RemoteAssets {
           debugPrint('[loadThumbnailFile $id] Reading entire file as list of bytes.');
 
           // read and return the file
-          return thmFile.readAsBytes();
+          return thmFile;
         }
         else { 
           // file is not on device and needs to be downloaded
@@ -229,7 +228,7 @@ class RemoteAssets {
             // read and return the file
             debugPrint('[loadThumbnailFile $id] Reading entire file as list of bytes.');
             
-            return thmFile.readAsBytes();
+            return thmFile;
           }
           else {
             throw Exception('Remote file does not exist');

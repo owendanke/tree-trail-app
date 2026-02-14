@@ -69,9 +69,8 @@ class PoiNode {
   /// 
   /// 
   static Marker build(
-    BuildContext context,
-    PointOfInterest poi,
     {
+      required PointOfInterest poi,
       bool isSelected = false,
       required VoidCallback onTap,
       required PoiNodeStyle style,
@@ -80,31 +79,31 @@ class PoiNode {
     final double size = isSelected ? style.selectedSize : style.size;
 
     return Marker(
-        point: poi.location,
-        width: size,
-        height: size,
-        child: GestureDetector(
-          onTap: onTap,
-          child: Container(
-            decoration: BoxDecoration(
-              color: isSelected 
-                ? style.selectedFillColor
-                : style.fillColor,
-              shape: BoxShape.circle,
-              border: Border.all(
-                color: isSelected
-                  ? style.selectedBorderColor
-                  : style.borderColor,
-                width: isSelected
-                  ? style.selectedBorderWidth
-                  : style.borderWidth,
-              ),
-              boxShadow: isSelected
-                ? style.selectedShadow
-                : null,
+      point: poi.location,
+      width: size,
+      height: size,
+      child: GestureDetector(
+        onTap: onTap,
+        child: Container(
+          decoration: BoxDecoration(
+            color: isSelected 
+              ? style.selectedFillColor
+              : style.fillColor,
+            shape: BoxShape.circle,
+            border: Border.all(
+              color: isSelected
+                ? style.selectedBorderColor
+                : style.borderColor,
+              width: isSelected
+                ? style.selectedBorderWidth
+                : style.borderWidth,
             ),
-          )
+            boxShadow: isSelected
+              ? style.selectedShadow
+              : null,
+          ),
         )
+      )
     );
   }
 }

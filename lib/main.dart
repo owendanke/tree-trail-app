@@ -11,7 +11,6 @@ import 'package:flutter/services.dart';
 import 'package:yaml/yaml.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
-import 'package:latlong2/latlong.dart';
 
 // httapp
 import 'package:httapp/pages/main_navigation.dart';
@@ -67,6 +66,7 @@ Future<void> main() async {
 
   //Bind (create) the Widget tree for the Flutter engine.
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  debugPrint('[main] maximum image cache size ${PaintingBinding.instance.imageCache.maximumSizeBytes} bytes');
 
   // keep the splash screen alive until removed
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
@@ -226,9 +226,9 @@ Future<void> main() async {
 
       // Load the thumbnail either from a local file or downloaded from the server
       // Stored in memory as a `Uint8List` so Image.memory() may be used instead of Image.file()
-      Uint8List? thmFileBytes = await assetHandler.loadThumbnailFile(id);
+      File? thmFileBytes = await assetHandler.loadThumbnailFile(id);
 
-      List<File> imageFileList = await assetHandler.treeImgFileList(id, imageListResult!, isLocal: localImageList);   // image is pulled from internet here
+      List<File> imageFileList = await assetHandler.treeImgFileList(id, imageListResult, isLocal: localImageList);   // image is pulled from internet here
       
 
       print('[main][treePageData $id] imageFileList: $imageFileList');

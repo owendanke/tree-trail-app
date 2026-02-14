@@ -63,11 +63,8 @@ class MapPage extends StatefulWidget {
 
 class _MapPageState extends State<MapPage> {
   late PackageInfo packageInfo;
-  double _rotation = 0.0;
   Stream<Position> _positionStream = const Stream.empty();
   LatLng _userLocation = MapPage.center;
-
-  late Marker _userLocationMarker;
 
   /// Keeps track of the selected PoiNode
   PointOfInterest? _selectedPoi;
@@ -98,12 +95,6 @@ class _MapPageState extends State<MapPage> {
   @override
   void initState() {
     super.initState();
-
-    _userLocationMarker = Marker(point: _userLocation, 
-      child: Icon(Icons.gps_fixed, color: Colors.blue,),
-      width: 40,
-      height: 40
-    );
   
     _getPositionStream().then((_) {
       _positionStream.listen((position) {
@@ -147,12 +138,6 @@ class _MapPageState extends State<MapPage> {
               interactionOptions: const InteractionOptions(
                 flags: InteractiveFlag.all, // includes rotate
               ),
-
-              onPositionChanged: (position, hasGesture) {
-                setState(() {
-                  _rotation = position.rotation;  // record the current rotation of the map
-                });
-              },
             ),
             children: [
 
@@ -171,8 +156,7 @@ class _MapPageState extends State<MapPage> {
                 if (_treeMarkerVisible)
                   ...widget.poiMap.entries.map((MapEntry<String, PointOfInterest> poi) {
                     return PoiNode.build(
-                      context, 
-                      poi.value,
+                      poi: poi.value,
                       isSelected: (_selectedPoi == poi.value) || (MapControllerService().selectedPoiId == poi.key),
                       onTap: () => selectPoi(poi.value),
                       style: treeMarkerTheme
@@ -183,8 +167,7 @@ class _MapPageState extends State<MapPage> {
                 if(_signMarkerVisible)
                   ...widget.signList.map((poi) {
                     return PoiNode.build(
-                      context, 
-                      poi,
+                      poi: poi,
                       isSelected: _selectedPoi == poi,
                       onTap: () => selectPoi(poi),
                       //onTap: () {},
@@ -193,7 +176,7 @@ class _MapPageState extends State<MapPage> {
                   }),
 
                 // User location
-                ...UserLocationMarker.build(_userLocation),
+                UserLocationMarker.build(_userLocation),
                 ]),
 
               // attributions to give credit to map creators
@@ -226,7 +209,7 @@ class _MapPageState extends State<MapPage> {
                         // Common name
                         Padding(
                           padding: EdgeInsetsGeometry.fromLTRB(8, 8, 8, 4),
-                          child: Text('${_selectedPoi!.name}', style: Theme.of(context).textTheme.titleLarge),
+                          child: Text(_selectedPoi!.name, style: Theme.of(context).textTheme.titleLarge),
                         ),
 
                         // Accession number
@@ -372,20 +355,15 @@ class _MapPageState extends State<MapPage> {
 }
 
 class UserLocationMarker {
-  static List<Marker> build(LatLng? location) {
-    if (location == null) return const [];
+  static Marker build(LatLng? location) {
 
-    return [
-      Marker(
-        point: location,
+    return Marker(
+        point: (location == null)
+          ? LatLng(51.507433, -0.076658)  // London
+          : location,   // user location
         width: 40,
         height: 40,
-        child: SizedBox(
-          width: 40,
-          height: 40,
-          child: Icon(Icons.gps_fixed, color: Colors.blue, size: 32)
-        ),
-      ),
-    ];
+        child: Icon(Icons.gps_fixed, color: Colors.blue, size: 32)
+      );
   }
 }

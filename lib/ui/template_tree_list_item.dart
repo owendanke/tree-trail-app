@@ -1,5 +1,7 @@
+// Dart
+import 'dart:io';
+
 // Flutter
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 // httapp
@@ -19,7 +21,7 @@ class TemplateTreeListItem extends StatelessWidget {
 
   final String id;
   final String name;
-  final Uint8List? imageFile;
+  final File? imageFile;
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +64,10 @@ class TemplateTreeListItem extends StatelessWidget {
       return Positioned.fill(child: placeholderImage());
     }
     else {
-      return Image.memory(imageFile!, fit: BoxFit.cover);
+      return Image.file(imageFile!,
+      fit: BoxFit.cover,
+      cacheWidth: MediaQuery.sizeOf(context).width.toInt()
+      );
     }
   }
 

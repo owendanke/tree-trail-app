@@ -2,23 +2,19 @@
 import 'dart:io';
 
 // Flutter
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 // pub.dev
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
-import 'package:httapp/routes/map_routes.dart';
 
 // httapp
 import 'package:httapp/ui/image_carousel.dart';
-import 'package:httapp/models/placeholder_image.dart';
-import 'package:httapp/services/text_theme_service.dart';
 import 'package:httapp/services/map_controller_service.dart';
 import 'package:latlong2/latlong.dart';
 
 
 class TemplateTreePage extends StatefulWidget {
-  const TemplateTreePage({
+  TemplateTreePage({
     super.key,
     required this.id,
     required this.name,
@@ -33,6 +29,7 @@ class TemplateTreePage extends StatefulWidget {
   final String body;
   final LatLng? location;
   final List<File> imageFileList;
+  bool _didPrecache = false;
 
   final void Function(int, {String? routeName})? onTabChange;
 
@@ -46,12 +43,25 @@ class _TemplateTreePage extends State<TemplateTreePage> {
    The page will contain a the name, an image, and a description of the tree.
   */
   
+  Future<void> _precacheImages() async {
+    for (final file in widget.imageFileList) {
+      await precacheImage(FileImage(file), context);
+    }
+  }
+
   @override
     void initState() {
       super.initState();
     }
-  
-  //final String imageName; //imageName will be used to access a local file downloaded from firebase
+
+    @override
+    void didChangeDependencies() {
+      super.didChangeDependencies();
+      if (!widget._didPrecache) {
+        widget._didPrecache = true;
+        _precacheImages();
+      }
+    }
 
   @override
   Widget build(BuildContext context) {
