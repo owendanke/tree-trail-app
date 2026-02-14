@@ -37,7 +37,7 @@ class LocalFileHandler {
       //debugPrint('File read successfully, length: ${contents.length}');
       return await fileToRead.readAsString();
     } catch (e) {
-      debugPrint('[readFile] Unexpected exception: $e');
+      debugPrint('[readFile] An exception has occured: $e');
       rethrow;
     }
   }
@@ -49,6 +49,7 @@ class LocalFileHandler {
       var entityList = Directory(directoryPath).listSync(recursive: false, followLinks: false);
       return entityList.length;
     } catch(e) {
+      debugPrint('[countFiles] An exception has occured: $e');
       rethrow;
     }
   }
@@ -59,16 +60,15 @@ class LocalFileHandler {
   static List<File> listFiles(String directoryPath) {
     List<File> fileList = List.empty(growable: true);
     try {
-      var entityList = Directory(directoryPath).listSync(recursive: false, followLinks: false);
+      Iterable<File> entityList = Directory(directoryPath).listSync(recursive: false, followLinks: false).whereType<File>();
 
-      for (var entity in entityList) {
-        if (entity is File) {
-          fileList.add(entity);
-        }
+      for (var file in entityList) {
+        fileList.add(file);
       }
 
       return fileList;
     } catch(e) {
+      debugPrint('[listFiles] An exception has occured: $e');
       rethrow;
     }
   }
@@ -82,18 +82,18 @@ class LocalFileHandler {
     final fileToDelete = File('$directoryPath/$fileName');
     
     if (!Directory(directoryPath).existsSync()) {
-      throw Exception('[deleteAllFilesSync] Directory not found: $directoryPath');
+      throw Exception('[deleteFileSync] Directory not found: $directoryPath');
     }
     
     if (!fileToDelete.existsSync()) {
-      debugPrint('[deleteAllFilesSync] $directoryPath/$fileName does not exist, exiting');
+      debugPrint('[deleteFileSync] $directoryPath/$fileName does not exist, exiting');
       return true;
     }
 
     try {
       fileToDelete.deleteSync();
     } catch (e) {
-      debugPrint('[deleteAllFilesSync]Error deleting ${fileToDelete.path}: $e');
+      debugPrint('[deleteFileSync] Error deleting ${fileToDelete.path}: $e');
     }
     
     return true;
@@ -117,7 +117,7 @@ class LocalFileHandler {
           entity.deleteSync();
           deletedCount++;
         } catch (e) {
-          debugPrint('[deleteAllFilesSync]Error deleting ${entity.path}: $e');
+          debugPrint('[deleteAllFilesSync] Error deleting ${entity.path}: $e');
         }
       }
     }
