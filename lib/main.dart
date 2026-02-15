@@ -6,6 +6,7 @@ import 'dart:core';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:httapp/services/firebase/app_check_config.dart';
 import 'package:httapp/services/local_file_handling.dart';
 import 'package:httapp/services/text_theme_manager.dart';
 
@@ -29,7 +30,6 @@ import 'package:httapp/services/version_service.dart';
 // firebase api & options
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_app_check/firebase_app_check.dart';
 import 'firebase_options.dart';
 
 
@@ -85,17 +85,7 @@ Future<void> main() async {
     Otherwise it will use the platform specific provider.
   */
   try {
-    await FirebaseAppCheck.instance.activate(
-      // On Android, use debug provider in debug mode, Play Integrity in release
-      providerAndroid: kDebugMode
-          ? AndroidDebugProvider()
-          : AndroidPlayIntegrityProvider(),
-      
-      // On iOS, use debug provider in debug mode, App Attest in release
-      providerApple: kDebugMode
-        ? AppleDebugProvider()
-        : AppleAppAttestProvider(),
-    );
+    await AppCheckConfig.activate();
   } catch(e) {
     debugPrint('[main] Exception during Appcheck activate: $e');
     rethrow;
