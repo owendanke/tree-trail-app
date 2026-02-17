@@ -1,7 +1,11 @@
+// Copyright (c) 2026, Owen Danke
+
+// Flutter
 import 'package:flutter/material.dart';
+
+// httapp
 import 'package:httapp/main.dart';
 import 'package:httapp/routes/app_routes.dart';
-
 // Routes (correspond to tabs on the navigation bar)
 import 'package:httapp/routes/home_routes.dart';
 import 'package:httapp/routes/explore_routes.dart';

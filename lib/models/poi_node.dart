@@ -1,6 +1,11 @@
+// Copyright (c) 2026, Owen Danke
+
+// Flutter
 import 'package:flutter/material.dart';
-import 'package:httapp/models/poi.dart';
 import 'package:flutter_map/flutter_map.dart';
+
+// httapp
+import 'package:httapp/models/poi.dart';
 import 'package:httapp/ui/poi_node_style.dart';
 
 class PoiNode {

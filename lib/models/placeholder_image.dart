@@ -1,3 +1,6 @@
+// Copyright (c) 2026, Owen Danke
+
+// Flutter
 import 'package:flutter/material.dart';
 
 Widget placeholderImage() {

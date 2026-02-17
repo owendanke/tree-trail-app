@@ -1,11 +1,10 @@
+// Copyright (c) 2026, Owen Danke
+
+// Flutter
 import 'package:flutter/material.dart';
-import 'app_routes.dart';
 
-/*
-  Creates routes for navigating generated tree list items and pages
-*/
-
-// Import Pages
+// httapp
+import 'package:httapp/routes/app_routes.dart';
 import 'package:httapp/pages/explore/tree_list.dart';
 
 class TreeListRoutes implements AppRoutes{

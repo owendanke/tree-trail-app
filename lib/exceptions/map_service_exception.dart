@@ -1,3 +1,5 @@
+// Copyright (c) 2026, Owen Danke
+
 /// Exception thrown when the MapControllerService fails
 class MapServiceException implements Exception {
   /// A message describing the exception 

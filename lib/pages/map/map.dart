@@ -1,3 +1,5 @@
+// Copyright (c) 2026, Owen Danke
+
 // Dart
 import 'dart:async';
 
@@ -6,6 +8,7 @@ import 'package:flutter/material.dart';
 
 // pub.dev
 import 'package:flutter_map/flutter_map.dart';
+
 import 'package:latlong2/latlong.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:geolocator/geolocator.dart';
@@ -16,6 +19,7 @@ import 'package:httapp/services/location/geolocator.dart';
 import 'package:httapp/services/version_service.dart';
 import 'package:httapp/models/poi.dart';
 import 'package:httapp/models/poi_node.dart';
+import 'package:httapp/models/user_location_marker.dart';
 import 'package:httapp/ui/map_compass.dart';
 import 'package:httapp/ui/map_marker_styles.dart';
 
@@ -82,12 +86,14 @@ class _MapPageState extends State<MapPage> {
 
   void selectPoi(PointOfInterest poi) {
     setState(() {
+      MapControllerService().selectedPoiId = poi.id;
       _selectedPoi = poi;
     });
   }
 
   void deselectPoi() {
     setState(() {
+      MapControllerService().selectedPoiId = null;
       _selectedPoi = null;
     });
   }
@@ -157,7 +163,8 @@ class _MapPageState extends State<MapPage> {
                   ...widget.poiMap.entries.map((MapEntry<String, PointOfInterest> poi) {
                     return PoiNode.build(
                       poi: poi.value,
-                      isSelected: (_selectedPoi == poi.value) || (MapControllerService().selectedPoiId == poi.key),
+                      //isSelected: (_selectedPoi == poi.value) || (MapControllerService().selectedPoiId == poi.key),
+                      isSelected: MapControllerService().selectedPoiId == poi.key,
                       onTap: () => selectPoi(poi.value),
                       style: treeMarkerTheme
                     );
@@ -170,7 +177,6 @@ class _MapPageState extends State<MapPage> {
                       poi: poi,
                       isSelected: _selectedPoi == poi,
                       onTap: () => selectPoi(poi),
-                      //onTap: () {},
                       style: signMarkerTheme
                     );
                   }),
@@ -190,7 +196,7 @@ class _MapPageState extends State<MapPage> {
           _layerButton(context), 
           MapCompass(mapController: MapPage.mapController),
 
-          // Draggable bottom sheet
+          // Bottom sheet
           if (_selectedPoi != null)
           Align(
             alignment: Alignment.bottomCenter,
@@ -208,13 +214,13 @@ class _MapPageState extends State<MapPage> {
 
                         // Common name
                         Padding(
-                          padding: EdgeInsetsGeometry.fromLTRB(8, 8, 8, 4),
+                          padding: EdgeInsetsGeometry.fromLTRB(16, 16, 16, 4),
                           child: Text(_selectedPoi!.name, style: Theme.of(context).textTheme.titleLarge),
                         ),
 
                         // Accession number
                         Padding(
-                          padding: EdgeInsetsGeometry.symmetric(vertical: 4, horizontal: 8),
+                          padding: EdgeInsetsGeometry.symmetric(vertical: 4, horizontal: 16),
                           child: Text('(${_selectedPoi!.id})', style: Theme.of(context).textTheme.titleMedium),
                         ),
                         
@@ -351,19 +357,5 @@ class _MapPageState extends State<MapPage> {
         child: const Icon(Icons.layers_outlined),
       )
     );
-  }
-}
-
-class UserLocationMarker {
-  static Marker build(LatLng? location) {
-
-    return Marker(
-        point: (location == null)
-          ? LatLng(51.507433, -0.076658)  // London
-          : location,   // user location
-        width: 40,
-        height: 40,
-        child: Icon(Icons.gps_fixed, color: Colors.blue, size: 32)
-      );
   }
 }

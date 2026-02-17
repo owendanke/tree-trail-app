@@ -1,4 +1,9 @@
+// Copyright (c) 2026, Owen Danke
+
+// Flutter
 import 'package:flutter/material.dart';
+
+// httapp
 import 'package:httapp/routes/settings_routes.dart';
 import 'package:httapp/services/version_service.dart';
 

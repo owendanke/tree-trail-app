@@ -1,4 +1,9 @@
+// Copyright (c) 2026, Owen Danke
+
+// Flutter
 import 'package:flutter/material.dart';
+
+// httapp
 import 'package:httapp/services/text_theme_service.dart';
 
 class CustomizationSettings extends StatelessWidget {

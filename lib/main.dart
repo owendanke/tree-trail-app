@@ -1,3 +1,5 @@
+// Copyright (c) 2026, Owen Danke
+
 // dart
 import 'dart:io';
 import 'dart:core';

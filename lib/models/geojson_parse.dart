@@ -1,6 +1,13 @@
+// Copyright (c) 2026, Owen Danke
+
+// Dart
 import 'dart:convert';
-import 'package:httapp/models/poi.dart';
+
+// pub.dev
 import 'package:latlong2/latlong.dart';
+
+// httapp
+import 'package:httapp/models/poi.dart';
 
 class GeojsonParse {
   /*

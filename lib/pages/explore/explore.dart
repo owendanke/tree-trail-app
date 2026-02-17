@@ -1,5 +1,9 @@
+// Copyright (c) 2026, Owen Danke
+
+// Flutter
 import 'package:flutter/material.dart';
 
+// httapp
 import 'package:httapp/routes/explore_routes.dart';
 
 //class ExplorePage extends StatefulWidget {

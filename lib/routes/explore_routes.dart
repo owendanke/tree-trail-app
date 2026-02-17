@@ -1,7 +1,10 @@
-import 'package:flutter/material.dart';
-import 'app_routes.dart';
+// Copyright (c) 2026, Owen Danke
 
-// Import page files
+// Flutter
+import 'package:flutter/material.dart';
+
+// httapp
+import 'package:httapp/routes/app_routes.dart';
 import 'package:httapp/pages/explore/explore.dart';
 import 'package:httapp/pages/explore/tree_list.dart';
 import 'package:httapp/ui/template_tree_page.dart';
