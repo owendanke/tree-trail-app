@@ -6,11 +6,8 @@ import 'dart:core';
 
 // flutter
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
-import 'package:httapp/services/firebase/app_check_config.dart';
-import 'package:httapp/services/local_file_handling.dart';
-import 'package:httapp/services/text_theme_manager.dart';
+
 
 // pub.dev packages
 import 'package:yaml/yaml.dart';
@@ -31,6 +28,7 @@ import 'package:httapp/services/version_service.dart';
 import 'package:httapp/services/local_file_handling.dart';
 import 'package:httapp/services/text_theme_service.dart';
 import 'package:httapp/services/map_controller_service.dart';
+import 'package:httapp/services/firebase/app_check_config.dart';
 
 // firebase api & options
 import 'package:firebase_storage/firebase_storage.dart';
