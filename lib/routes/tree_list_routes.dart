@@ -1,12 +1,10 @@
+// Copyright (c) 2026, Owen Danke
+
+// Flutter
 import 'package:flutter/material.dart';
-import 'app_routes.dart';
-import 'package:httapp/models/tree_template.dart';
 
-/*
-  Creates routes for navigating generated tree list items and pages
-*/
-
-// Import Pages
+// httapp
+import 'package:httapp/routes/app_routes.dart';
 import 'package:httapp/pages/explore/tree_list.dart';
 
 class TreeListRoutes implements AppRoutes{
@@ -19,26 +17,12 @@ class TreeListRoutes implements AppRoutes{
 
 
   @override
-  String get initialRoute => '/';
+  String get initialRoute => treeList;
 
   @override
-  Map<String, WidgetBuilder> getRoutes(BuildContext context, {Function(int)? onTabChange}) {
-    final Map<String, Widget Function(BuildContext)> routes = {'/': (context) => TreeListPage()};
-
-    print('External routes: ${externalRoutes.keys}');
-
-    for (var page in externalRoutes.entries) {
-      // add '/treePage/' before each key as to not confuse what the route is for
-      final routeName = '/treePage/${page.key}';
-      routes[routeName] = (context) => TreeTemplatePage(
-          id: page.value['id'], 
-          name: page.value['name'], 
-          body: page.value['body'],
-          imageFileList: page.value['imageFileList'],
-        );
-    }
-
-    print('Final routes: ${routes.keys}');
-    return routes;
+  Map<String, WidgetBuilder> getRoutes(BuildContext context, {void Function(int newIndex, {String? routeName})? onTabChange}) {
+    return {
+      initialRoute: (context) => TreeListPage()
+      };
   }
 }

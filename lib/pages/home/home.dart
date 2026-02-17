@@ -1,4 +1,9 @@
+// Copyright (c) 2026, Owen Danke
+
+// Flutter
 import 'package:flutter/material.dart';
+
+// httapp
 import 'package:httapp/routes/home_routes.dart';
 
 class HomePage extends StatelessWidget {

@@ -1,10 +1,13 @@
-import 'package:flutter/material.dart';
-import 'app_routes.dart';
+// Copyright (c) 2026, Owen Danke
 
-// Import page files
+// Flutter
+import 'package:flutter/material.dart';
+
+// httapp
+import 'package:httapp/routes/app_routes.dart';
 import 'package:httapp/pages/explore/explore.dart';
 import 'package:httapp/pages/explore/tree_list.dart';
-import 'package:httapp/models/tree_template.dart';
+import 'package:httapp/ui/template_tree_page.dart';
 
 class ExploreRoutes implements AppRoutes{
   // Route name constants
@@ -23,16 +26,18 @@ class ExploreRoutes implements AppRoutes{
   String get initialRoute => '/';
 
   @override
-  Map<String, WidgetBuilder> getRoutes(BuildContext context, {Function(int)? onTabChange}) {
+  Map<String, WidgetBuilder> getRoutes(BuildContext context, {void Function(int newIndex, {String? routeName})? onTabChange}) {
 
     for (var page in externalRoutes.entries) {
       // add '/treePage/' before each key as to not confuse what the route is for
-      final routeName = '/treePage/${page.key}';
-      routes[routeName] = (context) => TreeTemplatePage(
+      final routeName = '/${page.key}';
+      routes[routeName] = (context) => TemplateTreePage(
           id: page.value['id'], 
           name: page.value['name'], 
           body: page.value['body'],
+          location: page.value['location'],
           imageFileList: page.value['imageFileList'],
+          onTabChange: onTabChange,
         );
     }
 

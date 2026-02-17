@@ -1,13 +1,20 @@
+// Copyright (c) 2026, Owen Danke
+
+// Dart
 import 'dart:convert';
-import 'package:httapp/models/poi.dart';
+
+// pub.dev
 import 'package:latlong2/latlong.dart';
+
+// httapp
+import 'package:httapp/models/poi.dart';
 
 class GeojsonParse {
   /*
     Parses a GeoJSON file specifically for this project so it doesn't implement everything.
     Implements feature collections, features, points, and properties.
   */
-  static List<PointOfInterest> parsePointOfInterests(String geoJsonString) {
+  static Map<String, PointOfInterest> parsePointOfInterests(String geoJsonString) {
     final Map<String, dynamic> geoJson = jsonDecode(geoJsonString);
 
     return parseFeatureCollection(geoJson);
@@ -30,7 +37,7 @@ class GeojsonParse {
       }]
     }
   */
-  static List<PointOfInterest> parseFeatureCollection(Map<String, dynamic> geoJson) {
+  static Map<String, PointOfInterest> parseFeatureCollection(Map<String, dynamic> geoJson) {
     List<Map<String, dynamic>> features;
 
     if (geoJson['type'] != 'FeatureCollection') {
@@ -41,11 +48,16 @@ class GeojsonParse {
       .map((e) => Map<String, dynamic>.from(e))
       .toList();
     
-    return features
+    var pois = features
         .where((f) => f['type'] == 'Feature')
         .map(parseFeature)
         .whereType<PointOfInterest>()
         .toList();
+
+    return {
+      for (final poi in pois)
+        if (poi.id.isNotEmpty) poi.id: poi,
+    };
   }
 
   /*

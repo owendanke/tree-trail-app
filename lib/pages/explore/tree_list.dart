@@ -1,6 +1,11 @@
+// Copyright (c) 2026, Owen Danke
+
+// Flutter
 import 'package:flutter/material.dart';
+
+// httapp
 import 'package:httapp/main.dart';
-import 'package:httapp/models/tree_template.dart';
+import 'package:httapp/ui/template_tree_list_item.dart';
 
 class TreeListPage extends StatefulWidget {
   TreeListPage({
@@ -30,7 +35,7 @@ class _TreeListPageState extends State<TreeListPage> {
                 Padding(padding: EdgeInsetsGeometry.only(top: 4)),
 
                 for (var id in treePageData.keys)
-                  TreeTemplateItem(
+                  TemplateTreeListItem(
                     id: id,
                     name: treePageData[id]!['name']!,
                     imageFile: treePageData[id]!['thumbnail'],

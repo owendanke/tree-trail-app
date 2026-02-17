@@ -1,17 +1,18 @@
+// Dart
 import 'dart:io';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
-import 'package:httapp/models/image_carousel.dart';
-import 'package:httapp/models/placeholder_image.dart';
-import 'package:httapp/services/text_theme_manager.dart';
 
-class TreeTemplateItem extends StatelessWidget {
+// Flutter
+import 'package:flutter/material.dart';
+
+// httapp
+import 'package:httapp/models/placeholder_image.dart';
+
+class TemplateTreeListItem extends StatelessWidget {
   /*
   TreeListItem builds a widget that can be displayed in a list
   The item will allow navigation to the relevant tree information page
   */
-  const TreeTemplateItem({
+  const TemplateTreeListItem({
     super.key,
     required this.id,
     required this.name,
@@ -20,7 +21,7 @@ class TreeTemplateItem extends StatelessWidget {
 
   final String id;
   final String name;
-  final Uint8List? imageFile;
+  final File? imageFile;
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +33,7 @@ class TreeTemplateItem extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
             child: GestureDetector(
               onTap: () {
-                Navigator.pushNamed(context, '/treePage/$id'); // id is the tree number, and key for the page
+                Navigator.pushNamed(context, '/$id'); // id is the tree number, and key for the page
               },
               child: LayoutBuilder(
             builder: (context, constraints) {
@@ -63,7 +64,10 @@ class TreeTemplateItem extends StatelessWidget {
       return Positioned.fill(child: placeholderImage());
     }
     else {
-      return Image.memory(imageFile!, fit: BoxFit.cover);
+      return Image.file(imageFile!,
+      fit: BoxFit.cover,
+      cacheWidth: MediaQuery.sizeOf(context).width.toInt()
+      );
     }
   }
 
@@ -105,75 +109,6 @@ class TreeTemplateItem extends StatelessWidget {
             softWrap: true,
           ),
         ),
-      ),
-    );
-  }
-}
-
-
-
-class TreeTemplatePage extends StatefulWidget {
-  const TreeTemplatePage({
-    super.key,
-    required this.id,
-    required this.name,
-    required this.body,
-    required this.imageFileList
-  });
-  
-  final String id;
-  final String name;
-  final String body;
-  final List<File> imageFileList;
-
-  @override
-  State<TreeTemplatePage> createState() => _TreeTemplatePage();
-}
-
-class _TreeTemplatePage extends State<TreeTemplatePage> {
-  /*
-   TreeTemplatePage defines the layout for every tree information page.
-   The page will contain a the name, an image, and a description of the tree.
-  */
-  
-  @override
-    void initState() {
-      super.initState();
-    }
-  
-  //final String imageName; //imageName will be used to access a local file downloaded from firebase
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        foregroundColor: Theme.of(context).colorScheme.onPrimary,
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        //title: Text(widget.name, style: TextStyle(color: Theme.of(context).colorScheme.onPrimary)),
-      ),
-      //body: Text("Tree Template Page"),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Padding(
-              padding: EdgeInsetsGeometry.zero,
-              child: SizedBox(
-                height: MediaQuery.of(context).size.width,
-                width: MediaQuery.of(context).size.width,
-                child: ImageCarousel(imageFileList: widget.imageFileList),
-              ),
-            ),
-            Padding(
-              padding: EdgeInsetsGeometry.symmetric(vertical: 16.0, horizontal: 24.0),
-              child: MarkdownBody(
-                data: widget.body,
-                styleSheet: MarkdownStyleSheet(
-                  //textScaler: TextThemeService().markdownTextScale,
-                ),
-                )
-            )
-          ],
-        )
       ),
     );
   }

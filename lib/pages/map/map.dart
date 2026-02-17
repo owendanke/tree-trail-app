@@ -1,32 +1,63 @@
+// Copyright (c) 2026, Owen Danke
+
+// Dart
 import 'dart:async';
 
+// Flutter
 import 'package:flutter/material.dart';
+
+// pub.dev
 import 'package:flutter_map/flutter_map.dart';
+
 import 'package:latlong2/latlong.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:geolocator/geolocator.dart';
 
+// httapp
+import 'package:httapp/services/map_controller_service.dart';
 import 'package:httapp/services/location/geolocator.dart';
 import 'package:httapp/services/version_service.dart';
 import 'package:httapp/models/poi.dart';
 import 'package:httapp/models/poi_node.dart';
-import 'package:httapp/models/map_compass.dart';
+import 'package:httapp/models/user_location_marker.dart';
+import 'package:httapp/ui/map_compass.dart';
 import 'package:httapp/ui/map_marker_styles.dart';
 
 class MapPage extends StatefulWidget {
+  /// Title of the page, will appear on the appbar
   final String title = 'Map';
-  final List<PointOfInterest> poiList;
+
+  /// Data for the tree locations
+  final Map<String, PointOfInterest> poiMap;
+
+  /// Data for interpretive signs
   final List<PointOfInterest> signList;
 
-  static const LatLng center = LatLng(41.947186, -72.832672);         // Center (over kiosk)
-  static const LatLng boundsCorner1 = LatLng(41.959917, -72.849722);  // NW
-  static const LatLng boundsCorner2 = LatLng(41.934444, -72.815611);  // SE
+  /// Initial location where the map will be centered
+  /// 
+  /// Kiosk : [41.947186, -72.832672]
+  static const LatLng center = LatLng(41.947186, -72.832672);
 
-  static MapController mapController = MapController();
+  /// Map boundary 1, northwest corner
+  /// 
+  /// [41.959917, -72.849722]
+  /// 
+  /// This defines one extreme of the map, limiting the scope
+  static const LatLng boundsCorner1 = LatLng(41.959917, -72.849722);
+
+  /// Map boundary 1, southeast corner
+  /// 
+  /// [41.934444, -72.815611]
+  /// 
+  /// This defines one extreme of the map, limiting the scope
+  static const LatLng boundsCorner2 = LatLng(41.934444, -72.815611);
+
+  /// MapController provided by MapControllerService
+  static MapController mapController = MapControllerService().mapController;
 
   MapPage({
     super.key, 
-    required this.poiList,
+    required this.poiMap,
     required this.signList,
     });
 
@@ -36,11 +67,8 @@ class MapPage extends StatefulWidget {
 
 class _MapPageState extends State<MapPage> {
   late PackageInfo packageInfo;
-  double _rotation = 0.0;
   Stream<Position> _positionStream = const Stream.empty();
   LatLng _userLocation = MapPage.center;
-
-  late Marker _userLocationMarker;
 
   /// Keeps track of the selected PoiNode
   PointOfInterest? _selectedPoi;
@@ -58,12 +86,14 @@ class _MapPageState extends State<MapPage> {
 
   void selectPoi(PointOfInterest poi) {
     setState(() {
+      MapControllerService().selectedPoiId = poi.id;
       _selectedPoi = poi;
     });
   }
 
   void deselectPoi() {
     setState(() {
+      MapControllerService().selectedPoiId = null;
       _selectedPoi = null;
     });
   }
@@ -71,12 +101,6 @@ class _MapPageState extends State<MapPage> {
   @override
   void initState() {
     super.initState();
-
-    _userLocationMarker = Marker(point: _userLocation, 
-      child: Icon(Icons.gps_fixed, color: Colors.blue,),
-      width: 40,
-      height: 40
-    );
   
     _getPositionStream().then((_) {
       _positionStream.listen((position) {
@@ -120,12 +144,6 @@ class _MapPageState extends State<MapPage> {
               interactionOptions: const InteractionOptions(
                 flags: InteractiveFlag.all, // includes rotate
               ),
-
-              onPositionChanged: (position, hasGesture) {
-                setState(() {
-                  _rotation = position.rotation;  // record the current rotation of the map
-                });
-              },
             ),
             children: [
 
@@ -142,12 +160,12 @@ class _MapPageState extends State<MapPage> {
               MarkerLayer(markers: [
                 // Tree markers
                 if (_treeMarkerVisible)
-                  ...widget.poiList.map((poi) {
+                  ...widget.poiMap.entries.map((MapEntry<String, PointOfInterest> poi) {
                     return PoiNode.build(
-                      context, 
-                      poi,
-                      isSelected: _selectedPoi == poi,
-                      onTap: () => selectPoi(poi),
+                      poi: poi.value,
+                      //isSelected: (_selectedPoi == poi.value) || (MapControllerService().selectedPoiId == poi.key),
+                      isSelected: MapControllerService().selectedPoiId == poi.key,
+                      onTap: () => selectPoi(poi.value),
                       style: treeMarkerTheme
                     );
                   }),
@@ -156,17 +174,15 @@ class _MapPageState extends State<MapPage> {
                 if(_signMarkerVisible)
                   ...widget.signList.map((poi) {
                     return PoiNode.build(
-                      context, 
-                      poi,
+                      poi: poi,
                       isSelected: _selectedPoi == poi,
                       onTap: () => selectPoi(poi),
-                      //onTap: () {},
                       style: signMarkerTheme
                     );
                   }),
 
                 // User location
-                ...UserLocationMarker.build(_userLocation),
+                UserLocationMarker.build(_userLocation),
                 ]),
 
               // attributions to give credit to map creators
@@ -180,7 +196,7 @@ class _MapPageState extends State<MapPage> {
           _layerButton(context), 
           MapCompass(mapController: MapPage.mapController),
 
-          // Draggable bottom sheet
+          // Bottom sheet
           if (_selectedPoi != null)
           Align(
             alignment: Alignment.bottomCenter,
@@ -198,13 +214,13 @@ class _MapPageState extends State<MapPage> {
 
                         // Common name
                         Padding(
-                          padding: EdgeInsetsGeometry.fromLTRB(8, 8, 8, 4),
-                          child: Text('${_selectedPoi!.name}', style: Theme.of(context).textTheme.titleLarge),
+                          padding: EdgeInsetsGeometry.fromLTRB(16, 16, 16, 4),
+                          child: Text(_selectedPoi!.name, style: Theme.of(context).textTheme.titleLarge),
                         ),
 
                         // Accession number
                         Padding(
-                          padding: EdgeInsetsGeometry.symmetric(vertical: 4, horizontal: 8),
+                          padding: EdgeInsetsGeometry.symmetric(vertical: 4, horizontal: 16),
                           child: Text('(${_selectedPoi!.id})', style: Theme.of(context).textTheme.titleMedium),
                         ),
                         
@@ -228,9 +244,9 @@ class _MapPageState extends State<MapPage> {
                                 padding: EdgeInsetsGeometry.directional(start: 8, end: 8, bottom: 16),
                                 child: ElevatedButton(
                                   onPressed: () {
-                                    setState(() {
-                                      _selectedPoi = null;
-                                    });
+                                    // deselect the poi, prevents this widget from rendering
+                                    deselectPoi();
+                                    MapControllerService().deselectPoi();
                                   },
                                   child: const Text('Close'),
                                 ),
@@ -341,24 +357,5 @@ class _MapPageState extends State<MapPage> {
         child: const Icon(Icons.layers_outlined),
       )
     );
-  }
-}
-
-class UserLocationMarker {
-  static List<Marker> build(LatLng? location) {
-    if (location == null) return const [];
-
-    return [
-      Marker(
-        point: location,
-        width: 40,
-        height: 40,
-        child: SizedBox(
-          width: 40,
-          height: 40,
-          child: Icon(Icons.gps_fixed, color: Colors.blue, size: 32)
-        ),
-      ),
-    ];
   }
 }

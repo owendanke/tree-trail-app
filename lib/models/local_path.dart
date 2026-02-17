@@ -1,4 +1,9 @@
+// Copyright (c) 2026, Owen Danke
+
+// Dart
 import 'dart:io';
+
+// pub.dev
 import 'package:path_provider/path_provider.dart';
 /*
   Basic getters for finding local application support directories

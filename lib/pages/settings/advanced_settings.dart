@@ -1,6 +1,9 @@
-import 'dart:io';
+// Copyright (c) 2026, Owen Danke
 
+// Flutter
 import 'package:flutter/material.dart';
+
+// httapp
 import 'package:httapp/models/local_path.dart';
 import 'package:httapp/services/local_file_handling.dart';
 

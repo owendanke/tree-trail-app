@@ -1,3 +1,5 @@
+// Copyright (c) 2026, Owen Danke
+
 /*
   Definitions for remote paths
   Must match in Storage

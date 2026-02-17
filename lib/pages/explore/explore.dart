@@ -1,5 +1,9 @@
+// Copyright (c) 2026, Owen Danke
+
+// Flutter
 import 'package:flutter/material.dart';
 
+// httapp
 import 'package:httapp/routes/explore_routes.dart';
 
 //class ExplorePage extends StatefulWidget {
@@ -40,7 +44,8 @@ class _ExplorePageState extends State<ExplorePage> {
                   borderRadius: BorderRadius.circular(16),
                   child: Image.asset(
                     'assets/explore_page.jpg',
-                    cacheHeight: (300 * MediaQuery.of(context).devicePixelRatio).toInt(),
+                    cacheHeight: MediaQuery.sizeOf(context).width.toInt(),
+                    filterQuality: FilterQuality.medium,
                     fit: BoxFit.cover
                   )
                 )

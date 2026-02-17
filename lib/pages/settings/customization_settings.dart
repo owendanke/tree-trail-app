@@ -1,6 +1,10 @@
+// Copyright (c) 2026, Owen Danke
+
+// Flutter
 import 'package:flutter/material.dart';
-import 'package:httapp/main.dart';
-import 'package:httapp/services/text_theme_manager.dart';
+
+// httapp
+import 'package:httapp/services/text_theme_service.dart';
 
 class CustomizationSettings extends StatelessWidget {
   final String title = 'Customization Settings';
