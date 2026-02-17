@@ -1,7 +1,7 @@
 name: httapp
 description: "A project to educate and showcase the Holcomb Tree Trail arboretum."
 publish_to: 'none'
-version: 0.2.2
+version: 2026.2.16
 
 environment:
   sdk: ^3.9.2
