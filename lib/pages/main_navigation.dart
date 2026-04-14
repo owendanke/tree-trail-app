@@ -35,8 +35,8 @@ class _MainNavigationState extends State<MainNavigation> with SingleTickerProvid
   int _currentIndex = 0;
 
   final _tabLabels = ['Home', 'Explore', 'Map', 'Settings'];
-  final _tabIcons = [Icon(Icons.home_outlined), Icon(Icons.explore_outlined), Icon(Icons.map_outlined), Icon(Icons.settings_outlined)];
-  final _tabSelectedIcons = [Icon(Icons.home), Icon(Icons.explore), Icon(Icons.map), Icon(Icons.settings)];
+  final _tabIcons = [Icons.home_outlined, Icons.explore_outlined, Icons.map_outlined, Icons.settings_outlined];
+  final _tabSelectedIcons = [Icons.home, Icons.explore, Icons.map, Icons.settings];
 
   static ColorScheme colorScheme = MaterialTheme.lightScheme();
 
@@ -69,26 +69,27 @@ class _MainNavigationState extends State<MainNavigation> with SingleTickerProvid
     _tabController = TabController(length: _tabLabels.length, vsync: this);
   }
 
-  static Widget _tabItem(Icon icon, Icon selectedIcon, String label, {bool isSelected = false}) {
+  static Widget _tabItem(IconData icon, IconData selectedIcon, String label, {bool isSelected = false}) {
     return AnimatedContainer(
       alignment: Alignment.center,
       duration: Duration(milliseconds: 300),
       decoration: isSelected
         ? BoxDecoration(
-          borderRadius: BorderRadius.circular(8),
-          color: colorScheme.primaryContainer,
+          borderRadius: BorderRadius.circular(20),
+          color: colorScheme.tertiaryContainer,
         )
         : null,
 
-        padding: EdgeInsets.symmetric(vertical: 4, horizontal: 4),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             isSelected
-              ? selectedIcon
-              : icon,
-            Text(label),
+              ? Icon(selectedIcon, color: colorScheme.secondary)
+              : Icon(icon, color: colorScheme.onPrimary),
+            isSelected
+              ? Text(label, style: TextStyle(color: colorScheme.onTertiaryContainer))
+              : Text(label, style: TextStyle(color: colorScheme.onPrimary)),
           ],
         ),
       );
@@ -118,10 +119,8 @@ class _MainNavigationState extends State<MainNavigation> with SingleTickerProvid
         }
       },
       child: Scaffold(
-        
         body: Stack(
           children: [
-            
             // main content
             Positioned.fill(
               /*
@@ -147,7 +146,7 @@ class _MainNavigationState extends State<MainNavigation> with SingleTickerProvid
                 height: 100,
                 padding: EdgeInsets.fromLTRB(12, 12, 12, 20),
                 child: ClipRRect(
-                  borderRadius: BorderRadiusGeometry.circular(50),
+                  borderRadius: BorderRadiusGeometry.circular(20),
                   child: Container(
                     color: colorScheme.primary,
                     child: TabBar(
