@@ -137,9 +137,13 @@ class _TemplateTreePage extends State<TemplateTreePage> {
                       padding: EdgeInsetsGeometry.symmetric(horizontal: 8.0),
                       child: Text('Find On Map')
                     ),
+
                   ])
                 )
             ),
+
+            // offset sheet from navigation bar
+            SizedBox(height: 90,)
           ],
         )
       ),

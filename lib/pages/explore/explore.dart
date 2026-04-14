@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 
 // httapp
 import 'package:httapp/routes/explore_routes.dart';
+import 'package:httapp/services/text_theme_service.dart';
 
 //class ExplorePage extends StatefulWidget {
 class ExplorePage extends StatelessWidget {
@@ -36,6 +37,7 @@ class _ExplorePageState extends State<ExplorePage> {
           children: <Widget>[
 
             // Image from asset bundle with no horizontal padding
+            /*
             Padding(
               padding: EdgeInsetsGeometry.all(8),
               child: AspectRatio(
@@ -51,6 +53,7 @@ class _ExplorePageState extends State<ExplorePage> {
                 )
               )
             ),
+            */
             
             // Featured trees button
             ElevatedButton(
@@ -58,6 +61,27 @@ class _ExplorePageState extends State<ExplorePage> {
                 Navigator.pushNamed(context, ExploreRoutes.treeList);
               },
               child: _buttonContainer('Featured Trees'),
+            ),
+
+            // Featured trees description
+            Padding(
+              padding: EdgeInsetsGeometry.symmetric(vertical: 8, horizontal: 16),
+              child: Text("Learn more about select trees at the arboretum", style: TextThemeService().bodyStyle,),
+            ),
+
+            // Woodland trails button
+            ElevatedButton(
+              onPressed: () {
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('WILL LINK TO WOODLAND TRAILS')));
+                //Navigator.pushNamed(context, ExploreRoutes.treeList);
+              },
+              child: _buttonContainer('Woodland Trails'),
+            ),
+
+            // Woodland trails description
+            Padding(
+              padding: EdgeInsetsGeometry.symmetric(vertical: 8, horizontal: 16),
+              child: Text("Learn more about the trails at Holcomb Farm", style: TextThemeService().bodyStyle),
             ),
           ],
         ),

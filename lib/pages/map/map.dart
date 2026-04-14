@@ -188,6 +188,7 @@ class _MapPageState extends State<MapPage> {
               // attributions to give credit to map creators
               SimpleAttributionWidget(
                 source: Text('OpenStreetMap contributors'),
+                alignment: Alignment.topLeft,
               ),
             ],
           ),
@@ -200,65 +201,71 @@ class _MapPageState extends State<MapPage> {
           if (_selectedPoi != null)
           Align(
             alignment: Alignment.bottomCenter,
-            child: BottomSheet(
-              enableDrag: false,
-              onClosing: () {},
-              builder: (BuildContext context) {
-                return IntrinsicHeight(
-                  child: Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
+            child: Padding(
+              padding: EdgeInsetsGeometry.zero,
+              child: BottomSheet(
+                enableDrag: false,
+                onClosing: () {},
+                builder: (BuildContext context) {
+                  return IntrinsicHeight(
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
 
-                        // Common name
-                        Padding(
-                          padding: EdgeInsetsGeometry.fromLTRB(16, 16, 16, 4),
-                          child: Text(_selectedPoi!.name, style: Theme.of(context).textTheme.titleLarge),
-                        ),
+                          // Common name
+                          Padding(
+                            padding: EdgeInsetsGeometry.fromLTRB(16, 16, 16, 4),
+                            child: Text(_selectedPoi!.name, style: Theme.of(context).textTheme.titleLarge),
+                          ),
 
-                        // Accession number
-                        Padding(
-                          padding: EdgeInsetsGeometry.symmetric(vertical: 4, horizontal: 16),
-                          child: Text('(${_selectedPoi!.id})', style: Theme.of(context).textTheme.titleMedium),
-                        ),
-                        
-                        // layout tree info and close buttons in a row
-                        Row(
-                          children: [
-                            // Learn more button
-                            Expanded(
-                              child: Padding(
-                                padding: EdgeInsetsGeometry.directional(start: 8, end: 8, bottom: 16),
-                                child: ElevatedButton(
-                                  onPressed: () => Navigator.pushNamed(context, '/map/${_selectedPoi!.id}'),
-                                  child: const Text('Learn More'),
-                                ),
-                              )
-                            ),
+                          // Accession number
+                          Padding(
+                            padding: EdgeInsetsGeometry.symmetric(vertical: 4, horizontal: 16),
+                            child: Text('(${_selectedPoi!.id})', style: Theme.of(context).textTheme.titleMedium),
+                          ),
+                          
+                          // layout tree info and close buttons in a row
+                          Row(
+                            children: [
+                              // Learn more button
+                              Expanded(
+                                child: Padding(
+                                  padding: EdgeInsetsGeometry.directional(start: 8, end: 8, bottom: 16),
+                                  child: ElevatedButton(
+                                    onPressed: () => Navigator.pushNamed(context, '/map/${_selectedPoi!.id}'),
+                                    child: const Text('Learn More'),
+                                  ),
+                                )
+                              ),
 
-                            // close button
-                            Expanded(
-                              child: Padding(
-                                padding: EdgeInsetsGeometry.directional(start: 8, end: 8, bottom: 16),
-                                child: ElevatedButton(
-                                  onPressed: () {
-                                    // deselect the poi, prevents this widget from rendering
-                                    deselectPoi();
-                                    MapControllerService().deselectPoi();
-                                  },
-                                  child: const Text('Close'),
+                              // close button
+                              Expanded(
+                                child: Padding(
+                                  padding: EdgeInsetsGeometry.directional(start: 8, end: 8, bottom: 16),
+                                  child: ElevatedButton(
+                                    onPressed: () {
+                                      // deselect the poi, prevents this widget from rendering
+                                      deselectPoi();
+                                      MapControllerService().deselectPoi();
+                                    },
+                                    child: const Text('Close'),
+                                  ),
                                 ),
                               ),
-                            ),
-                          ],
-                        ),
-                      ],
+                            ],
+                          ),
+
+                          // offset sheet from navigation bar
+                          SizedBox(height: 90,)
+                        ],
+                      ),
                     ),
-                  ),
-                );
-              },
+                  );
+                },
+              ),
             ),
           )
         ],

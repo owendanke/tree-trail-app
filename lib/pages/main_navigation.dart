@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 // httapp
 import 'package:httapp/main.dart';
 import 'package:httapp/routes/app_routes.dart';
+import 'package:httapp/ui/theme.dart';
 // Routes (correspond to tabs on the navigation bar)
 import 'package:httapp/routes/home_routes.dart';
 import 'package:httapp/routes/explore_routes.dart';
@@ -24,7 +25,7 @@ class MainNavigation extends StatefulWidget {
   State<MainNavigation> createState() => _MainNavigationState();
 }
 
-class _MainNavigationState extends State<MainNavigation> {
+class _MainNavigationState extends State<MainNavigation> with SingleTickerProviderStateMixin {
 
   /// Tracks which tab is currently selected
   /// 0 = Home
@@ -32,6 +33,12 @@ class _MainNavigationState extends State<MainNavigation> {
   /// 2 = Map
   /// 3 = Settings
   int _currentIndex = 0;
+
+  final _tabLabels = ['Home', 'Explore', 'Map', 'Settings'];
+  final _tabIcons = [Icon(Icons.home_outlined), Icon(Icons.explore_outlined), Icon(Icons.map_outlined), Icon(Icons.settings_outlined)];
+  final _tabSelectedIcons = [Icon(Icons.home), Icon(Icons.explore), Icon(Icons.map), Icon(Icons.settings)];
+
+  static ColorScheme colorScheme = MaterialTheme.lightScheme();
 
   /// Route modules define:
   /// - initialRoute for a tab
@@ -44,7 +51,7 @@ class _MainNavigationState extends State<MainNavigation> {
     MapRoutes(externalRoutes: treePageData),
     SettingsRoutes(),
   ];
-  
+
   /*
     Each tab gets its own Navigator.
     We use a GlobalKey so we can:
@@ -53,6 +60,39 @@ class _MainNavigationState extends State<MainNavigation> {
     - Preserve navigation history per tab
   */
   late final List<GlobalKey<NavigatorState>> _navigatorKeys = List.generate(_routeModules.length, (index) => GlobalKey<NavigatorState>());
+
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: _tabLabels.length, vsync: this);
+  }
+
+  static Widget _tabItem(Icon icon, Icon selectedIcon, String label, {bool isSelected = false}) {
+    return AnimatedContainer(
+      alignment: Alignment.center,
+      duration: Duration(milliseconds: 300),
+      decoration: isSelected
+        ? BoxDecoration(
+          borderRadius: BorderRadius.circular(8),
+          color: colorScheme.primaryContainer,
+        )
+        : null,
+
+        padding: EdgeInsets.symmetric(vertical: 4, horizontal: 4),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            isSelected
+              ? selectedIcon
+              : icon,
+            Text(label),
+          ],
+        ),
+      );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -78,73 +118,69 @@ class _MainNavigationState extends State<MainNavigation> {
         }
       },
       child: Scaffold(
-        /*
-          IndexedStack keeps ALL tabs alive.
-          Only the widget at index = _currentIndex is visible.
-          Others remain in memory.
-        */
-        body: IndexedStack(
-          index: _currentIndex,
+        
+        body: Stack(
+          children: [
+            
+            // main content
+            Positioned.fill(
+              /*
+                IndexedStack keeps ALL tabs alive.
+                Only the widget at index = _currentIndex is visible.
+                Others remain in memory.
+              */
+              child: IndexedStack(
+                index: _currentIndex,
 
-          // children is a list of widgets (pages) and the child (entry) at index will be displayed
-          children: List.generate(_routeModules.length, (index) => _buildNavigator(index, _routeModules[index]),
-          ),
-        ),
-
-        // Bottom navigation bar
-        bottomNavigationBar: NavigationBarTheme(
-
-          // set theme data current theme from context
-          data: Theme.of(context).navigationBarTheme,
-          child: NavigationBar(
-            selectedIndex: _currentIndex,
-
-            // called when tab item is tapped
-            onDestinationSelected: 
-            (int index) {
-              if (_currentIndex == index){
-                // if taping the same tab, pop navigator to root page
-                _navigatorKeys[index].currentState?.popUntil((route) => route.isFirst);
-              }
-              else {
-                // change index from the current tab to the requested tab
-                setState((){
-                  _currentIndex = index;
-                  }
-                );
-              }
-            },
-            // tab items (destinations)
-            destinations: const [
-              // Home
-              NavigationDestination(
-                icon: Icon(Icons.home_outlined),
-                selectedIcon: Icon(Icons.home),
-                label: 'Home',
+                // children is a list of widgets (pages) and the child (entry) at index will be displayed
+                children: List.generate(_routeModules.length, (index) => _buildNavigator(index, _routeModules[index]),
+                ),
               ),
+            ),
+            
+            // Floating bottom navigation bar
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 0,
+              child: Container(
+                height: 100,
+                padding: EdgeInsets.fromLTRB(12, 12, 12, 20),
+                child: ClipRRect(
+                  borderRadius: BorderRadiusGeometry.circular(50),
+                  child: Container(
+                    color: colorScheme.primary,
+                    child: TabBar(
+                      controller: _tabController,
+                      tabAlignment: TabAlignment.fill,
 
-              // Explore
-              NavigationDestination(
-                icon: Icon(Icons.explore_outlined),
-                selectedIcon: Icon(Icons.explore),
-                label: 'Explore',
-              ),
+                      labelColor: colorScheme.secondary,
+                      unselectedLabelColor: colorScheme.onPrimary,
 
-              // Map
-              NavigationDestination(
-                icon: Icon(Icons.map_outlined),
-                selectedIcon: Icon(Icons.map),
-                label: 'Map',
-              ),
-
-              // Settings
-              NavigationDestination(
-                icon: Icon(Icons.settings_outlined),
-                selectedIcon: Icon(Icons.settings),
-                label: 'Settings',
-              ),
-            ],
-          )
+                      indicator: UnderlineTabIndicator(borderSide: BorderSide.none),
+                      onTap: (int index) {
+                        if (_currentIndex == index){
+                          // if taping the same tab, pop navigator to root page
+                          _navigatorKeys[index].currentState?.popUntil((route) => route.isFirst);
+                        }
+                        else {
+                          // change index from the current tab to the requested tab
+                          setState((){
+                            _currentIndex = index;
+                            }
+                          );
+                        }
+                      },
+                      tabs: [
+                        for (int i = 0; i < _tabLabels.length; i++)
+                          _tabItem(_tabIcons[i], _tabSelectedIcons[i], _tabLabels[i], isSelected: i == _currentIndex),
+                      ],
+                    ),
+                  )
+                )
+              )
+            )
+          ],
         ),
       ),
     );
