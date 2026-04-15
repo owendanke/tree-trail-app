@@ -71,17 +71,20 @@ If the app is unable to make downloads, functionality will be extremely limited.
                     ''',
                   ),
                   actions: [
-                    FilledButton.tonal(
-                      style: FilledButton.styleFrom(
-                        foregroundColor: Theme.of(context).colorScheme.onError,
-                        backgroundColor: Theme.of(context).colorScheme.error,
-                        ),
+                    FilledButton(
                       onPressed: () {
                         Navigator.of(context).pop(); // close dialog
                       },
                       child: const Text('Cancel')
                     ),
-                    FilledButton(
+                    OutlinedButton(
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: Theme.of(context).colorScheme.error,
+                        side: BorderSide(
+                          color: Theme.of(context).colorScheme.error,
+                          width: 2
+                          ),
+                        ),
                       onPressed: () {
                         // Delete all local files
 
