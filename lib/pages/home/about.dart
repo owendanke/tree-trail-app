@@ -3,6 +3,7 @@
 // Flutter
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:httapp/ui/appbar.dart';
 
 // httapp
 import 'package:httapp/services/text_theme_service.dart';
@@ -22,7 +23,7 @@ class AboutPage extends StatelessWidget {
       future: _textContent,
       builder: (context, snapshot) {
         return Scaffold(
-          appBar: AppBar(title: Text(title),),
+          appBar: MyAppBar(title: title),
           body: SingleChildScrollView(
             child: Column(
               children: [

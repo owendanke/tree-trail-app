@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 // httapp
 import 'package:httapp/main.dart';
 import 'package:httapp/ui/template_tree_list_item.dart';
+import 'package:httapp/ui/appbar.dart';
 
 class TreeListPage extends StatefulWidget {
   TreeListPage({
@@ -24,7 +25,7 @@ class _TreeListPageState extends State<TreeListPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(widget.title)),
+      appBar: MyAppBar(title: widget.title),
       body: LayoutBuilder(
         builder: (context, constraints) {
         return SingleChildScrollView(

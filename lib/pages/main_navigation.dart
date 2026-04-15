@@ -97,6 +97,8 @@ class _MainNavigationState extends State<MainNavigation> with SingleTickerProvid
 
   @override
   Widget build(BuildContext context) {
+    final bottomInset = MediaQuery.of(context).padding.bottom;
+
     return PopScope(
 
       // Prevent system back button from automatically closing app
@@ -144,7 +146,7 @@ class _MainNavigationState extends State<MainNavigation> with SingleTickerProvid
               bottom: 0,
               child: Container(
                 height: 100,
-                padding: EdgeInsets.fromLTRB(12, 12, 12, 20),
+                padding: EdgeInsets.fromLTRB(12, 0, 12, bottomInset),
                 child: ClipRRect(
                   borderRadius: BorderRadiusGeometry.circular(20),
                   child: Container(

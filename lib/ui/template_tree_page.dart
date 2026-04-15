@@ -11,6 +11,7 @@ import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:httapp/ui/image_carousel.dart';
 import 'package:httapp/services/map_controller_service.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:httapp/ui/appbar.dart';
 
 
 class TemplateTreePage extends StatefulWidget {
@@ -66,12 +67,14 @@ class _TemplateTreePage extends State<TemplateTreePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+      appBar: MyAppBar(title: widget.name),
+      /*
+      AppBar(
         foregroundColor: Theme.of(context).colorScheme.onPrimary,
         backgroundColor: Theme.of(context).colorScheme.primary,
         //title: Text(widget.name, style: TextStyle(color: Theme.of(context).colorScheme.onPrimary)),
       ),
-      //body: Text("Tree Template Page"),
+      */
       body: SingleChildScrollView(
         child: Column(
           children: [

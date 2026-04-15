@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 // httapp
 import 'package:httapp/routes/explore_routes.dart';
 import 'package:httapp/services/text_theme_service.dart';
+import 'package:httapp/ui/appbar.dart';
 
 //class ExplorePage extends StatefulWidget {
 class ExplorePage extends StatelessWidget {
@@ -30,7 +31,7 @@ class _ExplorePageState extends State<ExplorePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(title)),
+      appBar: MyAppBar(title: title),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,

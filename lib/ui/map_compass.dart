@@ -9,7 +9,9 @@ class MapCompass extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Positioned(
-      top: 64,
+      //top: 64,
+      // padding hack for floating app bar
+      top: 120 + 64,
       right: 16,
       child: StreamBuilder<MapEvent>(
         stream: mapController.mapEventStream,

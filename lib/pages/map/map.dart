@@ -22,6 +22,7 @@ import 'package:httapp/models/poi_node.dart';
 import 'package:httapp/models/user_location_marker.dart';
 import 'package:httapp/ui/map_compass.dart';
 import 'package:httapp/ui/map_marker_styles.dart';
+import 'package:httapp/ui/appbar.dart';
 
 class MapPage extends StatefulWidget {
   /// Title of the page, will appear on the appbar
@@ -122,7 +123,8 @@ class _MapPageState extends State<MapPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(widget.title)),
+      appBar: MyAppBar(title: widget.title),
+      extendBodyBehindAppBar: true,
       body: Stack(
         children: [
 
@@ -275,7 +277,9 @@ class _MapPageState extends State<MapPage> {
 
   Widget _layerButton(BuildContext context) {
     return Positioned(
-      top: 16,
+      //top: 16,
+      // hack padding for floating app bar
+      top: 120 + 16,
       right: 16,
       child: FloatingActionButton.small(
         shape: CircleBorder(),

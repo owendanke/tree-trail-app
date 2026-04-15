@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 
 // httapp
 import 'package:httapp/routes/home_routes.dart';
+import 'package:httapp/ui/appbar.dart';
 
 class HomePage extends StatelessWidget {
   HomePage({
@@ -20,7 +21,8 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(title)),
+      appBar: MyAppBar(title: title),
+      extendBodyBehindAppBar: true,
 
       // Background image with decorated box
       body: DecoratedBox(
@@ -33,6 +35,8 @@ class HomePage extends StatelessWidget {
         child: Center(
           child: Column(
             children: <Widget>[
+              
+              SizedBox(height: 100),
 
               // header logo
               Padding(
