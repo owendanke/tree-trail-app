@@ -26,10 +26,10 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
     final theme = Theme.of(context);
 
     const double topOffset = 12;
-    final topInset = MediaQuery.of(context).padding.top - topOffset;
+    final topInset = MediaQuery.of(context).padding.top;
     
     return AppBar(
-      //toolbarHeight: preferredSize.height,
+      toolbarHeight: preferredSize.height,
       backgroundColor: Colors.transparent,
       elevation: 0,
       centerTitle: true,
@@ -43,7 +43,7 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
       flexibleSpace: Padding(
         padding: EdgeInsets.only(top: topInset),
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(12, 12, 12, 12 + topOffset),
+          padding: const EdgeInsets.fromLTRB(12, 12, 12, 12),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(20),
             child: Container(

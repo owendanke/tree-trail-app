@@ -26,14 +26,14 @@ class _TreeListPageState extends State<TreeListPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: MyAppBar(title: widget.title),
+      extendBodyBehindAppBar: true,
       body: LayoutBuilder(
         builder: (context, constraints) {
         return SingleChildScrollView(
           child: Column(
               children: [
-                // Padding to make the space between appBar and top of the list 
-                // match the space between elements in the list
-                Padding(padding: EdgeInsetsGeometry.only(top: 4)),
+                // floating app bar padding cheat
+                SizedBox(height: 100),
 
                 for (var id in treePageData.keys)
                   TemplateTreeListItem(
@@ -45,6 +45,9 @@ class _TreeListPageState extends State<TreeListPage> {
                 // Padding to make the space between the end of the list and bottom 
                 // navigation bar match the space between elements in the list
                 Padding(padding: EdgeInsetsGeometry.only(bottom: 4)),
+
+                // offset sheet from navigation bar, another hack
+                SizedBox(height: 100)
               ]
             ),
           );

@@ -24,9 +24,13 @@ class AboutPage extends StatelessWidget {
       builder: (context, snapshot) {
         return Scaffold(
           appBar: MyAppBar(title: title),
+          extendBodyBehindAppBar: true,
+          
           body: SingleChildScrollView(
             child: Column(
               children: [
+                // floating app bar padding cheat
+                SizedBox(height: 100),
                 
                 // Image from asset bundle with no horizontal padding
                 Padding(
@@ -52,6 +56,9 @@ class AboutPage extends StatelessWidget {
                     ? Text(snapshot.data!, style: TextThemeService().bodyStyle)
                     : CircularProgressIndicator()
                 ),
+
+                // offset sheet from navigation bar, another hack
+                SizedBox(height: 90)
               ]
             ),
           ),

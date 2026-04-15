@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 // httapp
 import 'package:httapp/routes/settings_routes.dart';
 import 'package:httapp/services/version_service.dart';
+import 'package:httapp/ui/appbar.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
@@ -15,10 +16,15 @@ class SettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(title)),
+      appBar: MyAppBar(title: title),
+      extendBodyBehindAppBar: true,
       body: ListView(
         padding: EdgeInsets.fromLTRB(16, 16, 16, 16),
         children: [
+
+          // floating app bar padding cheat
+          SizedBox(height: 100),
+
           // customization settings
           _navigationTile(
             context,
@@ -44,7 +50,11 @@ class SettingsPage extends StatelessWidget {
           // Version
           Padding(
             padding: EdgeInsetsGeometry.symmetric(),
-            child: Text('Version: ${VersionService().version}', textAlign: TextAlign.center,))
+            child: Text('Version: ${VersionService().version}', textAlign: TextAlign.center),
+          ),
+
+            // offset sheet from navigation bar, another hack
+            SizedBox(height: 90)
         ],
       )
     );

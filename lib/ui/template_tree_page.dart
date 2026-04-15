@@ -146,7 +146,7 @@ class _TemplateTreePage extends State<TemplateTreePage> {
             ),
 
             // offset sheet from navigation bar
-            SizedBox(height: 90,)
+            SizedBox(height: 100)
           ],
         )
       ),

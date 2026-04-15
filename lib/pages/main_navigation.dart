@@ -97,7 +97,7 @@ class _MainNavigationState extends State<MainNavigation> with SingleTickerProvid
 
   @override
   Widget build(BuildContext context) {
-    final bottomInset = MediaQuery.of(context).padding.bottom;
+    final bottomInset = MediaQuery.of(context).padding.bottom + 12;
 
     return PopScope(
 

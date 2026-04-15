@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 
 // httapp
 import 'package:httapp/services/text_theme_service.dart';
+import 'package:httapp/ui/appbar.dart';
 
 class VisitorInfoPage extends StatelessWidget {
   VisitorInfoPage({super.key});
@@ -22,10 +23,14 @@ class VisitorInfoPage extends StatelessWidget {
       future: _textContent,
       builder: (context, snapshot) {
         return Scaffold(
-          appBar: AppBar(title: Text(title),),
+          appBar: MyAppBar(title: title),
+          extendBodyBehindAppBar: true,
           body: SingleChildScrollView(
             child: Column(
               children: [
+
+                // floating app bar padding cheat
+                SizedBox(height: 100),
 
                 // Image from asset bundle with no horizontal padding
                 Padding(
@@ -51,6 +56,9 @@ class VisitorInfoPage extends StatelessWidget {
                     ? Text(snapshot.data!, style: TextThemeService().bodyStyle)
                     : CircularProgressIndicator()
                 ),
+
+                // offset sheet from navigation bar, another hack
+                SizedBox(height: 90)
               ]
             ),
           ),

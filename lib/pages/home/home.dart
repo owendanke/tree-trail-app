@@ -36,6 +36,7 @@ class HomePage extends StatelessWidget {
           child: Column(
             children: <Widget>[
               
+              // floating app bar padding cheat
               SizedBox(height: 100),
 
               // header logo
