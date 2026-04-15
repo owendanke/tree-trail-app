@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:httapp/routes/explore_routes.dart';
 import 'package:httapp/services/text_theme_service.dart';
 import 'package:httapp/ui/appbar.dart';
+import 'package:httapp/launch_url.dart';
 
 //class ExplorePage extends StatefulWidget {
 class ExplorePage extends StatelessWidget {
@@ -32,13 +33,15 @@ class _ExplorePageState extends State<ExplorePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: MyAppBar(title: title),
+      extendBodyBehindAppBar: true,
+
       body: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
+            // floating app bar padding cheat
+            SizedBox(height: 100),
 
-            // Image from asset bundle with no horizontal padding
-            /*
+            // Image from asset bundle
             Padding(
               padding: EdgeInsetsGeometry.all(8),
               child: AspectRatio(
@@ -54,36 +57,60 @@ class _ExplorePageState extends State<ExplorePage> {
                 )
               )
             ),
-            */
             
-            // Featured trees button
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pushNamed(context, ExploreRoutes.treeList);
-              },
-              child: _buttonContainer('Featured Trees'),
-            ),
-
             // Featured trees description
             Padding(
               padding: EdgeInsetsGeometry.symmetric(vertical: 8, horizontal: 16),
-              child: Text("Learn more about select trees at the arboretum", style: TextThemeService().bodyStyle,),
+              child: Text("Learn more about select trees at the Holcomb Tree Trail arboretum", style: TextThemeService().bodyStyle,),
             ),
 
-            // Woodland trails button
-            ElevatedButton(
-              onPressed: () {
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('WILL LINK TO WOODLAND TRAILS')));
-                //Navigator.pushNamed(context, ExploreRoutes.treeList);
-              },
-              child: _buttonContainer('Woodland Trails'),
+            // Featured trees button
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: 8),
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.pushNamed(context, ExploreRoutes.treeList);
+                },
+                child: _buttonContainer('Featured Trees'),
+              )
             ),
-
+            
             // Woodland trails description
             Padding(
               padding: EdgeInsetsGeometry.symmetric(vertical: 8, horizontal: 16),
-              child: Text("Learn more about the trails at Holcomb Farm", style: TextThemeService().bodyStyle),
+              child: Text("Explore other trails at Holcomb Farm", style: TextThemeService().bodyStyle),
             ),
+
+            // Woodland trails button
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: 8),
+              child: ElevatedButton(
+                onPressed: () => showDialog<String>(
+                  context: context,
+                  builder: (BuildContext context) => AlertDialog(
+                    title: const Text('Open In Browser?'),
+                    content: const Text('This will bring you to the Holcomb Farm trails page.'),
+                    actions: <Widget>[
+                      OutlinedButton(
+                        onPressed: () => Navigator.pop(context, 'Cancel'),
+                        child: const Text('Cancel'),
+                      ),
+                      FilledButton(
+                        onPressed: () {
+                          urlLauncher('https://holcombfarm.org/trails/');
+                          Navigator.pop(context, 'Okay');
+                          },
+                        child: const Text('Okay'),
+                      ),
+                    ],
+                  ),
+                ),
+                child: _buttonContainer('Woodland Trails'),
+              )
+            ),
+            
+            // offset sheet from navigation bar, another hack
+            SizedBox(height: 90)
           ],
         ),
       ),
