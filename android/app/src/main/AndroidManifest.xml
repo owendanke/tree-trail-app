@@ -6,7 +6,7 @@
     <uses-feature
         android:name="android.hardware.location.gps"/>
     <application
-        android:label="holcomb_tree_trail"
+        android:label="Holcomb Tree Trail"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
