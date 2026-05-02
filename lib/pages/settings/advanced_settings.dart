@@ -41,9 +41,9 @@ class _LocalFileSection extends State<LocalFileSection> {
   late String _localImagePath;
   
   void _setPaths() async {
-    _localPath = await localPath;
-    _localDescPath = await localDescPath;
-    _localImagePath = await localImagePath;
+    // _localPath = await localPath;
+    // _localDescPath = await localDescPath;
+    // _localImagePath = await localImagePath;
   }
 
   @override
@@ -89,13 +89,13 @@ If the app is unable to make downloads, functionality will be extremely limited.
                         // Delete all local files
 
                         // Delete manifest file
-                        LocalFileHandler.deleteFileSync('tree_manifest.yaml', _localPath);
+                        // LocalFileHandler.deleteFileSync('tree_manifest.yaml', _localPath);
 
                         // Delete image files
-                        LocalFileHandler.deleteAllFilesSync(_localImagePath);
+                        // LocalFileHandler.deleteAllFilesSync(_localImagePath);
 
                         // Delete description files
-                        LocalFileHandler.deleteAllFilesSync(_localDescPath);
+                        // LocalFileHandler.deleteAllFilesSync(_localDescPath);
 
                         // Start downloading files again
 

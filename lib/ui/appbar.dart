@@ -4,7 +4,6 @@ import 'dart:ui' as ui;
 // Flutter
 import 'package:flutter/material.dart';
 // httapp
-import 'package:httapp/services/text_theme_service.dart';
 
 class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
   const MyAppBar({
@@ -25,7 +24,6 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    const double topOffset = 12;
     final topInset = MediaQuery.of(context).padding.top;
     
     return AppBar(

@@ -11,10 +11,7 @@ class TreeListRoutes implements AppRoutes{
   // Route name constants
   static const String treeList = '/';
 
-  var externalRoutes;
-  
-  TreeListRoutes({required this.externalRoutes});
-
+  TreeListRoutes();
 
   @override
   String get initialRoute => treeList;

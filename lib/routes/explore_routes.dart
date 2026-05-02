@@ -2,12 +2,15 @@
 
 // Flutter
 import 'package:flutter/material.dart';
+import 'package:httapp/main.dart';
+import 'package:httapp/models/entity/tree_entity_data.dart';
+import 'package:httapp/models/remote_path.dart';
 
 // httapp
 import 'package:httapp/routes/app_routes.dart';
 import 'package:httapp/pages/explore/explore.dart';
 import 'package:httapp/pages/explore/tree_list.dart';
-import 'package:httapp/ui/template_tree_page.dart';
+import 'package:httapp/ui/tree_page_template.dart';
 
 class ExploreRoutes implements AppRoutes{
   // Route name constants
@@ -18,9 +21,10 @@ class ExploreRoutes implements AppRoutes{
       '/tree_list': (context) => TreeListPage(),
     };
 
-  Map<dynamic, dynamic> externalRoutes;
+  // Map<dynamic, dynamic> externalRoutes;
   
-  ExploreRoutes({required this.externalRoutes});
+  // ExploreRoutes({required this.externalRoutes});
+  ExploreRoutes();
 
   @override
   String get initialRoute => '/';
@@ -28,15 +32,10 @@ class ExploreRoutes implements AppRoutes{
   @override
   Map<String, WidgetBuilder> getRoutes(BuildContext context, {void Function(int newIndex, {String? routeName})? onTabChange}) {
 
-    for (var page in externalRoutes.entries) {
-      // add '/treePage/' before each key as to not confuse what the route is for
-      final routeName = '/${page.key}';
-      routes[routeName] = (context) => TemplateTreePage(
-          id: page.value['id'], 
-          name: page.value['name'], 
-          body: page.value['body'],
-          location: page.value['location'],
-          imageFileList: page.value['imageFileList'],
+    for (var entity in catalogService.entities.value.where((e) => e.type == EntityType.tree)) {
+      final routeName = '/${entity.id}';
+      routes[routeName] = (context) => TreePageTemplate(
+          entity: entity as TreeEntityData,
           onTabChange: onTabChange,
         );
     }

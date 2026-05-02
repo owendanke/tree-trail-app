@@ -1,53 +1,46 @@
-// Dart
-import 'dart:io';
-
 // Flutter
 import 'package:flutter/material.dart';
 
 // pub.dev
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
+import 'package:httapp/models/entity/tree_entity_data.dart';
+
 
 // httapp
 import 'package:httapp/ui/image_carousel.dart';
 import 'package:httapp/services/map_controller_service.dart';
-import 'package:latlong2/latlong.dart';
 import 'package:httapp/ui/appbar.dart';
+// import 'package:httapp/models/entity/tree_entity_data.dart';
 
 
-class TemplateTreePage extends StatefulWidget {
-  TemplateTreePage({
+class TreePageTemplate extends StatefulWidget {
+  TreePageTemplate({
     super.key,
-    required this.id,
-    required this.name,
-    required this.body,
-    required this.location,
-    required this.imageFileList,
+    required this.entity,
     this.onTabChange,
   });
   
-  final String id;
-  final String name;
-  final String body;
-  final LatLng? location;
-  final List<File> imageFileList;
+  final TreeEntityData entity;
+  late final String description;
   bool _didPrecache = false;
 
   final void Function(int, {String? routeName})? onTabChange;
 
   @override
-  State<TemplateTreePage> createState() => _TemplateTreePage();
+  State<TreePageTemplate> createState() => _TreePageTemplate();
 }
 
-class _TemplateTreePage extends State<TemplateTreePage> {
+class _TreePageTemplate extends State<TreePageTemplate> {
   /*
    TreeTemplatePage defines the layout for every tree information page.
    The page will contain a the name, an image, and a description of the tree.
   */
   
   Future<void> _precacheImages() async {
-    for (final file in widget.imageFileList) {
+    for (final file in widget.entity.galleryImages) {
       await precacheImage(FileImage(file), context);
     }
+    widget._didPrecache = true;
   }
 
   @override
@@ -59,7 +52,6 @@ class _TemplateTreePage extends State<TemplateTreePage> {
     void didChangeDependencies() {
       super.didChangeDependencies();
       if (!widget._didPrecache) {
-        widget._didPrecache = true;
         _precacheImages();
       }
     }
@@ -67,7 +59,7 @@ class _TemplateTreePage extends State<TemplateTreePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: MyAppBar(title: widget.name),
+      appBar: MyAppBar(title: widget.entity.name),
       /*
       AppBar(
         foregroundColor: Theme.of(context).colorScheme.onPrimary,
@@ -85,7 +77,7 @@ class _TemplateTreePage extends State<TemplateTreePage> {
               child: SizedBox(
                 height: MediaQuery.of(context).size.width,
                 width: MediaQuery.of(context).size.width,
-                child: ImageCarousel(imageFileList: widget.imageFileList),
+                child: ImageCarousel(imageFileList: widget.entity.galleryImages),
               ),
             ),
 
@@ -93,7 +85,7 @@ class _TemplateTreePage extends State<TemplateTreePage> {
             Padding(
               padding: EdgeInsetsGeometry.symmetric(vertical: 16.0, horizontal: 24.0),
               child: MarkdownBody(
-                data: widget.body,
+                data: widget.entity.description.readAsStringSync(),
                 styleSheet: MarkdownStyleSheet(
                   //textScaler: TextThemeService().markdownTextScale,
                 ),
@@ -101,8 +93,6 @@ class _TemplateTreePage extends State<TemplateTreePage> {
             ),
 
             // Find on map
-            // conditional if a location for this tree has been provided
-            if (widget.location != null)
             Padding(
               padding: EdgeInsetsGeometry.symmetric(vertical: 16.0, horizontal: 24.0),
               child: ElevatedButton(
@@ -112,10 +102,10 @@ class _TemplateTreePage extends State<TemplateTreePage> {
                   // Move map center to the point
                   // Zoom in to the point
                   // Rotate map to north
-                  MapControllerService().moveAndRotate(widget.location!, 19.0, 0.0);
+                  MapControllerService().moveAndRotate(widget.entity.location, 19.0, 0.0);
 
                   // select the poi to highlight on the map
-                  MapControllerService().selectPoi(widget.id);
+                  MapControllerService().selectPoi(widget.entity.id);
 
                   // navigate to the map
                   // Do not use the routeName as it pushes a new map page onto the stack

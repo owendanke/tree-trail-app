@@ -5,7 +5,9 @@ import 'package:flutter/material.dart';
 
 // httapp
 import 'package:httapp/main.dart';
-import 'package:httapp/ui/template_tree_list_item.dart';
+import 'package:httapp/models/entity/tree_entity_data.dart';
+import 'package:httapp/models/remote_path.dart';
+import 'package:httapp/ui/tree_list_item_template.dart';
 import 'package:httapp/ui/appbar.dart';
 
 class TreeListPage extends StatefulWidget {
@@ -35,11 +37,9 @@ class _TreeListPageState extends State<TreeListPage> {
                 // floating app bar padding cheat
                 SizedBox(height: 100),
 
-                for (var id in treePageData.keys)
-                  TemplateTreeListItem(
-                    id: id,
-                    name: treePageData[id]!['name']!,
-                    imageFile: treePageData[id]!['thumbnail'],
+                for (var entity in catalogService.entities.value.where((e) => e.type == EntityType.tree))
+                  TreeListItemTemplate(
+                    entity: entity as TreeEntityData,
                   ),
 
                 // Padding to make the space between the end of the list and bottom 

@@ -3,18 +3,22 @@
 // Flutter
 import 'package:flutter/material.dart';
 
+
 // httapp
 import 'package:httapp/routes/app_routes.dart';
 import 'package:httapp/main.dart';
 import 'package:httapp/pages/map/map.dart';
-import 'package:httapp/ui/template_tree_page.dart';
+import 'package:httapp/ui/tree_page_template.dart';
+import 'package:httapp/models/entity/tree_entity_data.dart';
+import 'package:httapp/models/remote_path.dart';
 
 class MapRoutes implements AppRoutes{
   // Route name constants
   static const String map = '/';
-  Map<dynamic, dynamic> externalRoutes;
+  // Map<dynamic, dynamic> externalRoutes;
   
-  MapRoutes({required this.externalRoutes});
+  // MapRoutes({required this.externalRoutes});
+  MapRoutes();
 
   @override
   String get initialRoute => map;
@@ -23,18 +27,14 @@ class MapRoutes implements AppRoutes{
   Map<String, WidgetBuilder> getRoutes(BuildContext context, {void Function(int newIndex, {String? routeName})? onTabChange}) {
     
     final Map<String, WidgetBuilder> routes = {
-      map: (context) => MapPage(poiMap: poiData, signList: interpretiveSignData,),
+      map: (context) => MapPage(),
       };
 
-    for (var page in externalRoutes.entries) {
-      var routeName = '/map/${page.key}';
-      routes[routeName] = (context) => TemplateTreePage(
-          id: page.value['id'], 
-          name: page.value['name'], 
-          body: page.value['body'],
-          //location: page.value['location'],
-          location: null,
-          imageFileList: page.value['imageFileList'],
+    for (var entity in catalogService.entities.value.where((e) => e.type == EntityType.tree)) {
+      final routeName = '/map/${entity.id}';
+      routes[routeName] = (context) => TreePageTemplate(
+          entity: entity as TreeEntityData,
+          onTabChange: onTabChange,
         );
     }
 

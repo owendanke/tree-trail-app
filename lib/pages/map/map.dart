@@ -23,16 +23,11 @@ import 'package:httapp/models/user_location_marker.dart';
 import 'package:httapp/ui/map_compass.dart';
 import 'package:httapp/ui/map_marker_styles.dart';
 import 'package:httapp/ui/appbar.dart';
+import 'package:httapp/main.dart';
 
 class MapPage extends StatefulWidget {
   /// Title of the page, will appear on the appbar
   final String title = 'Map';
-
-  /// Data for the tree locations
-  final Map<String, PointOfInterest> poiMap;
-
-  /// Data for interpretive signs
-  final List<PointOfInterest> signList;
 
   /// Initial location where the map will be centered
   /// 
@@ -56,11 +51,7 @@ class MapPage extends StatefulWidget {
   /// MapController provided by MapControllerService
   static MapController mapController = MapControllerService().mapController;
 
-  MapPage({
-    super.key, 
-    required this.poiMap,
-    required this.signList,
-    });
+  MapPage({super.key});
 
   @override
   State<MapPage> createState() => _MapPageState();
@@ -159,33 +150,37 @@ class _MapPageState extends State<MapPage> {
               ),
 
               // Marker layer for trees, user location, etc.
-              MarkerLayer(markers: [
-                // Tree markers
-                if (_treeMarkerVisible)
-                  ...widget.poiMap.entries.map((MapEntry<String, PointOfInterest> poi) {
-                    return PoiNode.build(
-                      poi: poi.value,
-                      //isSelected: (_selectedPoi == poi.value) || (MapControllerService().selectedPoiId == poi.key),
-                      isSelected: MapControllerService().selectedPoiId == poi.key,
-                      onTap: () => selectPoi(poi.value),
-                      style: treeMarkerTheme
-                    );
-                  }),
-
-                // Sign markers
-                if(_signMarkerVisible)
-                  ...widget.signList.map((poi) {
-                    return PoiNode.build(
-                      poi: poi,
-                      isSelected: _selectedPoi == poi,
-                      onTap: () => selectPoi(poi),
-                      style: signMarkerTheme
-                    );
-                  }),
-
-                // User location
-                UserLocationMarker.build(_userLocation),
-                ]),
+              ValueListenableBuilder(
+                valueListenable: catalogService.treeLocations,
+                builder: (context, treeLocations, _) {
+                  return ValueListenableBuilder(
+                    valueListenable: catalogService.signLocations,
+                    builder: (context, signLocations, _) {
+                      return MarkerLayer(markers: [
+                        if (_treeMarkerVisible)
+                          ...treeLocations.map((entry) {
+                            return PoiNode.build(
+                              poi: entry,
+                              isSelected: MapControllerService().selectedPoiId == entry.id,
+                              onTap: () => selectPoi(entry),
+                              style: treeMarkerTheme,
+                            );
+                          }),
+                        if (_signMarkerVisible)
+                          ...signLocations.map((entry) {
+                            return PoiNode.build(
+                              poi: entry,
+                              isSelected: _selectedPoi == entry,
+                              onTap: () => selectPoi(entry),
+                              style: signMarkerTheme,
+                            );
+                          }),
+                        UserLocationMarker.build(_userLocation),
+                      ]);
+                    },
+                  );
+                },
+              ),
 
               // attributions to give credit to map creators
               SimpleAttributionWidget(

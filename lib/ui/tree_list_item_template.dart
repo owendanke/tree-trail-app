@@ -1,27 +1,21 @@
-// Dart
-import 'dart:io';
-
 // Flutter
 import 'package:flutter/material.dart';
+import 'package:httapp/models/entity/tree_entity_data.dart';
 
 // httapp
-import 'package:httapp/models/placeholder_image.dart';
+// import 'package:httapp/models/placeholder_image.dart';
 
-class TemplateTreeListItem extends StatelessWidget {
+class TreeListItemTemplate extends StatelessWidget {
   /*
   TreeListItem builds a widget that can be displayed in a list
   The item will allow navigation to the relevant tree information page
   */
-  const TemplateTreeListItem({
+  const TreeListItemTemplate({
     super.key,
-    required this.id,
-    required this.name,
-    required this.imageFile
+    required this.entity,
   });
 
-  final String id;
-  final String name;
-  final File? imageFile;
+  final TreeEntityData entity;
 
   @override
   Widget build(BuildContext context) {
@@ -33,13 +27,17 @@ class TemplateTreeListItem extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
             child: GestureDetector(
               onTap: () {
-                Navigator.pushNamed(context, '/$id'); // id is the tree number, and key for the page
+                Navigator.pushNamed(context, '/${entity.id}'); // id is the tree number, and key for the page
               },
               child: LayoutBuilder(
             builder: (context, constraints) {
               return Stack(
                 children: [
-                  _buildBackground(context),
+                  // _buildBackground(context),
+                  Image.file(entity.thumbnail,
+                    fit: BoxFit.cover,
+                    cacheWidth: MediaQuery.sizeOf(context).width.toInt()
+                  ),
                   _buildGradient(),
                   _buildTitle(constraints), // Pass constraints
                 ],
@@ -59,17 +57,17 @@ class TemplateTreeListItem extends StatelessWidget {
   }
   */
 
-  Widget _buildBackground(BuildContext context) {
-    if (imageFile == null) {
-      return Positioned.fill(child: placeholderImage());
-    }
-    else {
-      return Image.file(imageFile!,
-      fit: BoxFit.cover,
-      cacheWidth: MediaQuery.sizeOf(context).width.toInt()
-      );
-    }
-  }
+  // Widget _buildBackground(BuildContext context) {
+  //   if (imageFile == null) {
+  //     return Positioned.fill(child: placeholderImage());
+  //   }
+  //   else {
+  //     return Image.file(imageFile!,
+  //     fit: BoxFit.cover,
+  //     cacheWidth: MediaQuery.sizeOf(context).width.toInt()
+  //     );
+  //   }
+  // }
 
   Widget _buildGradient() {
     return Positioned.fill(
@@ -99,7 +97,7 @@ class TemplateTreeListItem extends StatelessWidget {
             maxWidth: constraints.maxWidth - 40, // Subtract left + right padding
           ),
           child: Text(
-            name,
+            entity.name,
             style: const TextStyle(
               color: Colors.white,
               fontSize: 18,

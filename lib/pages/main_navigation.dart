@@ -4,7 +4,6 @@
 import 'package:flutter/material.dart';
 
 // httapp
-import 'package:httapp/main.dart';
 import 'package:httapp/routes/app_routes.dart';
 import 'package:httapp/ui/theme.dart';
 // Routes (correspond to tabs on the navigation bar)
@@ -47,8 +46,8 @@ class _MainNavigationState extends State<MainNavigation> with SingleTickerProvid
   /// Each tab has its own route configuration.
   final List<AppRoutes> _routeModules = [
     HomeRoutes(),
-    ExploreRoutes(externalRoutes: treePageData),
-    MapRoutes(externalRoutes: treePageData),
+    ExploreRoutes(),
+    MapRoutes(),
     SettingsRoutes(),
   ];
 
