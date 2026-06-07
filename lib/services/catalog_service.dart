@@ -38,6 +38,11 @@ class CatalogService {
   /// True while a sync is running. Useful for showing a sync indicator.
   final ValueNotifier<bool> isSyncing = ValueNotifier(false);
 
+  /// True while loadLocal is running. Useful for showing a loading indicator.
+  final ValueNotifier<bool> isLoading = ValueNotifier(false);
+
+  final ValueNotifier<String> statusText = ValueNotifier('');
+
   CatalogService({FirebaseStorage? storage})
       : _storage = storage ?? FirebaseStorage.instance {
        _localCatalog = LocalCatalogService();
@@ -51,6 +56,9 @@ class CatalogService {
   /// Populates [entities] with all complete entities found locally.
   /// No network calls.
   Future<void> loadLocal() async {
+    isLoading.value = true;
+    statusText.value = 'Reading local disk...';
+
     debugPrint('[CatalogService][loadLocal] starting ');
     await _localCatalog.load();
 
@@ -81,6 +89,9 @@ class CatalogService {
       _upsertEntity(entity);
     }
     debugPrint('[CatalogService][loadLocal] done - ${complete.length} complete entities.');
+    
+    statusText.value = 'Local disk read done!';
+    isLoading.value = false;
   }
 
   // -------------------------------------------------------------------------
@@ -97,6 +108,9 @@ class CatalogService {
     }
 
     isSyncing.value = true;
+    isLoading.value = true;
+    statusText.value = 'Syncing from remote...';
+
     debugPrint('[CatalogService][sync] starting');
 
     try {
@@ -162,7 +176,10 @@ class CatalogService {
     } catch (e) {
       debugPrint('[CatalogService] sync() encountered an error: $e');
     } finally {
+      statusText.value = 'Remote sync done!';
+
       isSyncing.value = false;
+      isLoading.value = false;
     }
   }
 

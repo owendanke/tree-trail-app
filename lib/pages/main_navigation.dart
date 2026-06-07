@@ -4,13 +4,14 @@
 import 'package:flutter/material.dart';
 
 // httapp
+import 'package:httapp/main.dart';
 import 'package:httapp/routes/app_routes.dart';
 import 'package:httapp/ui/theme.dart';
 // Routes (correspond to tabs on the navigation bar)
 import 'package:httapp/routes/home_routes.dart';
 import 'package:httapp/routes/explore_routes.dart';
 import 'package:httapp/routes/map_routes.dart';
-import 'package:httapp/routes/settings_routes.dart';
+// import 'package:httapp/routes/settings_routes.dart';
 
 /// MainNavigation
 /// This widget controls:
@@ -33,9 +34,13 @@ class _MainNavigationState extends State<MainNavigation> with SingleTickerProvid
   /// 3 = Settings
   int _currentIndex = 0;
 
-  final _tabLabels = ['Home', 'Explore', 'Map', 'Settings'];
-  final _tabIcons = [Icons.home_outlined, Icons.explore_outlined, Icons.map_outlined, Icons.settings_outlined];
-  final _tabSelectedIcons = [Icons.home, Icons.explore, Icons.map, Icons.settings];
+  // final _tabLabels = ['Home', 'Explore', 'Map', 'Settings'];
+  // final _tabIcons = [Icons.home_outlined, Icons.explore_outlined, Icons.map_outlined, Icons.settings_outlined];
+  // final _tabSelectedIcons = [Icons.home, Icons.explore, Icons.map, Icons.settings];
+  final _tabLabels = ['Home', 'Explore', 'Map'];
+  final _tabIcons = [Icons.home_outlined, Icons.explore_outlined, Icons.map_outlined];
+  final _tabSelectedIcons = [Icons.home, Icons.explore, Icons.map];
+
 
   static ColorScheme colorScheme = MaterialTheme.lightScheme();
 
@@ -48,7 +53,7 @@ class _MainNavigationState extends State<MainNavigation> with SingleTickerProvid
     HomeRoutes(),
     ExploreRoutes(),
     MapRoutes(),
-    SettingsRoutes(),
+    // SettingsRoutes(),
   ];
 
   /*
@@ -178,6 +183,50 @@ class _MainNavigationState extends State<MainNavigation> with SingleTickerProvid
                     ),
                   )
                 )
+              )
+            ),
+
+            // Loading Screen
+            Positioned.fill(
+              child: ValueListenableBuilder(
+                valueListenable: catalogService.isLoading,
+                builder: (context, isLoading, _) {
+                  if (!isLoading) return Container();
+                  return Container(
+                    color: Color(0xfffef9ff),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        // Logo
+                        SizedBox(
+                          width: (MediaQuery.sizeOf(context).width.toInt() / 2),
+                          child: Image(image: AssetImage('assets/tree_trail_logo.png')),
+                        ),
+
+                        // Space between
+                        SizedBox(height: 32),
+
+                        // Loading bar
+                        SizedBox(
+                          width: (MediaQuery.sizeOf(context).width.toInt() / 3),
+                          child: LinearProgressIndicator(
+                            color: Theme.of(context).colorScheme.secondary,
+                            backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
+                            minHeight: 8,
+                            borderRadius: BorderRadius.circular(8),
+                            trackGap: 16,
+                          )
+                        ),
+
+                        // Space between
+                        SizedBox(height: 32),
+                        
+                        Text(catalogService.statusText.value)
+                      ],
+                    )
+                  );
+                }
               )
             )
           ],

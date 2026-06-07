@@ -71,9 +71,8 @@ Future<void> main() async {
     rethrow;
   }
 
-    // Load whatever is already on disk — no network calls.
-    catalogService = CatalogService();
-    await catalogService.loadLocal();
+  // Initialize catalog service
+  catalogService = CatalogService();
 
 
   // begin rendering the app widget, bootstrap the render tree
@@ -82,15 +81,21 @@ Future<void> main() async {
   // Remove splash once the first frame is ready.
   // Background sync starts after the first frame so the user sees the UI
   // without waiting for any downloads.
-  WidgetsBinding.instance.addPostFrameCallback((_) {
-    FlutterNativeSplash.remove();
-    _startBackgroundSync();
-  });
+  // WidgetsBinding.instance.addPostFrameCallback((_) {
+  //   FlutterNativeSplash.remove();
+  //  _startBackgroundSync();
+  // });
 }
 
 /// Kicks off the background sync. Errors are caught here so the app
 /// continues running normally if sync fails (e.g. no network).
-Future<void> _startBackgroundSync() async {
+Future<void> _startBackgroundAssetLoading() async {
+  try {
+    await catalogService.loadLocal();
+  } catch (e) {
+    debugPrint('[main] asset loading error: $e');
+  }
+
   try {
     await catalogService.sync();
   } catch (e) {
@@ -108,6 +113,8 @@ class MainApp extends StatelessWidget {
 
     // remove the spash screen manually
     FlutterNativeSplash.remove();
+
+    _startBackgroundAssetLoading();
 
     return MaterialApp(
       title: 'Holcomb Tree Trail',

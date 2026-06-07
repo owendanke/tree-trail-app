@@ -3,7 +3,9 @@
 // Flutter
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:httapp/ui/appbar.dart';
+import 'package:httapp/launch_url.dart';
 
 // httapp
 import 'package:httapp/services/text_theme_service.dart';
@@ -13,7 +15,7 @@ class AboutPage extends StatelessWidget {
   
   final String title = 'About';
   final String _assetImage = 'assets/HTT_farm_view.png';
-  final Future<String> _textContent = rootBundle.loadString('assets/ABOUT_THE_TRAIL.txt');
+  final Future<String> _textContent = rootBundle.loadString('assets/ABOUT_THE_TRAIL.markdown');
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +55,28 @@ class AboutPage extends StatelessWidget {
                   padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0),
                   //child: Text(_textContent, style: Theme.of(context).textTheme.bodyMedium,)
                   child: snapshot.hasData
-                    ? Text(snapshot.data!, style: TextThemeService().bodyStyle)
+                    ? MarkdownBody(
+                      data: snapshot.data!,
+                      onTapLink: (text, href, title) => showDialog<String>(
+                        context: context,
+                        builder: (BuildContext context) => AlertDialog(
+                          title: const Text('Open link in browser?'),
+                          actions: <Widget>[
+                            OutlinedButton(
+                              onPressed: () => Navigator.pop(context, 'Cancel'),
+                              child: const Text('Cancel'),
+                            ),
+                            FilledButton(
+                              onPressed: () {
+                                urlLauncher(href!);
+                                Navigator.pop(context, 'Okay');
+                                },
+                              child: const Text('Okay'),
+                            ),
+                          ],
+                        ),
+                      ),
+                      )
                     : CircularProgressIndicator()
                 ),
 

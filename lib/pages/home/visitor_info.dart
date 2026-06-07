@@ -3,6 +3,7 @@
 // Flutter
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 
 // httapp
 import 'package:httapp/services/text_theme_service.dart';
@@ -13,7 +14,7 @@ class VisitorInfoPage extends StatelessWidget {
   
   final String title = 'Visitor Info';
   final String _assetImage = 'assets/north_field_fall_vista.jpg';
-  final Future<String> _textContent = rootBundle.loadString('assets/VISITOR_INFO.txt');
+  final Future<String> _textContent = rootBundle.loadString('assets/VISITOR_INFO.markdown');
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +54,7 @@ class VisitorInfoPage extends StatelessWidget {
                   padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0),
                   //child: Text(_textContent, style: Theme.of(context).textTheme.bodyMedium,)
                   child: snapshot.hasData
-                    ? Text(snapshot.data!, style: TextThemeService().bodyStyle)
+                    ? MarkdownBody(data: snapshot.data!)
                     : CircularProgressIndicator()
                 ),
 

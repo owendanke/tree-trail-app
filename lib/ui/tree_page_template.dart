@@ -10,6 +10,7 @@ import 'package:httapp/models/entity/tree_entity_data.dart';
 import 'package:httapp/ui/image_carousel.dart';
 import 'package:httapp/services/map_controller_service.dart';
 import 'package:httapp/ui/appbar.dart';
+import 'package:httapp/models/poi.dart';
 // import 'package:httapp/models/entity/tree_entity_data.dart';
 
 
@@ -105,7 +106,11 @@ class _TreePageTemplate extends State<TreePageTemplate> {
                   MapControllerService().moveAndRotate(widget.entity.location, 19.0, 0.0);
 
                   // select the poi to highlight on the map
-                  MapControllerService().selectPoi(widget.entity.id);
+                  MapControllerService().selectPoi(PointOfInterest(
+                    id: widget.entity.id,
+                    name: widget.entity.name,
+                    location: widget.entity.location
+                  ));
 
                   // navigate to the map
                   // Do not use the routeName as it pushes a new map page onto the stack

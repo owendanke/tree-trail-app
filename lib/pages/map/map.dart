@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 
 // pub.dev
 import 'package:flutter_map/flutter_map.dart';
+import 'package:httapp/routes/map_routes.dart';
 
 import 'package:latlong2/latlong.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -51,7 +52,12 @@ class MapPage extends StatefulWidget {
   /// MapController provided by MapControllerService
   static MapController mapController = MapControllerService().mapController;
 
-  MapPage({super.key});
+  MapPage({
+    super.key,
+    this.onTabChange,
+  });
+
+  final void Function(int, {String? routeName})? onTabChange;
 
   @override
   State<MapPage> createState() => _MapPageState();
@@ -78,14 +84,14 @@ class _MapPageState extends State<MapPage> {
 
   void selectPoi(PointOfInterest poi) {
     setState(() {
-      MapControllerService().selectedPoiId = poi.id;
+      MapControllerService().selectPoi(poi);
       _selectedPoi = poi;
     });
   }
 
   void deselectPoi() {
     setState(() {
-      MapControllerService().selectedPoiId = null;
+      MapControllerService().selectedPoiId.value = null;
       _selectedPoi = null;
     });
   }
@@ -150,24 +156,27 @@ class _MapPageState extends State<MapPage> {
               ),
 
               // Marker layer for trees, user location, etc.
-              ValueListenableBuilder(
-                valueListenable: catalogService.treeLocations,
-                builder: (context, treeLocations, _) {
-                  return ValueListenableBuilder(
-                    valueListenable: catalogService.signLocations,
-                    builder: (context, signLocations, _) {
+              ListenableBuilder(
+                listenable: Listenable.merge([
+                  catalogService.treeLocations,
+                  catalogService.signLocations,
+                ]),
+                builder: (context, _) {
                       return MarkerLayer(markers: [
                         if (_treeMarkerVisible)
-                          ...treeLocations.map((entry) {
+                          ...catalogService.treeLocations.value.map((entry) {
                             return PoiNode.build(
                               poi: entry,
-                              isSelected: MapControllerService().selectedPoiId == entry.id,
+                              isSelected: MapControllerService().selectedPoiId.value != null
+                                ? MapControllerService().selectedPoiId.value!.id == entry.id
+                                : false,
+                              // isSelected: _selectedPoi == entry,
                               onTap: () => selectPoi(entry),
                               style: treeMarkerTheme,
                             );
                           }),
                         if (_signMarkerVisible)
-                          ...signLocations.map((entry) {
+                          ...catalogService.signLocations.value.map((entry) {
                             return PoiNode.build(
                               poi: entry,
                               isSelected: _selectedPoi == entry,
@@ -178,8 +187,6 @@ class _MapPageState extends State<MapPage> {
                         UserLocationMarker.build(_userLocation),
                       ]);
                     },
-                  );
-                },
               ),
 
               // attributions to give credit to map creators
@@ -195,76 +202,18 @@ class _MapPageState extends State<MapPage> {
           MapCompass(mapController: MapPage.mapController),
 
           // Bottom sheet
-          if (_selectedPoi != null)
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Padding(
-              padding: EdgeInsetsGeometry.zero,
-              child: BottomSheet(
-                enableDrag: false,
-                onClosing: () {},
-                builder: (BuildContext context) {
-                  return IntrinsicHeight(
-                    child: Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-
-                          // Common name
-                          Padding(
-                            padding: EdgeInsetsGeometry.fromLTRB(16, 16, 16, 4),
-                            child: Text(_selectedPoi!.name, style: Theme.of(context).textTheme.titleLarge),
-                          ),
-
-                          // Accession number
-                          Padding(
-                            padding: EdgeInsetsGeometry.symmetric(vertical: 4, horizontal: 16),
-                            child: Text('(${_selectedPoi!.id})', style: Theme.of(context).textTheme.titleMedium),
-                          ),
-                          
-                          // layout tree info and close buttons in a row
-                          Row(
-                            children: [
-                              // Learn more button
-                              Expanded(
-                                child: Padding(
-                                  padding: EdgeInsetsGeometry.directional(start: 8, end: 8, bottom: 16),
-                                  child: ElevatedButton(
-                                    onPressed: () => Navigator.pushNamed(context, '/map/${_selectedPoi!.id}'),
-                                    child: const Text('Learn More'),
-                                  ),
-                                )
-                              ),
-
-                              // close button
-                              Expanded(
-                                child: Padding(
-                                  padding: EdgeInsetsGeometry.directional(start: 8, end: 8, bottom: 16),
-                                  child: ElevatedButton(
-                                    onPressed: () {
-                                      // deselect the poi, prevents this widget from rendering
-                                      deselectPoi();
-                                      MapControllerService().deselectPoi();
-                                    },
-                                    child: const Text('Close'),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-
-                          // offset sheet from navigation bar
-                          SizedBox(height: 90,)
-                        ],
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
-          )
+          ValueListenableBuilder(
+            valueListenable: MapControllerService().selectedPoiId,
+            builder: (context, selectedPoi, _) {
+              if (selectedPoi != null) {
+                // selectPoi(selectedPoi); // throws setState() called during build
+                _selectedPoi = selectedPoi;
+                return _bottomSheet(context, _selectedPoi!);
+              }
+              else {
+                return Container();
+              }
+          }),
         ],
       ),
     );
@@ -362,6 +311,79 @@ class _MapPageState extends State<MapPage> {
         },
         child: const Icon(Icons.layers_outlined),
       )
+    );
+  }
+
+  Widget _bottomSheet(BuildContext context, PointOfInterest poi) {
+    return Align(
+      alignment: Alignment.bottomCenter,
+      child: Padding(
+        padding: EdgeInsetsGeometry.zero,
+        child: BottomSheet(
+          enableDrag: false,
+          onClosing: () {},
+          builder: (BuildContext context) {
+            return IntrinsicHeight(
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+
+                    // Common name
+                    Padding(
+                      padding: EdgeInsetsGeometry.fromLTRB(16, 16, 16, 4),
+                      child: Text(poi.name, style: Theme.of(context).textTheme.titleLarge),
+                    ),
+
+                    // Accession number
+                    Padding(
+                      padding: EdgeInsetsGeometry.symmetric(vertical: 4, horizontal: 16),
+                      child: Text('(${poi.id})', style: Theme.of(context).textTheme.titleMedium),
+                    ),
+                    
+                    // layout tree info and close buttons in a row
+                    Row(
+                      children: [
+                        // Learn more button
+                        Expanded(
+                          child: Padding(
+                            padding: EdgeInsetsGeometry.directional(start: 8, end: 8, bottom: 16),
+                            child: ElevatedButton(
+                              // onPressed: () => Navigator.pushNamed(context, '/map/${_selectedPoi!.id}'),
+                              onPressed: () => widget.onTabChange?.call(1, routeName: '/${poi.id}'),
+                              child: const Text('Learn More'),
+                            ),
+                          )
+                        ),
+
+                        // close button
+                        Expanded(
+                          child: Padding(
+                            padding: EdgeInsetsGeometry.directional(start: 8, end: 8, bottom: 16),
+                            child: ElevatedButton(
+                              onPressed: () {
+                                // deselect the poi, prevents this widget from rendering
+                                deselectPoi();
+                                MapControllerService().deselectPoi();
+                              },
+                              child: const Text('Close'),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    // offset sheet from navigation bar
+                    SizedBox(height: 90,)
+                  ],
+                ),
+              ),
+            );
+          },
+        ),
+      ),
     );
   }
 }

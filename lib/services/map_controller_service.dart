@@ -7,6 +7,7 @@ import 'package:latlong2/latlong.dart';
 
 // httapp
 import 'package:httapp/exceptions/map_service_exception.dart';
+import 'package:httapp/models/poi.dart';
 
 class MapControllerService {
   static final MapControllerService _singleton = MapControllerService._internal();
@@ -15,7 +16,7 @@ class MapControllerService {
 
   late final MapController mapController;
   bool _initialized = false;
-  String? selectedPoiId;
+  final ValueNotifier<PointOfInterest?> selectedPoiId = ValueNotifier(null);
   
   /// Initialize the service
   /// 
@@ -30,13 +31,13 @@ class MapControllerService {
   }
 
   /// Set the [selectedPoiId] to the provided id value.
-  void selectPoi(String poiId) {
-    selectedPoiId = poiId;
+  void selectPoi(PointOfInterest poi) {
+    selectedPoiId.value = poi;
   }
 
   /// Deselects the current [selectedPoiId] to null
   void deselectPoi() {
-    selectedPoiId = null;
+    selectedPoiId.value = null;
   }
 
   // moveAndRotate(LatLng center, double zoom, double degree, {String? id}) → MoveAndRotateResult 

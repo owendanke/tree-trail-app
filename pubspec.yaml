@@ -37,8 +37,8 @@ flutter:
     - assets/tree_trail_logo.png
     - assets/HTT_dropshadow.png
     - assets/HTT_farm_view.png
-    - assets/ABOUT_THE_TRAIL.txt
-    - assets/VISITOR_INFO.txt
+    - assets/ABOUT_THE_TRAIL.markdown
+    - assets/VISITOR_INFO.markdown
     - assets/rotating_leaf.gif
     - assets/north_field_fall_vista.jpg
     - assets/HTT_map_background.png

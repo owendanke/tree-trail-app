@@ -16,7 +16,7 @@ class MapRoutes implements AppRoutes{
   // Route name constants
   static const String map = '/';
   // Map<dynamic, dynamic> externalRoutes;
-  
+  Function(int, {String? routeName})? _onTabChange;
   // MapRoutes({required this.externalRoutes});
   MapRoutes();
 
@@ -27,14 +27,15 @@ class MapRoutes implements AppRoutes{
   Map<String, WidgetBuilder> getRoutes(BuildContext context, {void Function(int newIndex, {String? routeName})? onTabChange}) {
     
     final Map<String, WidgetBuilder> routes = {
-      map: (context) => MapPage(),
+      map: (context) => MapPage(onTabChange: onTabChange),
       };
 
     for (var entity in catalogService.entities.value.where((e) => e.type == EntityType.tree)) {
-      final routeName = '/map/${entity.id}';
+      // final routeName = '/map/${entity.id}';
+      final routeName = '/${entity.id}';
       routes[routeName] = (context) => TreePageTemplate(
           entity: entity as TreeEntityData,
-          onTabChange: onTabChange,
+          onTabChange: _onTabChange,
         );
     }
 

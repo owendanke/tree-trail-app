@@ -27,7 +27,7 @@ class ExploreRoutes implements AppRoutes{
   ExploreRoutes();
 
   @override
-  String get initialRoute => '/';
+  String get initialRoute => explore;
 
   @override
   Map<String, WidgetBuilder> getRoutes(BuildContext context, {void Function(int newIndex, {String? routeName})? onTabChange}) {
