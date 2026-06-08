@@ -39,7 +39,12 @@ DerivedData/
 /build/
 /coverage/
 .metadata
-
+run.sh
+run.bat
+build.sh
+build_debug.bat
+build_release.bat
+.env
 
 # Symbolication related
 app.*.symbols
